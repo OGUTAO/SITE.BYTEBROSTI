@@ -9,7 +9,7 @@ body {
 
 .container {
     width: 300px;
-    background: white;
+    background: #ecedee;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -28,7 +28,7 @@ input {
 button {
     width: 100%;
     padding: 10px;
-    background: #28a745;
+    background: #38b6ff;
     color: white;
     border: none;
     border-radius: 5px;
@@ -36,7 +36,7 @@ button {
 }
 
 button:hover {
-    background: #218838;
+    background: #38b6ff;
 }
 
 .error {
