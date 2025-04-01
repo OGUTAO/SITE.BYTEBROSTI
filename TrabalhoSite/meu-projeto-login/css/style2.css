@@ -1,0 +1,312 @@
+/* Reset básico de margens e preenchimentos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Cabeçalho */
+header {
+    background: linear-gradient(to right, #232526, #414345);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.logo {
+    position: relative;
+    text-align: left;
+    right: 400px;
+    padding-right: 20px;
+}
+
+.logo h1 {
+    font-size: 36px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: rgba(23, 189, 240, 0.767);
+}
+
+.logo p {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+/* Navegação */
+nav {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+nav a {
+    position: relative;
+    text-decoration: none;
+    color: white;
+    font-size: 17px;
+    margin: 0 15px;
+    transition: color 0.3s;
+    font-weight: 800;
+}
+
+nav a:hover {
+    color: #ffa500;
+}
+
+/* Botões do cabeçalho */
+.buttons {
+    display: flex;
+    gap: 10px;
+    padding-right: 20px;
+}
+
+.buttons button {
+    background: #ffa500;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.buttons button:hover {
+    background: #ff8800;
+}
+
+.settings {
+    background: none;
+    color: white;
+    font-size: 20px;
+    border: 2px solid white;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.settings:hover {
+    background: #ffa500;
+    color: white;
+}
+
+.impact-section {
+    position: relative;
+    background-color: #f4f4f4;
+    padding: 50px 0;
+    top: 150px;
+    text-align: center;
+}
+
+.impact-container p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #232526;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+
+/* Centralização de tudo não mexer */
+.banner:first-of-type {
+    position: relative;
+    width: 2000px;
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: auto;
+    z-index: 10;
+}
+
+/* imagem assitencia tecnica*/
+.banner:first-of-type img {
+    position: relative;
+    left: 550px;
+    width: 400%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Cabeçalho -> fundo */
+.banner {
+    position: relative;
+    text-align: center;
+    margin: 50px 0;
+}
+
+/* textos overlay2 e h3 */
+.banner .overlay2 {
+    position: relative;
+    display: inline;
+    font-weight: bold;
+    white-space: nowrap;
+    top: 520px;
+    left: 390px;
+    font-size: 24px;
+    color: rgb(253, 249, 249);
+    border-radius: 100px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 10px 10px;
+}
+
+.banner h3 {
+    position: relative;
+    top: 330px;
+    left: 0px;
+    height: auto;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 50px;
+}
+
+/* Carrossel */
+.carousel-container {
+    position: relative;
+    width: 835px; /* Ajuste a largura para 2 imagens */
+    overflow: hidden;
+    top: 350px;
+    margin: 0 auto; /* Centraliza o carrossel */
+}
+
+.carousel-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-images img {
+    width: 50%;
+    flex-shrink: 0;
+    max-width: 400px;
+    height: auto;
+    border-radius: 75px;
+    box-shadow: 5px 5px 15px rgba(248, 248, 248, 0.3);
+    margin: 0 10px; /* Adiciona margem horizontal para espaçamento */
+}
+
+/* Overlay Rodapé */
+.buttons .button {
+    position: relative;
+    top: 500px;
+    left: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.808);
+}
+
+#over {
+    position: relative;
+    top: 450px;
+    right: 0px;
+    font-weight: bold;
+    font-size: 30px; /* Aumenta o tamanho da fonte */
+    color: #232526; /* Cor do texto */
+    background: none; /* Sem fundo */
+    text-align: center; /* Centraliza o texto */
+    line-height: 1.4; /* Ajusta a altura da linha para um melhor espaçamento */
+}
+
+#over a {
+    text-decoration: none; /* Remove o sublinhado do link */
+    color: #232526; /* Cor do texto do link */
+    transition: color 0.3s ease; /* Efeito suave para a mudança de cor */
+}
+
+#over a:hover {
+    color: #ffa500; /* Muda a cor do texto ao passar o mouse */
+}
+
+
+
+/* Rodapé */
+footer {
+    position: relative;
+    top: 500px;
+    background: #232526;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin-top: 50px;
+    display: flex; /* Flexbox para alinhar os itens na mesma linha */
+    justify-content: center; /* Centraliza os botões horizontalmente */
+    gap: 20px; /* Espaçamento entre os botões */
+}
+
+/* Contêiner dos botões */
+footer .button {
+    display: inline-block;
+    /* Aqui você pode usar margens e ajustes de posição individuais para cada botão */
+}
+
+/* Estilo dos botões */
+footer button {
+    background: #ffa500;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+footer button:hover {
+    background: #ff8800;
+}
+
+/* Exemplo para posicionar cada botão */
+#sobre {
+    /* Você pode ajustar a posição do botão "Sobre nós" aqui, se necessário */
+    position: relative;
+    right: 800px; /* Mova para a esquerda se desejar */
+}
+
+#topo {
+    /* Você pode ajustar a posição do botão "Voltar ao Topo" aqui, se necessário */
+    position: relative;
+    right: 70px; /* Mova para a direita se desejar */
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .buttons {
+        margin-top: 10px;
+    }
+
+    .banner:first-of-type {
+        position: relative;
+        left: 0;
+        margin: 0 auto;
+        width: 80%;
+    }
+
+    .banner img {
+        width: 100%;
+    }
+
+    .carousel-container {
+        top: 350px; /* Ajuste para centralizar verticalmente */
+    }
+
+    .carousel-images img {
+        width: 90%;
+    }
+}

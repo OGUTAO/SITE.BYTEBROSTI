@@ -25,7 +25,7 @@ function prevImage() {
 }
 
 function updateCarousel() {
-    images.style.transform = `translateX(-${currentImage * imageWidth}px)`;
+    images.style.transform = `translateX(-${currentImage * (imageWidth + 20)}px)`; // Adiciona o dobro da margem (10px * 2)
 }
 
 function startAutoSlide() {
