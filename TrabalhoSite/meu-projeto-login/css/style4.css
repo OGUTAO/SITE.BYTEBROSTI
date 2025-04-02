@@ -1,0 +1,363 @@
+/* Estilos gerais (adapte do seu style2.css) */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #edeef1;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: linear-gradient(to right, #232526, #414345);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+
+header nav a {
+    color: #ffa500;
+    margin: 0 10px;
+    position: relative;
+    text-decoration: none;
+    font-size: 17px;
+    margin: 0 15px;
+    transition: color 0.3s;
+    font-weight: 800;
+}
+
+header nav a:hover {
+    color: #ff8800; 
+}
+
+.logo h1 {
+    font-size: 36px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: rgba(23, 189, 240, 0.767);
+}
+
+
+.atendimento {
+    position: relative;
+    top: 250px;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 40px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.atendimento h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.atendimento ul {
+    list-style: none;
+    padding: 0;
+}
+
+.atendimento li {
+    margin-bottom: 10px;
+}
+
+.atendimento form {
+    margin-top: 20px;
+}
+
+.atendimento label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.atendimento input[type="text"],
+.atendimento input[type="email"],
+.atendimento textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.atendimento input[type="submit"] {
+    background-color: #ffa500;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.atendimento input[type="submit"]:hover {
+    background-color: #ff8800;
+}
+
+.fale-conosco {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.fale-conosco h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #232526;
+}
+
+.fale-conosco p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.fale-conosco form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fale-conosco label {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 8px;
+    align-self: flex-start;
+}
+
+.fale-conosco input[type="text"],
+.fale-conosco input[type="email"],
+.fale-conosco textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.fale-conosco textarea {
+    resize: vertical;
+}
+
+.fale-conosco input[type="submit"] {
+    background-color: #ffa500;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.fale-conosco input[type="submit"]:hover {
+    background-color: #ff8800;
+}
+
+.fale-conosco ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 25px;
+}
+
+.fale-conosco li {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.servicos {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.servicos h2 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    color: #232526;
+}
+
+.servicos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.servico {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.servico:hover {
+    transform: translateY(-5px);
+}
+
+.servico-imagem {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.servico h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #232526;
+}
+
+.servico p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.servico-botao {
+    display: inline-block;
+    background-color: #ffa500;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.servico-botao:hover {
+    background-color: #ff8800;
+}
+
+
+.orcamento {
+    position: relative;
+    max-width: 1000px;
+    left: 350px;
+    top: 250px;
+    margin: 10px; /* Aumenta a margem superior para mover a caixa para baixo */
+    padding: 100px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.orcamento h2 {
+    font-size: 3em; /* Aumenta o tamanho da fonte do título */
+    margin-bottom: 25px;
+    color: #232526;
+}
+
+.orcamento p {
+    font-size: 1.2em; /* Aumenta o tamanho da fonte do parágrafo */
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.orcamento-conteudo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Alinha os itens no topo */
+}
+
+.orcamento-imagem {
+    width: 45%; /* Aumenta a largura da imagem */
+    margin-right: 30px;
+}
+
+.orcamento-imagem img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px; /* Aumenta o raio da borda da imagem */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para a imagem */
+}
+
+.orcamento form {
+    width: 50%; /* Aumenta a largura do formulário */
+    display: flex;
+    flex-direction: column;
+}
+
+.orcamento label {
+    font-size: 1.2em; /* Aumenta o tamanho da fonte do rótulo */
+    color: #333;
+    margin-bottom: 10px;
+    align-self: flex-start;
+}
+
+.orcamento input[type="text"],
+.orcamento input[type="email"],
+.orcamento input[type="tel"],
+.orcamento textarea {
+    width: 100%;
+    padding: 15px; /* Aumenta o preenchimento dos campos */
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+    border-radius: 8px; /* Aumenta o raio da borda dos campos */
+    font-size: 1.1em;
+    box-sizing: border-box;
+}
+
+.orcamento textarea {
+    resize: vertical;
+}
+
+.orcamento input[type="submit"] {
+    background-color: #ffa500;
+    color: white;
+    padding: 15px 30px; /* Aumenta o preenchimento do botão */
+    border: none;
+    border-radius: 8px; /* Aumenta o raio da borda do botão */
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.orcamento input[type="submit"]:hover {
+    background-color: #ff8800;
+}
+
+
+footer {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+    top: 500px;
+    margin-top: 50px;
+}
+
+
+footer button {
+    background-color: #ffa500;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px; /* Adiciona espaço entre o botão e o texto */
+}
+
+footer button:hover {
+    background-color: #ff8800;
+}
+
+/* ... (outros estilos) ... */
