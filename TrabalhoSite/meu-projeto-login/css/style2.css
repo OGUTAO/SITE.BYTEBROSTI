@@ -65,6 +65,7 @@ nav a:hover {
     color: #ffa500;
 }
 
+
 /* Botões do cabeçalho */
 .buttons {
     display: flex;
@@ -85,7 +86,7 @@ nav a:hover {
 }
 
 .buttons button:hover {
-    background: #ff8800;
+    background: #45a049;
 }
 
 .settings {
@@ -183,10 +184,7 @@ nav a:hover {
     margin: 0 auto;
 }
 
-.carousel-images {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-}
+/* Em style2.css */
 
 .carousel-images a {
     display: flex;
@@ -194,15 +192,43 @@ nav a:hover {
     align-items: center;
     text-decoration: none;
     color: #333;
-    width: 33.33%; /* Garante que 3 imagens sejam exibidas por vez */
+    /* width: 33.33%; */ /* REMOVA ou COMENTE esta linha */
+    flex: 0 0 50%;      /* ADICIONE: Define a base flex para 50%, sem crescer ou encolher */
+    box-sizing: border-box; /* ADICIONE: Garante que padding/border sejam incluídos na largura */
+    padding: 0 5px;    /* AJUSTE: Mude margin para padding se quiser espaçamento interno */
+                          /* Ou mantenha a margin e ajuste o JS (veja Passo 2) */
 }
 
+/* Se você optar por manter margin: 0 10px; em vez de padding,
+   remova a linha padding acima e mantenha a margin original: */
+/* .carousel-images a { ... margin: 0 10px; ... } */
+
+/* Opcional mas recomendado: Adicionar gap ao container flex para espaçamento */
+.carousel-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    /* gap: 20px; */ /* ADICIONE se quiser 20px de espaço *entre* os itens.
+                       Nesse caso, remova margin/padding horizontal dos itens 'a'
+                       e ajuste o cálculo da largura no JS ou use 'scroll-snap'.
+                       Para manter simples, vamos focar em corrigir com margin/padding primeiro. */
+}
+
+/* Garanta que a imagem não ultrapasse o container 'a' */
+/* Em style2.css */
+
+/* Em style2.css */
+
 .carousel-images a img {
-    width: 90%; /* Ajuste conforme necessário */
-    height: auto;
+    display: block;     /* Importante para evitar espaços extras */
+    max-width: 100%;   /* Garante que a imagem não ultrapasse o container 'a' */
+    width: auto;       /* Deixa a largura ajustar automaticamente com a altura */
+    height: auto;      /* Necessário para que max-height funcione bem */
+    max-height: 400px; /* <<< AJUSTE ESTE VALOR (em pixels) para a altura máxima desejada */
+    margin: 0 auto;    /* Centraliza a imagem horizontalmente se ela ficar mais estreita que o container 'a' */
+
+    /* Mantenha seus estilos existentes */
     border-radius: 10px;
-    box-shadow: 5px 5px 15px rgba(248, 248, 248, 0.3);
-    margin: 0 10px; /* Ajuste conforme necessário */
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 .carousel-images a p {
@@ -242,6 +268,7 @@ nav a:hover {
 #over a:hover {
     color: #ffa500;
 }
+
 
 html, body {
     height: 100%;
