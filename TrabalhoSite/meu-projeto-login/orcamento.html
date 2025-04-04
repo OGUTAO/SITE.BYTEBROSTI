@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orçamento - Byte Bros</title>
-    <link rel="stylesheet" href="css/style4.css">
-</head>
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Orçamento - Byte Bros</title>
+        <link rel="stylesheet" href="css/style4.css"> <link rel="stylesheet" href="css/style5.css"> 
+    </head>
 <body>
     <header>
         <div class="logo">
-            <h1>BYTE BROS.TI</h1>
+            <a href="login_menu.html"><h1>BYTE BROS.TI</h1></a>
             <p>Manutenção Digital</p>
         </div>
         <nav>
@@ -25,8 +27,12 @@
             <p>Preencha o formulário abaixo para solicitar um orçamento para o serviço selecionado:</p>
 
             <div class="orcamento-conteudo">
-                <div class="orcamento-imagem">
+                <div class="servico-info">
                     <img id="servico-imagem" src="" alt="Imagem do Serviço">
+                    <h3 id="servico-nome"></h3>
+                    <div class="botao-voltar">
+                        <a href="javascript:history.go(-1)" class="botao">Voltar</a>
+                    </div>
                 </div>
                 <form id="orcamento-form">
                     <label for="nome">Nome:</label>
@@ -38,10 +44,7 @@
                     <label for="telefone">Telefone:</label>
                     <input type="tel" id="telefone" name="telefone" required><br><br>
 
-                    <label for="servico">Serviço:</label>
-                    <input type="text" id="servico" name="servico" readonly><br><br>
-
-                    <label for="descricao">Descrição do Problema:</label><br>
+                    <label for="descricao">Digite aqui oque deseja para agilizar o atendimento:</label><br>
                     <textarea id="descricao" name="descricao" rows="5" required></textarea><br><br>
 
                     <input type="submit" value="Enviar Solicitação">

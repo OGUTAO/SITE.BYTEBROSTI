@@ -19,7 +19,7 @@ header {
 
 
 header nav a {
-    color: #ffa500;
+    color:  rgba(23, 189, 240, 0.767);
     margin: 0 10px;
     position: relative;
     text-decoration: none;
@@ -33,12 +33,36 @@ header nav a:hover {
     color: #ff8800; 
 }
 
+header .logo a {
+    /* Outros estilos do link */
+    text-decoration: none; /* Remove o sublinhado */
+}
+
+.logo {
+    /* Mantenha ou adicione estas propriedades para controlar o layout interno */
+    display: flex; /* Permite alinhar os itens lado a lado ou em coluna */
+    flex-direction: column; /* Organiza os itens em coluna (um abaixo do outro) */
+    align-items: flex-start; /* Alinha os itens à esquerda */
+}
+
 .logo h1 {
     font-size: 36px;
     font-weight: bold;
     letter-spacing: 2px;
     color: rgba(23, 189, 240, 0.767);
+    margin-bottom: 5px; /* Adiciona um pequeno espaço abaixo do título principal */
 }
+.logo:hover h1 {
+    color: #ffa500; /* Exemplo: muda para a cor laranja */
+    /* Você pode adicionar outras propriedades de estilo aqui também */
+}
+
+.logo p {
+    font-size: 1em; /* Ou o tamanho que você preferir */
+    color: white; /* Já está branco, mas pode ajustar se quiser */
+    margin-top: 0; /* Remove qualquer margem superior padrão do parágrafo */
+}
+
 
 
 .atendimento {
@@ -99,6 +123,8 @@ header nav a:hover {
 }
 
 .fale-conosco {
+    position: relative;
+    top: 250px;
     max-width: 600px;
     margin: 30px auto;
     padding: 30px;
@@ -177,6 +203,8 @@ header nav a:hover {
 }
 
 .servicos {
+    position: relative;
+    top: 250px;
     max-width: 1200px;
     margin: 30px auto;
     padding: 30px;
@@ -334,7 +362,23 @@ header nav a:hover {
     background-color: #ff8800;
 }
 
+.servico-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
 
+.servico-info img {
+    width: 450px;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.servico-info h3 { /* Adiciona estilos para o título do serviço */
+    font-size: 1.8em; /* Aumenta o tamanho da fonte */
+    color: #232526; /* Define a cor do texto */
+    margin-top: 10px; /* Adiciona espaço acima do título */
+}
 footer {
     background-color: black;
     color: white;

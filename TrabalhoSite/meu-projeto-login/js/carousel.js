@@ -1,10 +1,13 @@
 let currentImage = 0;
 const images = document.querySelector('.carousel-images');
-let imageWidth = document.querySelector('.carousel-images img').clientWidth;
-const imagesToShow = 2; // Número de imagens a serem exibidas por vez
-let autoSlideInterval; // Variável para armazenar o intervalo do slide automático
+const imagesToShow = 3; // Exibe 3 imagens por vez
+let autoSlideInterval;
 let startX;
 let isDragging = false;
+
+function getImageWidth() {
+    return document.querySelector('.carousel-container').clientWidth / imagesToShow;
+}
 
 function nextImage() {
     currentImage += imagesToShow;
@@ -12,7 +15,7 @@ function nextImage() {
         currentImage = 0;
     }
     updateCarousel();
-    resetAutoSlide(); // Reinicia o slide automático após a navegação manual
+    resetAutoSlide();
 }
 
 function prevImage() {
@@ -21,17 +24,18 @@ function prevImage() {
         currentImage = images.children.length - imagesToShow;
     }
     updateCarousel();
-    resetAutoSlide(); // Reinicia o slide automático após a navegação manual
+    resetAutoSlide();
 }
 
 function updateCarousel() {
-    images.style.transform = `translateX(-${currentImage * (imageWidth + 20)}px)`; // Adiciona o dobro da margem (10px * 2)
+    const imageWidth = getImageWidth();
+    images.style.transform = `translateX(-${currentImage * imageWidth}px)`;
 }
 
 function startAutoSlide() {
     autoSlideInterval = setInterval(() => {
         nextImage();
-    }, 3000); // Altere o valor (3000) para ajustar o tempo de transição (em milissegundos)
+    }, 3000);
 }
 
 function resetAutoSlide() {
@@ -39,7 +43,6 @@ function resetAutoSlide() {
     startAutoSlide();
 }
 
-// Eventos de arrastar (swipe)
 images.addEventListener('mousedown', (e) => {
     isDragging = true;
     startX = e.pageX;
@@ -61,7 +64,6 @@ images.addEventListener('mousemove', (e) => {
     }
 });
 
-// Eventos de toque (touch) para dispositivos móveis
 images.addEventListener('touchstart', (e) => {
     startX = e.touches[0].pageX;
 });
@@ -75,11 +77,8 @@ images.addEventListener('touchend', (e) => {
     }
 });
 
-// Atualiza a largura das imagens ao redimensionar a janela
 window.addEventListener('resize', () => {
-    imageWidth = document.querySelector('.carousel-images img').clientWidth;
     updateCarousel();
 });
 
-// Inicia o slide automático
 startAutoSlide();

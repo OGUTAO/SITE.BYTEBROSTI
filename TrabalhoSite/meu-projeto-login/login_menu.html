@@ -7,68 +7,82 @@
     <link rel="stylesheet" href="css/style2.css">
 </head>
 <body>
-    <header>
-        <script>
-            function scrollToTop() {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        </script>
-        <section class="banner">
-        </section>
-
-        <div class="logo">
-            <h1>BYTE BROS.TI</h1>
-            <p>Manutenção Digital</p>
-        </div>
-        <nav>
-            <a href="atendimento.html">Atendimento</a>
-            <a href="servicos.html">Serviços</a>
-            <a href="faleconosco.html">Fale Conosco</a>
-        </nav>
-        <div class="buttons">
-            <button onclick="window.location.href='register.html'">Cadastrar</button>
-            <button onclick="window.location.href='login.html'">Fazer Login</button>
-            <button class="settings">⚙</button>
-        </div>
-    </header>
-
-    <section class="banner">
-        <div class="overlay2">HÁ UM ANO OFERECENDO SUPORTE TÉCNICO DE MÁQUINAS EM TODO DISTRITO FEDERAL! </div>
-        <img src="img/assistencia.png">
-    </section>
-
-    <section class="impact-section">
-        <div class="impact-container">
-            <p>Transforme sua experiência em algo extraordinário! Estamos aqui para oferecer soluções personalizadas que atendem às suas necessidades, garantindo qualidade, confiança e inovação em cada passo. Descubra como podemos fazer a diferença e elevar seu nível de satisfação!</p>
-        </div>
-    </section>
-
-    <section class="banner">
-        <h3>Nossos Serviços:</h3>
-        <div class="carousel-container">
-            <div class="carousel-images">
-                <img src="img/assistencia2.png">
-                <img src="img/assistencia3.png">
-                <img src="img/assistencia4.png">
-                <img src="img/assistencia5.png">
-                <img src="img/assistencia6.png">
-                <img src="img/assistencia7.png">
+    <div class="page-container">
+        <header>
+            <script>
+                function scrollToTop() {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            </script>
+            <section class="banner"></section>
+            <div class="logo">
+                <a href="login_menu.html"><h1>BYTE BROS.TI</h1></a>
+                <p>Manutenção Digital</p>
             </div>
-        </div>
-        <p id="over">
-            <a href="sobrenos.html">Faça seu orçamento hoje mesmo!</a>
-        </p>  
-    </section>
-
-    <footer>
-        <div class="button" id="sobre">
-            <button onclick="window.location.href='sobrenos.html'">Sobre nós</button>
-        </div>
-        <div class="button" id="topo">
-            <button onclick="scrollToTop()">Voltar ao Topo</button>
-        </div>
-    </footer>
-
+            <nav>
+                <a href="atendimento.html">Suporte</a>
+                <a href="servicos.html">Serviços</a>
+                <a href="faleconosco.html">Fale Conosco</a>
+            </nav>
+            <div class="buttons">
+                <button onclick="window.location.href='register.html'">Cadastrar</button>
+                <button onclick="window.location.href='login.html'">Fazer Login</button>
+                <button class="settings">⚙</button>
+            </div>
+        </header>
+        <main>
+            <section class="banner">
+                <div class="overlay2">HÁ UM ANO OFERECENDO SUPORTE TÉCNICO DE MÁQUINAS EM TODO DISTRITO FEDERAL! </div>
+                <img src="img/assistencia.png">
+            </section>
+            <section class="impact-section">
+                <div class="impact-container">
+                    <img src="img/fundo.png">
+                </div>
+            </section>
+            <section class="banner">
+                <h3>Nossos Serviços:</h3>
+                <div class="carousel-container">
+                    <div class="carousel-images">
+                        <a href="pagina1.html">
+                            <img src="img/assistencia2.png" alt="Serviço 1">
+                            <p>Serviço 1</p>
+                        </a>
+                        <a href="pagina2.html">
+                            <img src="img/assistencia3.png" alt="Serviço 2">
+                            <p>Serviço 2</p>
+                        </a>
+                        <a href="pagina3.html">
+                            <img src="img/assistencia4.png" alt="Serviço 3">
+                            <p>Serviço 3</p>
+                        </a>
+                        <a href="pagina4.html">
+                            <img src="img/assistencia5.png" alt="Serviço 4">
+                            <p>Serviço 4</p>
+                        </a>
+                        <a href="pagina5.html">
+                            <img src="img/assistencia6.png" alt="Serviço 5">
+                            <p>Serviço 5</p>
+                        </a>
+                        <a href="pagina6.html">
+                            <img src="img/assistencia7.png" alt="Serviço 6">
+                            <p>Serviço 6</p>
+                        </a>
+                    </div>
+                </div>
+                <p id="over">
+                    <a href="sobrenos.html">Faça seu orçamento hoje mesmo!</a>
+                </p> 
+            </section>
+        </main>
+        <footer>
+            <button class="footer-button left-button">
+                <a href="sobrenos.html" class="footer-link">Sobre Nós</a>
+            </button>
+            <p class="copyright">&copy; 2024 Byte Bros. Todos os direitos reservados.</p>
+            <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="footer-button right-button">Voltar ao Topo</button>
+        </footer>
+    </div>
     <script src="js/carousel.js"></script>
 </body>
 </html>
