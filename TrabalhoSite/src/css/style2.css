@@ -1,0 +1,386 @@
+/* Reset básico de margens e preenchimentos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Cabeçalho */
+header {
+    background: linear-gradient(to right, #232526, #414345);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.logo {
+    position: relative;
+    text-align: left;
+    right: 400px;
+    padding-right: 20px;
+}
+
+header .logo a {
+    text-decoration: none;
+}
+
+.logo h1 {
+    font-size: 36px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: rgba(23, 189, 240, 0.767);
+}
+
+.logo p {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+/* Navegação */
+nav {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+nav a {
+    position: relative;
+    text-decoration: none;
+    color: rgba(23, 189, 240, 0.767);
+    font-size: 17px;
+    margin: 0 15px;
+    transition: color 0.3s;
+    font-weight: 800;
+}
+
+nav a:hover {
+    color: #ffa500;
+}
+
+
+/* Botões do cabeçalho */
+.buttons {
+    display: flex;
+    gap: 10px;
+    padding-right: 20px;
+}
+
+.buttons button {
+    background: #ffa500;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.buttons button:hover {
+    background: #45a049;
+}
+
+.settings {
+    background: none;
+    color: white;
+    font-size: 20px;
+    border: 2px solid white;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.settings:hover {
+    background: #ffa500;
+    color: white;
+}
+
+.impact-section {
+    position: relative;
+    background-color: #f4f4f4;
+    padding: 50px 0;
+    top: 150px;
+    text-align: center;
+}
+
+.impact-container p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #232526;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Centralização de tudo não mexer */
+.banner:first-of-type {
+    position: relative;
+    width: 2000px;
+    top: 0px;
+    left: 0px;
+    width: 200px;
+    height: auto;
+    z-index: 10;
+}
+
+/* imagem assitencia tecnica*/
+.banner:first-of-type img {
+    position: relative;
+    left: 550px;
+    width: 400%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Cabeçalho -> fundo */
+.banner {
+    position: relative;
+    text-align: center;
+    margin: 50px 0;
+}
+
+/* textos overlay2 e h3 */
+.banner .overlay2 {
+    position: relative;
+    display: inline;
+    font-weight: bold;
+    white-space: nowrap;
+    top: 520px;
+    left: 390px;
+    font-size: 24px;
+    color: rgb(253, 249, 249);
+    border-radius: 100px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 10px 10px;
+}
+
+.banner h3 {
+    position: relative;
+    top: 330px;
+    left: 0px;
+    height: auto;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size: 50px;
+}
+
+/* Carrossel */
+.carousel-container {
+    position: relative;
+    width: 1200px; /* Ajuste conforme necessário */
+    overflow: hidden;
+    top: 350px;
+    margin: 0 auto;
+}
+
+/* Em style2.css */
+
+.carousel-images a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    /* width: 33.33%; */ /* REMOVA ou COMENTE esta linha */
+    flex: 0 0 50%;      /* ADICIONE: Define a base flex para 50%, sem crescer ou encolher */
+    box-sizing: border-box; /* ADICIONE: Garante que padding/border sejam incluídos na largura */
+    padding: 0 5px;    /* AJUSTE: Mude margin para padding se quiser espaçamento interno */
+                          /* Ou mantenha a margin e ajuste o JS (veja Passo 2) */
+}
+
+/* Se você optar por manter margin: 0 10px; em vez de padding,
+   remova a linha padding acima e mantenha a margin original: */
+/* .carousel-images a { ... margin: 0 10px; ... } */
+
+/* Opcional mas recomendado: Adicionar gap ao container flex para espaçamento */
+.carousel-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    /* gap: 20px; */ /* ADICIONE se quiser 20px de espaço *entre* os itens.
+                       Nesse caso, remova margin/padding horizontal dos itens 'a'
+                       e ajuste o cálculo da largura no JS ou use 'scroll-snap'.
+                       Para manter simples, vamos focar em corrigir com margin/padding primeiro. */
+}
+
+/* Garanta que a imagem não ultrapasse o container 'a' */
+/* Em style2.css */
+
+/* Em style2.css */
+
+.carousel-images a img {
+    display: block;     /* Importante para evitar espaços extras */
+    max-width: 100%;   /* Garante que a imagem não ultrapasse o container 'a' */
+    width: auto;       /* Deixa a largura ajustar automaticamente com a altura */
+    height: auto;      /* Necessário para que max-height funcione bem */
+    max-height: 400px; /* <<< AJUSTE ESTE VALOR (em pixels) para a altura máxima desejada */
+    margin: 0 auto;    /* Centraliza a imagem horizontalmente se ela ficar mais estreita que o container 'a' */
+
+    /* Mantenha seus estilos existentes */
+    border-radius: 10px;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-images a p {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Overlay Rodapé */
+.buttons .button {
+    position: relative;
+    top: 500px;
+    left: 50%;
+    font-size: 24px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.808);
+}
+
+#over {
+    position: relative;
+    top: 450px;
+    right: 0px;
+    font-weight: bold;
+    font-size: 30px;
+    color: #232526;
+    background: none;
+    text-align: center;
+    line-height: 1.4;
+}
+
+#over a {
+    text-decoration: none;
+    color: #232526;
+    transition: color 0.3s ease;
+}
+
+#over a:hover {
+    color: #ffa500;
+}
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Rodapé */
+footer {
+    position: relative;
+    top: 450px;
+    background: #232526;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-button {
+    background-color: #ffa500;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.footer-button:hover {
+    background-color: #ff8800;
+}
+
+.footer-link {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.footer-link:hover {
+    color: white;
+}
+
+footer p.copyright {
+    padding-top: 20px;
+    border-top: 1px solid #333;
+    text-align: center;
+    width: 100%;
+    margin: 10px 0 0;
+}
+
+/* Exemplo para posicionar cada botão */
+#sobre {
+    position: relative;
+    right: 800px;
+}
+
+#topo {
+    position: relative;
+    right: 70px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .buttons {
+        margin-top: 10px;
+    }
+
+    .banner:first-of-type {
+        position: relative;
+        left: 0;
+        margin: 0 auto;
+        width: 80%;
+    }
+
+    .banner img {
+        width: 100%;
+    }
+
+    .carousel-container {
+        top: 350px;
+    }
+
+    .carousel-images img {
+        width: 90%;
+    }
+}
+
+/* nova regra para a imagem fundo.png */
+.impact-container img {
+    position: relative;
+    top: 80px;
+    width: 60%;
+    height: auto;
+    border: 5px solid rgba(23, 189, 240, 0.767);
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+}

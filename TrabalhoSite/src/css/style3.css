@@ -1,0 +1,140 @@
+/* Estilos gerais */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte mais moderna */
+    line-height: 1.7; /* Aumenta o espaçamento entre as linhas para melhor leitura */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* Tom mais suave de fundo */
+}
+
+
+header {
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Gradiente para um visual mais moderno */
+    color: white;
+    padding: 40px 20px; /* Aumenta o padding para mais espaço */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adiciona uma sombra sutil */
+}
+
+header h1 {
+    font-size: 2.5em; /* Tamanho maior para o título */
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.1em;
+    color: #e0e0e0; /* Cor mais clara para o parágrafo */
+}
+
+nav {
+    text-align: center;
+    padding: 15px 0; /* Ajusta o padding */
+    background: #0056b3;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px; /* Ajusta o padding */
+    display: inline-block;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Adiciona transição para transformação */
+}
+
+nav a:hover {
+    background: #003f7f;
+    transform: translateY(-2px); /* Pequeno efeito de elevação no hover */
+}
+
+.sobre-nos {
+    max-width: 900px; /* Aumenta a largura máxima */
+    margin: 40px auto; /* Aumenta a margem */
+    padding: 40px; /* Aumenta o padding */
+    background: white;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Sombra mais destacada */
+    border-radius: 12px; /* Bordas mais arredondadas */
+    text-align: left; /* Alinha o texto à esquerda para melhor leitura */
+}
+
+.sobre-nos h2 {
+    color: #007bff;
+    text-align: center;
+    margin-bottom: 40px; /* Aumenta a margem inferior */
+    font-size: 2.2em; /* Tamanho maior para o título */
+    border-bottom: 2px solid #eee; /* Adiciona uma linha abaixo do título */
+    padding-bottom: 20px;
+}
+
+.sobre-nos p {
+    margin-bottom: 30px; /* Aumenta a margem inferior */
+    font-size: 1.1em;
+    line-height: 1.8; /* Ajusta o espaçamento entre linhas */
+}
+
+.sobre-nos ul {
+    list-style-type: none;
+    padding: 0;
+    margin-left: 20px; /* Adiciona margem à esquerda */
+}
+
+.sobre-nos li {
+    margin-bottom: 15px; /* Aumenta a margem inferior */
+    position: relative;
+    padding-left: 30px; /* Aumenta o padding à esquerda */
+    font-size: 1.1em;
+}
+
+.sobre-nos li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #28a745;
+    font-size: 1.2em; /* Aumenta o tamanho do ícone */
+}
+
+.sobre-nos .botao {
+    display: inline-block;
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Gradiente no botão */
+    color: white;
+    padding: 12px 25px; /* Ajusta o padding */
+    text-decoration: none;
+    border-radius: 8px; /* Bordas mais arredondadas */
+    margin-top: 30px; /* Aumenta a margem superior */
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sobre-nos .botao:hover {
+    background: linear-gradient(135deg, #0056b3, #003f7f); /* Gradiente mais escuro no hover */
+    transform: translateY(-3px); /* Efeito de elevação no hover */
+}
+
+footer {
+    background: #0056b3;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px; /* Aumenta a margem superior */
+}
+
+.botao-voltar {
+    text-align: center;
+    margin: 30px 0; /* Aumenta a margem */
+}
+
+.botao {
+    display: inline-block;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    padding: 12px 25px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.botao:hover {
+    background: linear-gradient(135deg, #0056b3, #003f7f);
+    transform: translateY(-3px);
+}
