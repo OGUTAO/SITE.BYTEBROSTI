@@ -1,3 +1,4 @@
-[build]
-  publish = "public"
-  command = ""
+[[redirects]]
+  from = "/"
+  to = "/login_menu.html"
+  status = 200
