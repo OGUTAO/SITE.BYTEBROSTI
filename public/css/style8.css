@@ -1,0 +1,410 @@
+/* Reset e base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    transition: background-color 0.4s ease;
+    margin-top: 0 !important; /* Garante que não haja margem superior no body */
+    padding-top: 0 !important; /* Garante que não haja padding superior no body */
+}
+
+/* Tema escuro */
+body.dark-theme {
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+}
+
+/* Página de login do administrador */
+.admin-login-page {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    color: #000000; /* Cor de texto padrão no tema claro para o login */
+}
+
+.admin-login-page h2,
+.admin-login-page label {
+    color: #000000 !important; /* Garante texto preto para títulos e labels no login (tema claro) */
+}
+
+.login-logo {
+    flex-shrink: 0; /* Impedir que a logo encolha */
+    width: 150px; /* Defina a largura desejada para a logo */
+    height: auto; /* Manter a proporção da imagem */
+    margin-right: 20px; /* Espaço à direita da logo */
+}
+
+.login-logo img {
+    position: relative;
+    left: 785px;
+    top: 30px; /* Diminuído para subir a logo (ajuste conforme necessário) */
+    width: 350px;
+    height: auto;
+    display: block; /* Remover qualquer espaçamento extra abaixo da imagem */
+}
+
+.admin-login-page input {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 15px;
+    width: 100%;
+    color: #000000; /* Cor do texto nos inputs no login (tema claro) */
+}
+
+.admin-login-page .button {
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Estilos para o tema escuro NA PÁGINA de login */
+body.dark-theme #loginSection.login-container h2,
+body.dark-theme #loginSection.login-container label {
+    color: #f5f5f5 !important; /* Força texto branco para títulos e labels NO LOGIN no tema escuro */
+}
+
+body.dark-theme #loginSection.login-container input {
+    background-color: #444; /* Fundo um pouco mais claro que o body no tema escuro */
+    color: #f5f5f5; /* Cor do texto branca nos inputs NO LOGIN no tema escuro */
+    border-color: #666; /* Borda mais clara para inputs NO LOGIN no tema escuro */
+}
+
+body.dark-theme #loginSection.login-container {
+    background-color: #2a2a2a; /* Fundo cinza escuro NO LOGIN no tema escuro */
+    color: #f5f5f5; /* Cor de texto padrão branca NO LOGIN no tema escuro */
+}
+
+
+/* Container */
+.container {
+    position: relative;
+    top: -130px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.container.admin-content {
+    margin-top: 0 !important; /* Garante que não haja margem superior no container principal */
+    padding-top: 0 !important; /* Garante que não haja padding superior no container principal */
+}
+
+/* Header */
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-top: 0 !important; /* Garante que não haja margem superior no header */
+    padding-top: 0 !important; /* Garante que não haja padding superior no header */
+}
+
+.user-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#admin-email-display {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+/* Botões */
+.button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    background-color: #43a047;
+    transform: scale(1.03);
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+.button.danger {
+    background-color: #f44336;
+}
+
+.button.danger:hover {
+    background-color: #e53935;
+}
+
+.button.disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Abas */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.tab-button {
+    padding: 12px 20px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+    color: inherit;
+}
+
+.tab-button:hover {
+    background-color: #f0f0f0;
+}
+
+.tab-button.active {
+    border-bottom: 3px solid #4caf50;
+    color: #4caf50;
+    background-color: #e8f5e9;
+}
+
+body.dark-theme .tab-button:hover {
+    background-color: #2e2e2e;
+}
+
+/* Conteúdo das abas */
+.tab-content {
+    display: none;
+    margin-bottom: 20px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Formulários */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #fff;
+    transition: border 0.3s;
+}
+
+body.dark-theme .form-group input,
+body.dark-theme .form-group textarea {
+    background-color: #2c2c2c;
+    color: #f5f5f5;
+    border: 1px solid #555;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+/* Lista de produtos */
+.product-list {
+    list-style: none;
+    padding: 0;
+}
+
+.product-item {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s;
+}
+
+.product-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-theme .product-item {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+.product-info {
+    margin-bottom: 10px;
+}
+
+.product-name {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.product-details {
+    color: #666;
+    font-size: 14px;
+}
+
+body.dark-theme .product-details {
+    color: #bbb;
+}
+
+.product-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stats {
+    display: flex;
+    gap: 15px;
+}
+
+.product-value,
+.product-quantity {
+    font-size: 14px;
+}
+
+/* Estilos para a barra de pesquisa de produtos */
+.product-search {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.product-search input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.product-search input[type="text"]:focus {
+    border-color: #4caf50;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+body.dark-theme .product-search input[type="text"] {
+    background-color: #333;
+    color: #f5f5f5;
+    border-color: #555;
+}
+
+body.dark-theme .product-search input[type="text"]:focus {
+    border-color: #4caf50;
+    box-shadow: 0 1px 3px rgba(255, 255, 255, 0.1);
+    background-color: #444;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Controles de edição */
+.edit-controls {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+body.dark-theme .edit-controls {
+    border-top-color: #444;
+}
+
+.edit-control-group {
+    margin-bottom: 10px;
+}
+
+.edit-action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Sem produtos */
+.no-products-message {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-style: italic;
+}
+
+
+
+/* Rodapé */
+.footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+body.dark-theme .footer {
+    border-top-color: #444;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .header-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .user-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .product-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .action-buttons {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

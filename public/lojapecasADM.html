@@ -3,72 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADM Loja de Peças - Byte Bros</title>
-    <link rel="stylesheet" href="css/style6.css">
+    <title>Administração - Byte Bros</title>
+    <link rel="stylesheet" href="css/style8.css">
+    <style>
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            gap: 10px;
+            background-color: white;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .login-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .login-container input[type="email"],
+        .login-container input[type="password"],
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .login-container button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        .login-container button:hover {
+            background-color: #45a049;
+        }
+
+        .admin-content {
+            display: none; /* Inicialmente escondido */
+        }
+        
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: #FFD700;
+            color: #333;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-left: 8px;
+        }
+        
+        .admin-badge svg {
+            width: 14px;
+            height: 14px;
+            margin-right: 4px;
+        }
+        
+        .admin-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .admin-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <button id="theme-toggle" class="button theme-toggle-button" title="Alternar Tema">
-            </button>
+    <div class="login-logo">
+        <img id="admin-logo" src="img/bytebros.png" alt="Logo da Administração">
+    </div>
+    <div id="loginSection" class="login-container">
+        <div class="admin-login-page">
+        </div>
+        <h2>Login de Administrador</h2>
+        <div id="initialSetup" style="display: none;">
+            <h3>Primeiro Acesso - Criar Admin Superior</h3>
+            <label for="new-admin-email">Email:</label>
+            <input type="email" id="new-admin-email" required>
+            <label for="new-admin-password">Senha:</label>
+            <input type="password" id="new-admin-password" required>
+            <button onclick="createSuperAdmin()">Criar Admin Superior</button>
+            <p id="creation-message" style="color: green; display: none;">Administrador superior criado com sucesso! Faça login abaixo.</p>
+            <p id="creation-error" style="color: red; display: none;">Erro ao criar administrador.</p>
+        </div>
+        <div id="loginForm">
+            <label for="admin-email">Email:</label>
+            <input type="email" id="admin-email" name="admin-email" required>
+            <label for="admin-password">Senha:</label>
+            <input type="password" id="admin-password" name="admin-password" required>
+            <button onclick="loginAdmin()">Entrar</button>
+            <p id="login-error" style="color: red; display: none;">Credenciais inválidas.</p>
+        </div>
+    </div>
+    <div id="adminContent" class="container admin-content">
+        <div class="header-controls">
+            <h1>Painel de Administração</h1>
+            <div class="user-controls">
+                <span id="admin-email-display"></span>
+                <button id="theme-toggle" class="button" title="Alternar Tema">🌙</button>
+                <button onclick="logoutAdmin()" class="button">Sair</button>
+            </div>
+        </div>
 
-        <h2>Adicionar Novo Produto</h2>
-        <form id="add-product-form" class="product-form">
-            <div class="form-group">
-                <label for="new-product-name">Nome:</label>
-                <input type="text" id="new-product-name" required>
-            </div>
-            <div class="form-group">
-                <label for="new-product-details">Detalhes:</label>
-                <textarea id="new-product-details"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="new-product-value">Valor (Ex: 99.90):</label>
-                <input type="number" step="0.01" min="0" id="new-product-value" placeholder="99.90" required>
-            </div>
-            <div class="form-group">
-                <label for="new-product-quantity">Quantidade:</label>
-                <input type="number" id="new-product-quantity" value="1" min="0" required>
-            </div>
-            <div class="form-group">
-                <label for="new-product-image">URL da Imagem:</label>
-                <input type="text" id="new-product-image" placeholder="Ex: img/nova_peca.jpg">
-            </div>
-            <button type="submit" class="button submit-button">Adicionar Produto</button>
-        </form>
+        <!-- Abas de navegação -->
+        <div class="tabs">
+            <button id="tab-products" class="tab-button active">Produtos</button>
+            <button id="tab-add-product" class="tab-button">Adicionar Produto</button>
+            <button id="tab-admins" class="tab-button" style="display: none;">Gerenciar Admins</button>
+        </div>
 
-        <hr>
+        <!-- Conteúdo da aba Produtos -->
+        <div id="products-content" class="tab-content active">
+            <h2>Peças Disponíveis</h2>
+            <div class="product-search">
+                <input type="text" id="product-search" placeholder="Buscar produtos...">
+            </div>
+            <ul class="product-list"></ul>
+        </div>
 
-        <h2>Peças Disponíveis</h2>
-        <ul class="product-list"></ul>
+        <!-- Conteúdo da aba Adicionar Produto -->
+        <div id="add-product-content" class="tab-content">
+            <h2>Adicionar Novo Produto</h2>
+            <form id="add-product-form" class="product-form">
+                <div class="form-group">
+                    <label for="new-product-name">Nome:</label>
+                    <input type="text" id="new-product-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-product-details">Detalhes:</label>
+                    <textarea id="new-product-details"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="new-product-value">Valor (Ex: 99.90):</label>
+                    <input type="number" step="0.01" min="0" id="new-product-value" placeholder="99.90" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-product-quantity">Quantidade:</label>
+                    <input type="number" id="new-product-quantity" value="1" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-product-image">URL da Imagem:</label>
+                    <input type="text" id="new-product-image" placeholder="Ex: img/nova_peca.jpg">
+                </div>
+                <button type="submit" class="button submit-button">Adicionar Produto</button>
+            </form>
+        </div>
 
-        <a href="lojapecascliente.html" class="button temp-button">Acessar Loja como Cliente</a>
+        <!-- Conteúdo da aba Gerenciar Admins (apenas para admin superior) -->
+        <div id="admins-content" class="tab-content">
+            <h2>Gerenciar Administradores</h2>
+            <div class="admin-form">
+                <h3>Adicionar Novo Administrador</h3>
+                <div class="form-group">
+                    <label for="add-admin-email">Email:</label>
+                    <input type="email" id="add-admin-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="add-admin-password">Senha:</label>
+                    <input type="password" id="add-admin-password" required>
+                </div>
+                <button id="add-admin-btn" class="button">Adicionar Admin</button>
+                <p id="add-admin-message" style="color: green; display: none;">Administrador adicionado com sucesso!</p>
+                <p id="add-admin-error" style="color: red; display: none;">Erro ao adicionar administrador.</p>
+            </div>
+            
+            <div class="admin-list-container">
+                <h3>Administradores Atuais</h3>
+                <ul id="admin-list" class="admin-list">
+                    <!-- Lista de administradores será inserida aqui via JavaScript -->
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <a href="lojapecascliente.html" class="button">Acessar Loja</a>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Seletores de Elementos ---
+            // Elementos da página
+            const loginSection = document.getElementById('loginSection');
+            const initialSetupDiv = document.getElementById('initialSetup');
+            const loginFormDiv = document.getElementById('loginForm');
+            const adminContent = document.getElementById('adminContent');
             const addProductForm = document.getElementById('add-product-form');
             const productList = document.querySelector('.product-list');
             const themeToggleButton = document.getElementById('theme-toggle');
+            const adminEmailDisplay = document.getElementById('admin-email-display');
+            const tabProducts = document.getElementById('tab-products');
+            const tabAddProduct = document.getElementById('tab-add-product');
+            const tabAdmins = document.getElementById('tab-admins');
+            const productsContent = document.getElementById('products-content');
+            const addProductContent = document.getElementById('add-product-content');
+            const adminsContent = document.getElementById('admins-content');
+            const addAdminBtn = document.getElementById('add-admin-btn');
+            const adminList = document.getElementById('admin-list');
 
-            // --- Estado da Aplicação ---
+            // Variáveis de estado
             let products = loadProductsFromLocalStorage();
+            let adminAccounts = loadAdminAccounts();
+            let isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+            let isSuperAdmin = localStorage.getItem('isAdminSuper') === 'true';
 
-            // --- Funções de Persistência (LocalStorage) ---
-            function saveProductsToLocalStorage(productsToSave) {
-                localStorage.setItem('products', JSON.stringify(productsToSave));
+            // Verificar se há admin superior cadastrado
+            function checkInitialSetup() {
+                if (adminAccounts.length === 0) {
+                    // Primeiro acesso, mostrar tela de criação do admin superior
+                    initialSetupDiv.style.display = 'block';
+                    loginFormDiv.style.display = 'none';
+                } else {
+                    // Já existe admin, mostrar tela de login
+                    initialSetupDiv.style.display = 'none';
+                    loginFormDiv.style.display = 'block';
+                }
             }
 
+            // Funções para manipulação de contas de administrador
+            function loadAdminAccounts() {
+                const storedAdmins = localStorage.getItem('adminAccounts');
+                return storedAdmins ? JSON.parse(storedAdmins) : [];
+            }
+
+            function saveAdminAccounts(accounts) {
+                localStorage.setItem('adminAccounts', JSON.stringify(accounts));
+            }
+
+            // Criar o primeiro admin (Admin Superior)
+            function createSuperAdmin() {
+                const newEmail = document.getElementById('new-admin-email').value;
+                const newPassword = document.getElementById('new-admin-password').value;
+                const creationMessage = document.getElementById('creation-message');
+                const creationError = document.getElementById('creation-error');
+
+                if (!newEmail || !newPassword) {
+                    creationError.textContent = 'Por favor, preencha todos os campos.';
+                    creationError.style.display = 'block';
+                    creationMessage.style.display = 'none';
+                    return;
+                }
+
+                // Verifica se já existe algum admin cadastrado
+                if (adminAccounts.length > 0) {
+                    creationError.textContent = 'Já existe um administrador cadastrado no sistema.';
+                    creationError.style.display = 'block';
+                    creationMessage.style.display = 'none';
+                    return;
+                }
+
+                // Cria o admin superior
+                adminAccounts.push({ 
+                    email: newEmail, 
+                    password: newPassword, 
+                    isSuper: true // Marca como admin superior
+                });
+                saveAdminAccounts(adminAccounts);
+
+                creationMessage.style.display = 'block';
+                creationError.style.display = 'none';
+                
+                // Mostrar o formulário de login
+                setTimeout(() => {
+                    initialSetupDiv.style.display = 'none';
+                    loginFormDiv.style.display = 'block';
+                }, 1500);
+            }
+
+            // Login de administrador
+            function loginAdmin() {
+                const emailInput = document.getElementById('admin-email').value;
+                const passwordInput = document.getElementById('admin-password').value;
+                const loginError = document.getElementById('login-error');
+                
+                const admin = adminAccounts.find(acc => acc.email === emailInput && acc.password === passwordInput);
+
+                if (admin) {
+                    // Login bem-sucedido
+                    isAdminLoggedIn = true;
+                    isSuperAdmin = admin.isSuper;
+                    
+                    // Salva estado na sessão
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+                    localStorage.setItem('loggedInAdminEmail', emailInput);
+                    localStorage.setItem('isAdminSuper', admin.isSuper ? 'true' : 'false');
+                    
+                    loginError.style.display = 'none';
+                    showAdminPanel();
+                } else {
+                    loginError.style.display = 'block';
+                }
+            }
+
+            // Logout
+            function logoutAdmin() {
+                isAdminLoggedIn = false;
+                isSuperAdmin = false;
+                
+                // Limpa estado da sessão
+                localStorage.removeItem('isAdminLoggedIn');
+                localStorage.removeItem('loggedInAdminEmail');
+                localStorage.removeItem('isAdminSuper');
+                
+                // Volta para a tela de login
+                loginSection.style.display = 'flex';
+                adminContent.style.display = 'none';
+            }
+
+            // Mostrar painel admin
+            function showAdminPanel() {
+                const loggedInAdminEmail = localStorage.getItem('loggedInAdminEmail') || '';
+                
+                loginSection.style.display = 'none';
+                adminContent.style.display = 'block';
+                adminEmailDisplay.textContent = loggedInAdminEmail;
+                
+                // Controle de acesso baseado no tipo de admin
+                if (isSuperAdmin) {
+                    tabAdmins.style.display = 'block';
+                } else {
+                    tabAdmins.style.display = 'none';
+                }
+                // ... seu código JavaScript existente ...
+
+        const productSearchInput = document.getElementById('product-search');
+
+        if (productSearchInput) {
+            productSearchInput.addEventListener('input', handleProductSearch);
+        }
+
+        function handleProductSearch(event) {
+            const searchText = event.target.value.toLowerCase();
+            const filteredProducts = products.filter(product =>
+                product.name.toLowerCase().includes(searchText) ||
+                product.details.toLowerCase().includes(searchText)
+            );
+            renderAdminProducts(filteredProducts);
+        }
+
+        // ... o restante do seu código JavaScript ...
+                
+                // Carrega as listas
+                renderAdminProducts(products);
+                renderAdminList();
+            }
+
+            // Sistema de abas
+            function setupTabs() {
+                // Inicializar sistema de abas
+                tabProducts.addEventListener('click', () => switchTab('products'));
+                tabAddProduct.addEventListener('click', () => switchTab('add-product'));
+                tabAdmins.addEventListener('click', () => switchTab('admins'));
+                
+                // Ativa a primeira aba por padrão
+                switchTab('products');
+            }
+            
+            function switchTab(tabName) {
+                // Remove classe "active" de todas as abas e conteúdos
+                [tabProducts, tabAddProduct, tabAdmins].forEach(tab => tab.classList.remove('active'));
+                [productsContent, addProductContent, adminsContent].forEach(content => content.classList.remove('active'));
+                
+                // Ativa a aba selecionada
+                if (tabName === 'products') {
+                    tabProducts.classList.add('active');
+                    productsContent.classList.add('active');
+                } else if (tabName === 'add-product') {
+                    tabAddProduct.classList.add('active');
+                    addProductContent.classList.add('active');
+                } else if (tabName === 'admins') {
+                    tabAdmins.classList.add('active');
+                    adminsContent.classList.add('active');
+                }
+            }
+
+            // Funções para gerenciar produtos
             function loadProductsFromLocalStorage() {
                 const storedProducts = localStorage.getItem('products');
                 return storedProducts ? JSON.parse(storedProducts) : [];
             }
 
-            // --- Renderização da Lista de Produtos ---
+            function saveProductsToLocalStorage(productsToSave) {
+                localStorage.setItem('products', JSON.stringify(productsToSave));
+            }
+
             function renderAdminProducts(productsToRender) {
-                productList.innerHTML = ''; // Limpa a lista antes de renderizar
+                if (!productList) return;
+                
+                productList.innerHTML = '';
                 if (!productsToRender || productsToRender.length === 0) {
-                    productList.innerHTML = '<li class="no-products-message">Nenhuma peça cadastrada ainda.</li>'; // Mensagem se vazio
+                    productList.innerHTML = '<li class="no-products-message">Nenhuma peça cadastrada ainda.</li>';
                     return;
                 }
 
@@ -82,7 +424,6 @@
                         ? valueAsNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
                         : 'Valor inválido';
 
-                    // **ESTRUTURA ATUALIZADA AQUI para .stats e .action-buttons**
                     listItem.innerHTML = `
                         <div class="product-info">
                             <div class="product-name">${product.name || 'Nome Indefinido'}</div>
@@ -116,209 +457,329 @@
                     productList.appendChild(listItem);
                 });
 
-                attachAdminEventListeners(); // (Re)liga eventos aos botões criados
+                // Adiciona eventos de edição após renderizar produtos
+                attachProductEventListeners();
             }
 
-            // --- Lógica de Eventos da Lista ---
-            function attachAdminEventListeners() {
-                productList.querySelectorAll('.edit-button').forEach(button => {
-                    // Remove listener antigo para evitar duplicação se já existir
-                    button.removeEventListener('click', handleEditClick);
-                    button.addEventListener('click', handleEditClick);
+            function attachProductEventListeners() {
+                // Adicionar eventos aos botões de edição de produtos
+                document.querySelectorAll('.edit-button').forEach(button => {
+                    button.addEventListener('click', handleEditProduct);
                 });
-                productList.querySelectorAll('.save').forEach(button => {
-                    button.removeEventListener('click', handleSaveClick);
-                    button.addEventListener('click', handleSaveClick);
+                
+                document.querySelectorAll('.save').forEach(button => {
+                    button.addEventListener('click', handleSaveProductEdit);
                 });
-                productList.querySelectorAll('.cancel').forEach(button => {
-                    button.removeEventListener('click', handleCancelClick);
-                    button.addEventListener('click', handleCancelClick);
+                
+                document.querySelectorAll('.cancel').forEach(button => {
+                    button.addEventListener('click', handleCancelProductEdit);
                 });
-                productList.querySelectorAll('.delete-button').forEach(button => {
-                    button.removeEventListener('click', handleDeleteClick);
-                    button.addEventListener('click', handleDeleteClick);
+                
+                document.querySelectorAll('.delete-button').forEach(button => {
+                    button.addEventListener('click', handleDeleteProduct);
                 });
             }
+            // ... seu código JavaScript existente ...
 
-            function handleEditClick(event) {
+        const productSearchInput = document.getElementById('product-search');
+
+        if (productSearchInput) {
+            productSearchInput.addEventListener('input', handleProductSearch);
+        }
+
+        function handleProductSearch(event) {
+            const searchText = event.target.value.toLowerCase();
+            const filteredProducts = products.filter(product =>
+                product.name.toLowerCase().includes(searchText) ||
+                product.details.toLowerCase().includes(searchText)
+            );
+            renderAdminProducts(filteredProducts);
+        }
+            
+
+            function handleEditProduct(event) {
                 const button = event.currentTarget;
-                const listItem = button.closest('.product-item');
-                if (!listItem) return;
-                const editControls = listItem.querySelector('.edit-controls');
-                const productActions = listItem.querySelector('.product-actions');
-
-                closeAllEditControls(listItem); // Fecha outros abertos
-
-                if (editControls) editControls.classList.add('active');
-                if (productActions) productActions.style.display = 'none';
+                const productItem = button.closest('.product-item');
+                const productActions = productItem.querySelector('.product-actions');
+                const editControls = productItem.querySelector('.edit-controls');
+                
+                // Esconde os controles de edição de todos os outros itens
+                document.querySelectorAll('.product-item').forEach(item => {
+                    if (item !== productItem) {
+                        item.querySelector('.product-actions').style.display = 'flex';
+                        item.querySelector('.edit-controls').style.display = 'none';
+                    }
+                });
+                
+                // Mostra os controles de edição deste item
+                productActions.style.display = 'none';
+                editControls.style.display = 'block';
             }
 
-            function handleSaveClick(event) {
+            function handleSaveProductEdit(event) {
                 const button = event.currentTarget;
-                const listItem = button.closest('.product-item');
-                if (!listItem) return;
                 const index = parseInt(button.dataset.index);
-                const editControls = listItem.querySelector('.edit-controls');
-                const newValueInput = editControls.querySelector(`#value-${index}`);
-                const newQuantityInput = editControls.querySelector(`#quantity-${index}`);
-
-                const newValue = parseFloat(newValueInput.value);
-                const newQuantity = parseInt(newQuantityInput.value);
-
-                if (isNaN(newValue) || newValue < 0 || isNaN(newQuantity) || newQuantity < 0) {
-                    alert("Por favor, insira valores válidos para Valor (número positivo) e Quantidade (número inteiro positivo).");
+                const productItem = button.closest('.product-item');
+                
+                const valueInput = productItem.querySelector(`#value-${index}`);
+                const quantityInput = productItem.querySelector(`#quantity-${index}`);
+                
+                const newValue = parseFloat(valueInput.value);
+                const newQuantity = parseInt(quantityInput.value);
+                
+                if (isNaN(newValue) || newValue < 0) {
+                    alert('Por favor, digite um valor válido.');
                     return;
                 }
-
-                // Atualiza o array 'products'
-                products = products.map((product, i) => {
-                    if (i === index) {
-                        return { ...product, value: newValue.toFixed(2), quantity: newQuantity };
-                    }
-                    return product;
-                });
-
+                
+                if (isNaN(newQuantity) || newQuantity < 0) {
+                    alert('Por favor, digite uma quantidade válida.');
+                    return;
+                }
+                
+                // Atualiza o produto
+                products[index].value = newValue.toFixed(2);
+                products[index].quantity = newQuantity;
+                
+                // Salva atualização e volta para o modo de visualização
                 saveProductsToLocalStorage(products);
-                renderAdminProducts(products); // Re-renderiza com dados atualizados
-                alert(`Produto atualizado!`);
+                renderAdminProducts(products);
+                alert('Produto atualizado com sucesso!');
             }
 
-            function handleCancelClick(event) {
+            function handleCancelProductEdit(event) {
                 const button = event.currentTarget;
-                const listItem = button.closest('.product-item');
-                if (!listItem) return;
-                const editControls = listItem.querySelector('.edit-controls');
-                const productActions = listItem.querySelector('.product-actions');
-
-                if (editControls) editControls.classList.remove('active');
-                if (productActions) productActions.style.display = 'flex'; // Ou 'block' dependendo do seu CSS base
+                const productItem = button.closest('.product-item');
+                const productActions = productItem.querySelector('.product-actions');
+                const editControls = productItem.querySelector('.edit-controls');
+                
+                // Volta para o modo de visualização
+                productActions.style.display = 'flex';
+                editControls.style.display = 'none';
             }
 
-            function handleDeleteClick(event) {
+            function handleDeleteProduct(event) {
                 const button = event.currentTarget;
-                const indexToDelete = parseInt(button.dataset.index);
-                // Encontra o produto pelo índice para pegar o nome (cuidado se a ordem mudar)
-                const productToDelete = products[indexToDelete];
-                const productName = productToDelete ? productToDelete.name : `Item ${indexToDelete + 1}`;
-
-
-                if (confirm(`Tem certeza que deseja excluir "${productName}"?`)) {
-                    // Filtra o array, mantendo todos EXCETO o do índice a ser deletado
-                    products = products.filter((_, index) => index !== indexToDelete);
+                const index = parseInt(button.dataset.index);
+                const product = products[index];
+                
+                if (confirm(`Tem certeza que deseja excluir o produto "${product.name}"?`)) {
+                    products.splice(index, 1);
                     saveProductsToLocalStorage(products);
                     renderAdminProducts(products);
-                    alert(`"${productName}" foi excluído!`);
+                    alert('Produto excluído com sucesso!');
                 }
             }
 
-            function closeAllEditControls(excludeItem = null) {
-                productList.querySelectorAll('.product-item').forEach(item => {
-                    if (item === excludeItem) return;
-                    const editControls = item.querySelector('.edit-controls');
-                    const productActions = item.querySelector('.product-actions');
-                    if (editControls) editControls.classList.remove('active');
-                    if (productActions) productActions.style.display = 'flex'; // Garante que ações voltem
+            // Gerenciar admins (apenas para admin superior)
+            function renderAdminList() {
+                if (!adminList) return;
+                
+                adminList.innerHTML = '';
+                
+                if (adminAccounts.length === 0) {
+                    adminList.innerHTML = '<li>Nenhum administrador cadastrado.</li>';
+                    return;
+                }
+                
+                adminAccounts.forEach((admin, index) => {
+                    const adminItem = document.createElement('li');
+                    adminItem.className = 'admin-item';
+                    
+                    adminItem.innerHTML = `
+                        <div class="admin-info">
+                            <span class="admin-email">${admin.email}</span>
+                            ${admin.isSuper ? `<span class="admin-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                Admin Superior
+                            </span>` : ''}
+                        </div>
+                        <button class="button delete-admin ${admin.isSuper ? 'disabled' : ''}" 
+                                data-index="${index}" 
+                                ${admin.isSuper ? 'disabled' : ''}>
+                            Remover
+                        </button>
+                    `;
+                    
+                    adminList.appendChild(adminItem);
+                });
+                
+                // Adiciona eventos aos botões de remoção
+                document.querySelectorAll('.delete-admin').forEach(button => {
+                    if (!button.hasAttribute('disabled')) {
+                        button.addEventListener('click', handleRemoveAdmin);
+                    }
                 });
             }
 
-            // --- Lógica do Formulário de Adicionar Produto ---
+            function handleRemoveAdmin(event) {
+                const button = event.currentTarget;
+                const index = parseInt(button.dataset.index);
+                const admin = adminAccounts[index];
+                
+                if (admin.isSuper) {
+                    alert('Não é possível remover o administrador superior.');
+                    return;
+                }
+                
+                if (confirm(`Tem certeza que deseja remover o administrador ${admin.email}?`)) {
+                    adminAccounts.splice(index, 1);
+                    saveAdminAccounts(adminAccounts);
+                    renderAdminList();
+                    alert('Administrador removido com sucesso!');
+                }
+            }
+
+            // Adicionar novo admin (por um admin superior)
+            if (addAdminBtn) {
+                addAdminBtn.addEventListener('click', () => {
+                    const addAdminMessage = document.getElementById('add-admin-message');
+                    const addAdminError = document.getElementById('add-admin-error');
+                    const emailInput = document.getElementById('add-admin-email');
+                    const passwordInput = document.getElementById('add-admin-password');
+                    
+                    const newEmail = emailInput.value;
+                    const newPassword = passwordInput.value;
+                    
+                    if (!newEmail || !newPassword) {
+                        addAdminError.textContent = 'Por favor, preencha todos os campos.';
+                        addAdminError.style.display = 'block';
+                        addAdminMessage.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Verifica se o email já está cadastrado
+                    if (adminAccounts.some(admin => admin.email === newEmail)) {
+                        addAdminError.textContent = 'Este email já está cadastrado.';
+                        addAdminError.style.display = 'block';
+                        addAdminMessage.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Adiciona o novo admin (não superior)
+                    adminAccounts.push({
+                        email: newEmail,
+                        password: newPassword,
+                        isSuper: false
+                    });
+                    
+                    saveAdminAccounts(adminAccounts);
+                    renderAdminList();
+                    
+                    // Limpa o formulário e exibe mensagem de sucesso
+                    emailInput.value = '';
+                    passwordInput.value = '';
+                    addAdminMessage.style.display = 'block';
+                    addAdminError.style.display = 'none';
+                    
+                    setTimeout(() => {
+                        addAdminMessage.style.display = 'none';
+                    }, 3000);
+                });
+            }
+
+            // Adicionar produto
             if (addProductForm) {
                 addProductForm.addEventListener('submit', (event) => {
                     event.preventDefault();
+                    
                     const nameInput = document.getElementById('new-product-name');
                     const detailsInput = document.getElementById('new-product-details');
                     const valueInput = document.getElementById('new-product-value');
                     const quantityInput = document.getElementById('new-product-quantity');
                     const imageInput = document.getElementById('new-product-image');
-
+                    
+                    const name = nameInput.value.trim();
+                    const details = detailsInput.value.trim();
                     const value = parseFloat(valueInput.value);
                     const quantity = parseInt(quantityInput.value);
-
-                    if (!nameInput.value.trim()) {
-                        alert("O nome do produto é obrigatório.");
+                    const image = imageInput.value.trim();
+                    
+                    if (!name) {
+                        alert('Por favor, informe o nome do produto.');
                         nameInput.focus();
                         return;
                     }
+                    
                     if (isNaN(value) || value < 0) {
-                        alert("Por favor, insira um valor monetário válido (Ex: 99.90).");
+                        alert('Por favor, informe um valor válido.');
                         valueInput.focus();
                         return;
                     }
-                     if (isNaN(quantity) || quantity < 0) {
-                        alert("Por favor, insira uma quantidade válida (número inteiro positivo).");
+                    
+                    if (isNaN(quantity) || quantity < 0) {
+                        alert('Por favor, informe uma quantidade válida.');
                         quantityInput.focus();
                         return;
                     }
-
+                    
+                    // Cria o novo produto
                     const newProduct = {
-                        id: Date.now().toString(), // ID único simples
-                        name: nameInput.value.trim(),
-                        details: detailsInput.value.trim(),
+                        id: Date.now().toString(),
+                        name,
+                        details,
                         value: value.toFixed(2),
-                        quantity: quantity,
-                        image: imageInput.value.trim()
+                        quantity,
+                        image: image || 'placeholder.svg'
                     };
-
-                    products.push(newProduct); // Adiciona ao array local
-                    saveProductsToLocalStorage(products); // Salva no localStorage
-                    renderAdminProducts(products); // Atualiza a lista na tela
-                    addProductForm.reset(); // Limpa o formulário
-                    alert(`"${newProduct.name}" adicionado com sucesso!`);
+                    
+                    // Adiciona ao array e salva
+                    products.push(newProduct);
+                    saveProductsToLocalStorage(products);
+                    
+                    // Limpa o formulário
+                    addProductForm.reset();
+                    
+                    // Atualiza a lista e mostra mensagem
+                    renderAdminProducts(products);
+                    alert(`Produto "${name}" adicionado com sucesso!`);
+                    
+                    // Volta para a aba de produtos
+                    switchTab('products');
                 });
+            }
+
+            // Sistema de temas claro/escuro
+            let isDarkTheme = localStorage.getItem('isDarkTheme') === 'true';
+            
+            function applyTheme() {
+                if (isDarkTheme) {
+                    document.body.classList.add('dark-theme');
+                    themeToggleButton.textContent = '☀️'; // Sol para modo claro
+                } else {
+                    document.body.classList.remove('dark-theme');
+                    themeToggleButton.textContent = '🌙'; // Lua para modo escuro
+                }
+            }
+            
+            themeToggleButton.addEventListener('click', () => {
+                isDarkTheme = !isDarkTheme;
+                localStorage.setItem('isDarkTheme', isDarkTheme);
+                applyTheme();
+            });
+            
+            // Inicialização
+            applyTheme();
+            
+            // Verificar estado de login e mostrar tela correta
+            if (isAdminLoggedIn) {
+                showAdminPanel();
             } else {
-                console.warn("Formulário #add-product-form não encontrado.");
+                loginSection.style.display = 'flex';
+                adminContent.style.display = 'none';
+                checkInitialSetup();
             }
+            
+            // Configurar sistema de abas
+            setupTabs();
 
-
-            // --- Lógica do Tema Claro/Escuro ---
-            const sunIcon = '☀️'; // Ícone Sol
-            const moonIcon = '🌙'; // Ícone Lua
-
-            function setTheme(theme) {
-                if (theme === 'dark') {
-                    document.body.classList.add('dark-mode');
-                    if (themeToggleButton) themeToggleButton.innerHTML = sunIcon;
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    if (themeToggleButton) themeToggleButton.innerHTML = moonIcon;
-                    localStorage.setItem('theme', 'light');
-                }
-            }
-
-            function toggleTheme() {
-                if (document.body.classList.contains('dark-mode')) {
-                    setTheme('light');
-                } else {
-                    setTheme('dark');
-                }
-            }
-
-            function loadTheme() {
-                const savedTheme = localStorage.getItem('theme');
-                // Verifica também a preferência do sistema operacional
-                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-                if (savedTheme) {
-                    setTheme(savedTheme);
-                } else if (prefersDark) {
-                    setTheme('dark');
-                } else {
-                    setTheme('light'); // Padrão
-                }
-            }
-
-            // --- Inicialização Geral ---
-            if (themeToggleButton) {
-                themeToggleButton.addEventListener('click', toggleTheme);
-            } else {
-                console.warn("Botão de tema #theme-toggle não encontrado.");
-            }
-
-            loadTheme(); // Carrega tema preferido/salvo
-            renderAdminProducts(products); // Renderiza a lista inicial
-
-        }); // Fim do DOMContentLoaded
+            // Expor funções para uso global (fora do escopo DOMContentLoaded)
+            window.createSuperAdmin = createSuperAdmin;
+            window.loginAdmin = loginAdmin;
+            window.logoutAdmin = logoutAdmin;
+        });
     </script>
 </body>
 </html>
