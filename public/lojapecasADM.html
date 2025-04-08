@@ -5,77 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADM Loja de Peças - Byte Bros</title>
     <link rel="stylesheet" href="css/style6.css">
-    <style>
-        .login-container {
-            display: none; /* Inicialmente escondido */
-            flex-direction: column;
-            width: 300px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            gap: 10px;
-        }
-
-        .login-container h2 {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .login-container label {
-            display: block;
-        }
-
-        .login-container input[type="email"],
-        .login-container input[type="password"],
-        .login-container button {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            font-size: 1em;
-        }
-
-        .login-container button {
-            background-color: #5cb85c;
-            color: white;
-            cursor: pointer;
-        }
-
-        .login-container button:hover {
-            background-color: #4cae4c;
-        }
-
-        .admin-content {
-            display: none; /* Inicialmente escondido */
-        }
-    </style>
 </head>
 <body>
-    <div id="loginSection" class="login-container">
-        <h2>Login de Administrador</h2>
-        <div id="initialSetup" style="display: none;">
-            <h3>Primeiro Acesso - Criar Administrador</h3>
-            <label for="new-admin-email">Email:</label>
-            <input type="email" id="new-admin-email" required>
-            <label for="new-admin-password">Senha:</label>
-            <input type="password" id="new-admin-password" required>
-            <button onclick="createAdmin()">Criar Admin</button>
-            <p id="creation-message" style="color: green; display: none;">Administrador criado com sucesso! Faça login abaixo.</p>
-            <p id="creation-error" style="color: red; display: none;">Erro ao criar administrador.</p>
-        </div>
-        <div id="loginForm">
-            <label for="admin-email">Email:</label>
-            <input type="email" id="admin-email" name="admin-email" required>
-            <label for="admin-password">Senha:</label>
-            <input type="password" id="admin-password" name="admin-password" required>
-            <button onclick="loginAdmin()">Entrar</button>
-            <p id="login-error" style="color: red; display: none;">Credenciais inválidas.</p>
-        </div>
-    </div>
-
-    <div id="adminContent" class="container admin-content">
-        <button id="theme-toggle" class="button theme-toggle-button" title="Alternar Tema"></button>
-        <button onclick="logoutAdmin()" class="button">Logout</button>
+    <div class="container">
+        <button id="theme-toggle" class="button theme-toggle-button" title="Alternar Tema">
+            </button>
 
         <h2>Adicionar Novo Produto</h2>
         <form id="add-product-form" class="product-form">
@@ -108,154 +42,19 @@
         <ul class="product-list"></ul>
 
         <a href="lojapecascliente.html" class="button temp-button">Acessar Loja como Cliente</a>
-
-        <hr>
-
-        <h2>Gerenciar Administradores (Apenas Admin Superior)</h2>
-        <div id="adminManagement" style="display: none;">
-            <h3>Adicionar Novo Administrador</h3>
-            <label for="add-admin-email">Email:</label>
-            <input type="email" id="add-admin-email">
-            <label for="add-admin-password">Senha:</label>
-            <input type="password" id="add-admin-password">
-            <button onclick="addAdmin()">Adicionar Admin</button>
-            <p id="add-admin-message" style="color: green; display: none;">Administrador adicionado com sucesso!</p>
-            <p id="add-admin-error" style="color: red; display: none;">Erro ao adicionar administrador.</p>
-        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const loginSection = document.getElementById('loginSection');
-            const initialSetupDiv = document.getElementById('initialSetup');
-            const loginFormDiv = document.getElementById('loginForm');
-            const adminContent = document.getElementById('adminContent');
+            // --- Seletores de Elementos ---
             const addProductForm = document.getElementById('add-product-form');
             const productList = document.querySelector('.product-list');
             const themeToggleButton = document.getElementById('theme-toggle');
-            const adminManagementDiv = document.getElementById('adminManagement');
-            const creationMessage = document.getElementById('creation-message');
-            const creationError = document.getElementById('creation-error');
-            const loginError = document.getElementById('login-error');
-            const addAdminMessage = document.getElementById('add-admin-message');
-            const addAdminError = document.getElementById('add-admin-error');
 
+            // --- Estado da Aplicação ---
             let products = loadProductsFromLocalStorage();
-            let isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
-            let adminAccounts = loadAdminAccounts();
 
-            function loadAdminAccounts() {
-                const storedAdmins = localStorage.getItem('adminAccounts');
-                return storedAdmins ? JSON.parse(storedAdmins) : [];
-            }
-
-            function saveAdminAccounts(accounts) {
-                localStorage.setItem('adminAccounts', JSON.stringify(accounts));
-            }
-
-            function checkAdminSession() {
-                if (isAdminLoggedIn) {
-                    loginSection.style.display = 'none';
-                    initialSetupDiv.style.display = 'none';
-                    loginFormDiv.style.display = 'none';
-                    adminContent.style.display = 'block';
-                    renderAdminProducts(products);
-                    attachAdminEventListeners();
-                    // Apenas o primeiro admin tem permissão para gerenciar outros admins
-                    if (adminAccounts.length > 0 && getLoggedInAdminEmail() === adminAccounts[0].email) {
-                        adminManagementDiv.style.display = 'block';
-                    } else {
-                        adminManagementDiv.style.display = 'none';
-                    }
-                } else {
-                    adminContent.style.display = 'none';
-                    if (adminAccounts.length === 0) {
-                        loginSection.style.display = 'flex';
-                        initialSetupDiv.style.display = 'block';
-                        loginFormDiv.style.display = 'none';
-                    } else {
-                        loginSection.style.display = 'flex';
-                        initialSetupDiv.style.display = 'none';
-                        loginFormDiv.style.display = 'block';
-                    }
-                }
-            }
-
-            function createAdmin() {
-                const newEmail = document.getElementById('new-admin-email').value;
-                const newPassword = document.getElementById('new-admin-password').value;
-
-                if (!newEmail || !newPassword) {
-                    alert('Por favor, preencha email e senha.');
-                    return;
-                }
-
-                if (adminAccounts.find(admin => admin.email === newEmail)) {
-                    creationError.textContent = 'Este email já está cadastrado.';
-                    creationError.style.display = 'block';
-                    creationMessage.style.display = 'none';
-                    return;
-                }
-
-                adminAccounts.push({ email: newEmail, password: newPassword });
-                saveAdminAccounts(adminAccounts);
-                creationMessage.style.display = 'block';
-                creationError.style.display = 'none';
-                loginFormDiv.style.display = 'block';
-                initialSetupDiv.style.display = 'none';
-            }
-
-            function loginAdmin() {
-                const emailInput = document.getElementById('admin-email').value;
-                const passwordInput = document.getElementById('admin-password').value;
-                const admin = adminAccounts.find(acc => acc.email === emailInput && acc.password === passwordInput);
-
-                if (admin) {
-                    isAdminLoggedIn = true;
-                    localStorage.setItem('isAdminLoggedIn', 'true');
-                    localStorage.setItem('loggedInAdminEmail', emailInput); // Salva o email do admin logado
-                    loginError.style.display = 'none';
-                    checkAdminSession();
-                } else {
-                    loginError.style.display = 'block';
-                }
-            }
-
-            function getLoggedInAdminEmail() {
-                return localStorage.getItem('loggedInAdminEmail');
-            }
-
-            function addAdmin() {
-                const newEmail = document.getElementById('add-admin-email').value;
-                const newPassword = document.getElementById('add-admin-password').value;
-
-                if (!newEmail || !newPassword) {
-                    alert('Por favor, preencha email e senha para o novo administrador.');
-                    return;
-                }
-
-                if (adminAccounts.find(admin => admin.email === newEmail)) {
-                    addAdminError.textContent = 'Este email já está cadastrado como administrador.';
-                    addAdminError.style.display = 'block';
-                    addAdminMessage.style.display = 'none';
-                    return;
-                }
-
-                adminAccounts.push({ email: newEmail, password: newPassword });
-                saveAdminAccounts(adminAccounts);
-                addAdminMessage.style.display = 'block';
-                addAdminError.style.display = 'none';
-                document.getElementById('add-admin-email').value = '';
-                document.getElementById('add-admin-password').value = '';
-            }
-
-            function logoutAdmin() {
-                isAdminLoggedIn = false;
-                localStorage.removeItem('isAdminLoggedIn');
-                localStorage.removeItem('loggedInAdminEmail');
-                checkAdminSession();
-            }
-
+            // --- Funções de Persistência (LocalStorage) ---
             function saveProductsToLocalStorage(productsToSave) {
                 localStorage.setItem('products', JSON.stringify(productsToSave));
             }
@@ -265,10 +64,11 @@
                 return storedProducts ? JSON.parse(storedProducts) : [];
             }
 
+            // --- Renderização da Lista de Produtos ---
             function renderAdminProducts(productsToRender) {
-                productList.innerHTML = '';
+                productList.innerHTML = ''; // Limpa a lista antes de renderizar
                 if (!productsToRender || productsToRender.length === 0) {
-                    productList.innerHTML = '<li class="no-products-message">Nenhuma peça cadastrada ainda.</li>';
+                    productList.innerHTML = '<li class="no-products-message">Nenhuma peça cadastrada ainda.</li>'; // Mensagem se vazio
                     return;
                 }
 
@@ -282,32 +82,33 @@
                         ? valueAsNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
                         : 'Valor inválido';
 
+                    // **ESTRUTURA ATUALIZADA AQUI para .stats e .action-buttons**
                     listItem.innerHTML = `
                         <div class="product-info">
-                            <div class="product-name"><span class="math-inline">\{product\.name \|\| 'Nome Indefinido'\}</div\>
-<div class\="product\-details"\></span>{product.details || 'Sem detalhes'}</div>
+                            <div class="product-name">${product.name || 'Nome Indefinido'}</div>
+                            <div class="product-details">${product.details || 'Sem detalhes'}</div>
                         </div>
                         <div class="product-actions">
                             <div class="stats">
                                 <span class="product-value">Valor: ${formattedValue}</span>
-                                <span class="product-quantity">Quantidade: <span class="math-inline">\{product\.quantity \|\| 0\}</span\>
-</div\>
-<div class\="action\-buttons"\>
-<button class\="button edit\-button" data\-index\="</span>{index}" title="Editar Produto">Editar</button>
-                                <button class="button delete-button danger" data-index="<span class="math-inline">\{index\}" title\="Excluir Produto"\>Excluir</button\>
-</div\>
-</div\>
-<div class\="edit\-controls"\>
-<div class\="edit\-control\-group"\>
-<label for\="value\-</span>{index}">Novo Valor (Ex: 1800.00):</label>
-                                <input type="number" step="0.01" min="0" id="value-<span class="math-inline">\{index\}" value\="</span>{product.value || ''}">
+                                <span class="product-quantity">Quantidade: ${product.quantity || 0}</span>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="button edit-button" data-index="${index}" title="Editar Produto">Editar</button>
+                                <button class="button delete-button danger" data-index="${index}" title="Excluir Produto">Excluir</button>
+                            </div>
+                        </div>
+                        <div class="edit-controls">
+                            <div class="edit-control-group">
+                                <label for="value-${index}">Novo Valor (Ex: 1800.00):</label>
+                                <input type="number" step="0.01" min="0" id="value-${index}" value="${product.value || ''}">
                             </div>
                             <div class="edit-control-group">
-                                <label for="quantity-<span class="math-inline">\{index\}"\>Nova Qtd\:</label\>
-<input type\="number" id\="quantity\-</span>{index}" value="<span class="math-inline">\{product\.quantity \|\| 0\}" min\="0"\>
-</div\>
-<div class\="edit\-action\-buttons"\>
-<button class\="button save" data\-index\="</span>{index}">Salvar</button>
+                                <label for="quantity-${index}">Nova Qtd:</label>
+                                <input type="number" id="quantity-${index}" value="${product.quantity || 0}" min="0">
+                            </div>
+                            <div class="edit-action-buttons">
+                                <button class="button save" data-index="${index}">Salvar</button>
                                 <button class="button cancel" data-index="${index}">Cancelar</button>
                             </div>
                         </div>
@@ -315,11 +116,13 @@
                     productList.appendChild(listItem);
                 });
 
-                attachAdminEventListeners();
+                attachAdminEventListeners(); // (Re)liga eventos aos botões criados
             }
 
+            // --- Lógica de Eventos da Lista ---
             function attachAdminEventListeners() {
                 productList.querySelectorAll('.edit-button').forEach(button => {
+                    // Remove listener antigo para evitar duplicação se já existir
                     button.removeEventListener('click', handleEditClick);
                     button.addEventListener('click', handleEditClick);
                 });
@@ -344,7 +147,7 @@
                 const editControls = listItem.querySelector('.edit-controls');
                 const productActions = listItem.querySelector('.product-actions');
 
-                closeAllEditControls(listItem);
+                closeAllEditControls(listItem); // Fecha outros abertos
 
                 if (editControls) editControls.classList.add('active');
                 if (productActions) productActions.style.display = 'none';
@@ -367,6 +170,7 @@
                     return;
                 }
 
+                // Atualiza o array 'products'
                 products = products.map((product, i) => {
                     if (i === index) {
                         return { ...product, value: newValue.toFixed(2), quantity: newQuantity };
@@ -375,7 +179,7 @@
                 });
 
                 saveProductsToLocalStorage(products);
-                renderAdminProducts(products);
+                renderAdminProducts(products); // Re-renderiza com dados atualizados
                 alert(`Produto atualizado!`);
             }
 
@@ -387,16 +191,19 @@
                 const productActions = listItem.querySelector('.product-actions');
 
                 if (editControls) editControls.classList.remove('active');
-                if (productActions) productActions.style.display = 'flex';
+                if (productActions) productActions.style.display = 'flex'; // Ou 'block' dependendo do seu CSS base
             }
 
             function handleDeleteClick(event) {
                 const button = event.currentTarget;
                 const indexToDelete = parseInt(button.dataset.index);
+                // Encontra o produto pelo índice para pegar o nome (cuidado se a ordem mudar)
                 const productToDelete = products[indexToDelete];
                 const productName = productToDelete ? productToDelete.name : `Item ${indexToDelete + 1}`;
 
+
                 if (confirm(`Tem certeza que deseja excluir "${productName}"?`)) {
+                    // Filtra o array, mantendo todos EXCETO o do índice a ser deletado
                     products = products.filter((_, index) => index !== indexToDelete);
                     saveProductsToLocalStorage(products);
                     renderAdminProducts(products);
@@ -410,10 +217,11 @@
                     const editControls = item.querySelector('.edit-controls');
                     const productActions = item.querySelector('.product-actions');
                     if (editControls) editControls.classList.remove('active');
-                    if (productActions) productActions.style.display = 'flex';
+                    if (productActions) productActions.style.display = 'flex'; // Garante que ações voltem
                 });
             }
 
+            // --- Lógica do Formulário de Adicionar Produto ---
             if (addProductForm) {
                 addProductForm.addEventListener('submit', (event) => {
                     event.preventDefault();
@@ -436,14 +244,14 @@
                         valueInput.focus();
                         return;
                     }
-                    if (isNaN(quantity) || quantity < 0) {
+                     if (isNaN(quantity) || quantity < 0) {
                         alert("Por favor, insira uma quantidade válida (número inteiro positivo).");
                         quantityInput.focus();
                         return;
                     }
 
                     const newProduct = {
-                        id: Date.now().toString(),
+                        id: Date.now().toString(), // ID único simples
                         name: nameInput.value.trim(),
                         details: detailsInput.value.trim(),
                         value: value.toFixed(2),
@@ -451,19 +259,20 @@
                         image: imageInput.value.trim()
                     };
 
-                    products.push(newProduct);
-                    saveProductsToLocalStorage(products);
-                    renderAdminProducts(products);
-                    addProductForm.reset();
+                    products.push(newProduct); // Adiciona ao array local
+                    saveProductsToLocalStorage(products); // Salva no localStorage
+                    renderAdminProducts(products); // Atualiza a lista na tela
+                    addProductForm.reset(); // Limpa o formulário
                     alert(`"${newProduct.name}" adicionado com sucesso!`);
                 });
             } else {
                 console.warn("Formulário #add-product-form não encontrado.");
             }
 
+
             // --- Lógica do Tema Claro/Escuro ---
-            const sunIcon = '☀️';
-            const moonIcon = '🌙';
+            const sunIcon = '☀️'; // Ícone Sol
+            const moonIcon = '🌙'; // Ícone Lua
 
             function setTheme(theme) {
                 if (theme === 'dark') {
@@ -487,6 +296,7 @@
 
             function loadTheme() {
                 const savedTheme = localStorage.getItem('theme');
+                // Verifica também a preferência do sistema operacional
                 const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
                 if (savedTheme) {
@@ -494,7 +304,7 @@
                 } else if (prefersDark) {
                     setTheme('dark');
                 } else {
-                    setTheme('light');
+                    setTheme('light'); // Padrão
                 }
             }
 
@@ -505,9 +315,10 @@
                 console.warn("Botão de tema #theme-toggle não encontrado.");
             }
 
-            loadTheme();
-            checkAdminSession();
-        });
+            loadTheme(); // Carrega tema preferido/salvo
+            renderAdminProducts(products); // Renderiza a lista inicial
+
+        }); // Fim do DOMContentLoaded
     </script>
 </body>
 </html>
