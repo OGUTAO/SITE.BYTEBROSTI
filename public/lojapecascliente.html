@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loja de Peças - Byte Bros</title>
+    <link rel="stylesheet" href="css/style7.css">
+    </head>
+<body>
+    <div class="container">
+        <div class="top-buttons-container">
+            <a href="lojapecasADM.html" class="button back-button">ADM</a>
+            <a href="index.html" class="button back-button">Menu</a>
+            <button id="theme-toggle" class="button theme-toggle-button" title="Alternar Tema">
+                </button>
+        </div>
+
+        <h2>Nossa Loja de Peças</h2>
+
+        <ul class="product-list"></ul>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Seletores ---
+            const productList = document.querySelector('.product-list');
+            const themeToggleButton = document.getElementById('theme-toggle'); // Seleciona o NOVO botão
+
+            // --- Lógica do Tema Claro/Escuro ---
+            const sunIcon = '☀️'; // Ícone Sol
+            const moonIcon = '🌙'; // Ícone Lua
+
+            function setTheme(theme) { // Nome padrão da função
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    if (themeToggleButton) themeToggleButton.innerHTML = sunIcon;
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    if (themeToggleButton) themeToggleButton.innerHTML = moonIcon;
+                    localStorage.setItem('theme', 'light');
+                }
+                // Adicione aqui qualquer outra lógica que precise rodar na troca de tema na página do cliente
+            }
+
+            function toggleTheme() { // Nome padrão da função
+                if (document.body.classList.contains('dark-mode')) {
+                    setTheme('light');
+                } else {
+                    setTheme('dark');
+                }
+            }
+
+            function loadTheme() { // Nome padrão da função
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                if (savedTheme) {
+                    setTheme(savedTheme);
+                } else if (prefersDark) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light'); // Padrão
+                }
+            }
+            // --- Fim da Lógica do Tema ---
+
+
+            // --- Lógica de Produtos (Carregamento e Renderização) ---
+            function loadProductsFromLocalStorage() {
+                const storedProducts = localStorage.getItem('products');
+                return storedProducts ? JSON.parse(storedProducts) : [];
+            }
+
+            function renderClientProducts(productsToRender) {
+                productList.innerHTML = ''; // Limpa antes de renderizar
+                if (!productsToRender || productsToRender.length === 0) {
+                     productList.innerHTML = '<li class="no-products-message">Nenhuma peça disponível no momento.</li>';
+                     return;
+                }
+
+                productsToRender.forEach((product, index) => {
+                    // Verifica se o produto tem quantidade > 0 antes de renderizar para o cliente
+                    if (product.quantity > 0) {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('product-item'); // Usar a mesma classe base pode ajudar na estilização
+                        listItem.dataset.productId = product.id || index; // Usa ID se disponível
+
+                        const valueAsNumber = parseFloat(product.value);
+                        const formattedValue = !isNaN(valueAsNumber)
+                            ? valueAsNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                            : 'Valor Indisponível';
+
+                        listItem.innerHTML = `
+                            <div class="product-image-container">
+                                <img src="${product.image || 'img/default_product.jpg'}" alt="${product.name || 'Produto'}" class="product-image">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">${product.name || 'Nome Indisponível'}</h3>
+                                <p class="product-details">${product.details || ''}</p>
+                                <div class="product-price-quantity">
+                                    <span class="product-price">${formattedValue}</span>
+                                    <span class="product-quantity">Disponível: ${product.quantity}</span>
+                                </div>
+                            </div>
+                            <button class="button add-to-cart-button" data-product-id="${product.id || index}" data-product-name="${product.name || ''}" data-product-value="${product.value || 0}">Adicionar ao Carrinho</button>
+                        `;
+                        productList.appendChild(listItem);
+                    }
+                });
+
+                // Adiciona listeners aos botões de carrinho recém-criados
+                attachCartEventListeners();
+            }
+
+            function attachCartEventListeners() {
+                 const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
+                 addToCartButtons.forEach(button => {
+                     // Remove listener antigo para segurança (embora limpar innerHTML geralmente resolva)
+                     button.removeEventListener('click', handleAddToCart);
+                     button.addEventListener('click', handleAddToCart);
+                 });
+            }
+
+            function handleAddToCart(event) {
+                const button = event.currentTarget;
+                const productId = button.dataset.productId;
+                const productName = button.dataset.productName;
+                const productValue = button.dataset.productValue;
+                console.log(`Produto adicionado ao carrinho: ID=${productId}, Nome="${productName}", Valor=R$${productValue}`);
+                alert(`"${productName}" (R$${productValue}) adicionado ao carrinho! (Funcionalidade de carrinho real a ser implementada)`);
+                // Aqui você implementaria a lógica real do carrinho (ex: salvar no localStorage, atualizar UI do carrinho)
+            }
+
+            // --- Inicialização ---
+            if (themeToggleButton) {
+                themeToggleButton.addEventListener('click', toggleTheme);
+            } else {
+                console.warn("Botão de tema #theme-toggle não encontrado.");
+            }
+
+            loadTheme(); // Carrega o tema ao iniciar
+
+            const products = loadProductsFromLocalStorage();
+            renderClientProducts(products); // Carrega e renderiza os produtos
+
+        }); // Fim do DOMContentLoaded
+    </script>
+</body>
+</html>

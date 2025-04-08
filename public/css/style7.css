@@ -1,0 +1,445 @@
+/* style7.css - Estilos para Loja Cliente */
+
+/* === Importação de Fonte (Exemplo - Adicionar no <head> do HTML) === */
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap'); */
+
+/* === Variáveis de Cor Globais (:root) === */
+:root {
+    /* Copiado da página ADM para consistência */
+    /* Paleta Claro */
+    --bg-color-light: #f8f9fa;
+    --container-bg-light: #ffffff;
+    --text-color-light: #212529;
+    --muted-text-light: #6c757d;
+    --border-color-light: #dee2e6;
+    --accent-color-light: #0d6efd; /* Azul */
+    --accent-hover-light: #0b5ed7;
+    --success-color-light: #198754; /* Verde */
+    --success-hover-light: #157347;
+    --danger-color-light: #dc3545; /* Vermelho */
+    --danger-hover-light: #bb2d3b;
+    --shadow-light: 0 6px 15px rgba(0, 0, 0, 0.08); /* Sombra um pouco mais forte */
+    --input-bg-light: #ffffff;
+    --input-focus-shadow-light: rgba(13, 110, 253, 0.25);
+    --edit-controls-bg-light: rgba(13, 110, 253, 0.05); /* Pode não ser usado aqui */
+    --hover-bg-light: rgba(0, 0, 0, 0.03);
+
+    /* Paleta Escuro */
+    --bg-color-dark: #1a202c;
+    --container-bg-dark: #2d3748;
+    --text-color-dark: #e2e8f0;
+    --muted-text-dark: #a0aec0;
+    --border-color-dark: #4a5568;
+    --accent-color-dark: #60a5fa; /* Azul claro */
+    --accent-hover-dark: #3b82f6;
+    --success-color-dark: #48bb78; /* Verde claro */
+    --success-hover-dark: #38a169;
+    --danger-color-dark: #f56565;  /* Vermelho claro */
+    --danger-hover-dark: #e53e3e;
+    --shadow-dark: 0 6px 15px rgba(0, 0, 0, 0.3);
+    --input-bg-dark: #1a202c;
+    --input-focus-shadow-dark: rgba(96, 165, 250, 0.3);
+    --edit-controls-bg-dark: rgba(96, 165, 250, 0.1); /* Pode não ser usado aqui */
+    --hover-bg-dark: rgba(255, 255, 255, 0.05);
+}
+
+/* === Estilos Base === */
+body {
+    /* IMPORTANTE: Adicione o @import do Google Fonts no seu HTML ou no topo do CSS */
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    background-color:#78797a96;
+    color: var(--text-color-light);
+    line-height: 1.7; /* Um pouco mais espaçado */
+    padding-bottom: 50px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 40px auto; /* Margem padronizada */
+    padding: 40px;
+    background-color: var(--container-bg-light);
+    border-radius: 15px; /* Mais arredondado */
+    box-shadow: var(--shadow-light);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative; /* Para posicionar botão de tema se absoluto */
+}
+
+h2 {
+    /* Usar cor padrão do texto */
+    color: var(--text-color-light);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 40px;
+    font-size: 2.2em; /* Ajustado */
+    font-weight: 600; /* Ajustado */
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+/* Container para os botões no topo */
+.top-buttons-container {
+    display: flex;
+    justify-content: space-between; /* Espaça os botões */
+    align-items: center;
+    margin-bottom: 30px; /* Espaço abaixo dos botões */
+    border-bottom: 1px solid var(--border-color-light); /* Linha separadora */
+    padding-bottom: 20px; /* Espaço abaixo da linha */
+    position: relative; /* Contexto para o botão de tema se absoluto */
+    gap: 10px; /* Espaço entre botões se eles se juntarem */
+}
+/* Empurra o botão de tema para a direita */
+.top-buttons-container .theme-toggle-button {
+    margin-left: auto;
+}
+
+/* === Botão Genérico e Variações === */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 18px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 0.90em;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease, transform 0.1s ease;
+    user-select: none;
+}
+.button:focus-visible {
+    outline: 2px solid var(--accent-color-light);
+    outline-offset: 2px;
+}
+/* Efeito Hover mais sutil */
+.button:not(.theme-toggle-button):hover { /* Aplica a todos exceto tema */
+    filter: brightness(90%);
+    transform: translateY(-1px); /* Leve levantada */
+}
+.button:active {
+    filter: brightness(85%);
+    transform: translateY(1px);
+}
+
+/* Botões de Voltar (ADM, Menu) - Estilo Secundário/Outline */
+.button.back-button {
+    background-color: transparent;
+    border-color: var(--muted-text-light);
+    color: var(--muted-text-light);
+    padding: 7px 15px; /* Menor */
+}
+.button.back-button:hover {
+    background-color: var(--muted-text-light);
+    color: var(--container-bg-light);
+    border-color: var(--muted-text-light);
+    filter: none;
+    transform: translateY(-1px);
+}
+
+/* Botão Adicionar ao Carrinho */
+.button.add-to-cart-button {
+    /* Usando cor de sucesso */
+    background-color: var(--success-color-light);
+    color: #fff;
+    border-color: var(--success-color-light);
+    padding: 10px 20px; /* Padding específico */
+    font-size: 0.95em;
+    font-weight: 500;
+    width: 100%; /* Ocupa largura no card */
+    margin-top: auto; /* Empurra para baixo */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.button.add-to-cart-button:hover {
+    background-color: var(--success-hover-light);
+    border-color: var(--success-hover-light);
+    transform: scale(1.02); /* Efeito de escala no hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    filter: none;
+}
+
+/* Botão de Tema */
+.theme-toggle-button {
+    /* --- AJUSTE A POSIÇÃO CONFORME NECESSÁRIO --- */
+    /* Exemplo: Mantido no fluxo com outros botões */
+     position: relative; /* Remove absolute/fixed se estiver no fluxo */
+     width: 40px;
+     height: 40px;
+     padding: 6px;
+    /* position: absolute; */ /* Se precisar posicionar absoluto */
+    /* top: 0; */
+    /* right: 0; */
+
+    border-radius: 50%;
+    font-size: 1.4em;
+    line-height: 1;
+    background-color: transparent; /* Fundo transparente por padrão */
+    border: 1px solid var(--border-color-light);
+    color: var(--muted-text-light); /* Cor mais sutil */
+    box-shadow: none; /* Remove sombra padrão */
+}
+.theme-toggle-button:hover {
+    background-color: var(--hover-bg-light);
+    color: var(--text-color-light); /* Cor normal no hover */
+    border-color: var(--border-color-light);
+    filter: none;
+    transform: scale(1.05); /* Leve aumento */
+}
+.theme-toggle-button:active {
+     transform: translateY(0px) scale(0.95);
+     filter: brightness(95%);
+}
+.theme-toggle-button:focus-visible {
+    outline-offset: 1px;
+}
+
+
+/* === Lista de Produtos === */
+.product-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Minmax ajustado */
+    gap: 35px; /* Gap ajustado */
+}
+
+/* Mensagem quando a lista está vazia */
+.no-products-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted-text-light);
+    font-style: italic;
+    border: 1px dashed var(--border-color-light);
+    border-radius: 8px;
+    margin-top: 20px;
+    grid-column: 1 / -1; /* Ocupa todas as colunas do grid */
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.product-item {
+    background-color: var(--container-bg-light); /* Usa fundo do container */
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07); /* Sombra mais leve */
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color-light); /* Borda sutil */
+}
+
+.product-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.10); /* Sombra hover */
+}
+
+.product-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px; /* Altura imagem reduzida */
+    overflow: hidden;
+    background-color: #eee; /* Fundo claro para imagem */
+}
+
+.product-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease-out;
+}
+
+.product-item:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-info {
+    padding: 20px; /* Padding ajustado */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column; /* Organiza info verticalmente */
+}
+
+.product-name {
+    font-size: 1.15em; /* Ajustado */
+    font-weight: 600;
+    color: var(--text-color-light); /* Cor padrão */
+    margin-bottom: 8px;
+}
+
+.product-details {
+    font-size: 0.9em; /* Ajustado */
+    color: var(--muted-text-light);
+    margin-bottom: 15px;
+    line-height: 1.6;
+    flex-grow: 1; /* Faz detalhes ocuparem espaço antes do preço */
+}
+
+.product-price-quantity {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px; /* Espaço antes do botão */
+    margin-top: 10px; /* Espaço acima do preço */
+}
+
+.product-price {
+    font-size: 1.15em; /* Ajustado */
+    color: var(--success-color-light); /* Usa variável verde */
+    font-weight: 700;
+}
+
+.product-quantity {
+    font-size: 0.85em; /* Ajustado */
+    color: var(--muted-text-light); /* Usa variável */
+    opacity: 1; /* Remove opacidade */
+}
+
+/* === Media Queries === */
+@media (max-width: 700px) {
+    .container {
+        margin: 20px 10px;
+        padding: 20px;
+    }
+    h2 {
+        font-size: 1.8em; /* Reduz H2 */
+    }
+    .top-buttons-container {
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        /* Botão de tema pode precisar de ajuste fino aqui se sair do fluxo */
+    }
+    .product-list {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Menor minmax */
+        gap: 25px;
+    }
+    .product-info {
+        padding: 15px;
+    }
+    .button.add-to-cart-button {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 400px) {
+     .product-list {
+        grid-template-columns: 1fr; /* Uma coluna */
+        gap: 20px;
+     }
+     .top-buttons-container {
+         flex-wrap: wrap; /* Permite quebrar botões */
+         justify-content: center;
+     }
+     .top-buttons-container .theme-toggle-button {
+         /* Posicionamento absoluto pode ser melhor aqui */
+         position: absolute;
+         top: 15px;
+         right: 15px;
+     }
+     .container {
+         padding-top: 65px; /* Garante espaço se botão for absoluto */
+     }
+}
+
+
+/* === Tema Escuro === */
+body.dark-mode {
+    background-color: var(--bg-color-dark);
+    color: var(--text-color-dark);
+}
+
+body.dark-mode .container {
+    background-color: var(--container-bg-dark);
+    box-shadow: var(--shadow-dark);
+}
+
+body.dark-mode h2 {
+    color: var(--text-color-dark);
+}
+
+body.dark-mode .top-buttons-container {
+    border-bottom-color: var(--border-color-dark);
+}
+
+body.dark-mode hr {
+     background-color: var(--border-color-dark);
+}
+
+
+/* Botões Escuros */
+body.dark-mode .button:focus-visible,
+body.dark-mode .theme-toggle-button:focus-visible {
+    outline-color: var(--accent-color-dark);
+}
+body.dark-mode .button.back-button {
+    border-color: var(--muted-text-dark);
+    color: var(--muted-text-dark);
+}
+body.dark-mode .button.back-button:hover {
+    background-color: var(--muted-text-dark);
+    color: var(--bg-color-dark); /* Cor de fundo geral */
+    border-color: var(--muted-text-dark);
+}
+body.dark-mode .button.add-to-cart-button {
+    background-color: var(--success-color-dark);
+    border-color: var(--success-color-dark);
+    color: #1a202c; /* Texto escuro para contraste */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+body.dark-mode .button.add-to-cart-button:hover {
+    background-color: var(--success-hover-dark);
+    border-color: var(--success-hover-dark);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Botão Tema Escuro */
+body.dark-mode .theme-toggle-button {
+    background-color: transparent;
+    border-color: var(--border-color-dark);
+    color: var(--muted-text-dark);
+    box-shadow: none;
+}
+body.dark-mode .theme-toggle-button:hover {
+     background-color: var(--hover-bg-dark);
+     color: var(--text-color-dark);
+     border-color: var(--border-color-dark);
+}
+
+/* Lista Produtos Escuro */
+body.dark-mode .no-products-message {
+     color: var(--muted-text-dark);
+     border-color: var(--border-color-dark);
+}
+
+body.dark-mode .product-item {
+    background-color: var(--bg-color-dark); /* Fundo mais escuro que o container */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    border-color: var(--border-color-dark);
+}
+body.dark-mode .product-item:hover {
+     background-color: var(--bg-color-dark); /* Mantém fundo no hover */
+     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+
+body.dark-mode .product-image-container {
+    background-color: #2d3748; /* Fundo mais escuro para imagem */
+}
+
+body.dark-mode .product-name {
+    color: var(--text-color-dark); /* Cor padrão do texto escuro */
+}
+
+body.dark-mode .product-details,
+body.dark-mode .product-quantity {
+    color: var(--muted-text-dark);
+    opacity: 1; /* Remove opacidade */
+}
+
+body.dark-mode .product-price {
+    color: var(--success-color-dark); /* Usa variável verde claro */
+}

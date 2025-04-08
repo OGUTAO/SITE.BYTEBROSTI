@@ -138,3 +138,41 @@ footer {
     background: linear-gradient(135deg, #0056b3, #003f7f);
     transform: translateY(-3px);
 }
+/* Modo Escuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode header {
+    background: linear-gradient(135deg, #1e3a8a, #1e40af);
+    color: white;
+}
+
+body.dark-mode .section,
+body.dark-mode .sobre-nos {
+    background: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 6px 12px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode h2 {
+    color: #60a5fa;
+}
+
+body.dark-mode .botao,
+body.dark-mode .botao-voltar .botao {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+}
+
+body.dark-mode .botao:hover,
+body.dark-mode .botao-voltar .botao:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e3a8a);
+    transform: translateY(-3px);
+}
+
+body.dark-mode footer {
+    background-color: #1e40af;
+    color: #e0e0e0;
+}

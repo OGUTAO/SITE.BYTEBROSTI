@@ -6,6 +6,11 @@ body {
     padding: 0;
 }
 
+.dark-mode {
+    background-color: #121212;
+    color: #f4f4f4;
+}
+
 header {
     background: linear-gradient(to right, #232526, #414345);
     color: white;
@@ -14,7 +19,6 @@ header {
     justify-content: space-between;
     align-items: center;
 }
-
 
 .servico-detalhes {
     max-width: 800px;
@@ -26,10 +30,20 @@ header {
     text-align: center;
 }
 
+.dark-mode .servico-detalhes {
+    background-color: #1e1e1e;
+    color: #f4f4f4;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+}
+
 .servico-detalhes h2 {
     font-size: 2.5em;
     margin-bottom: 20px;
     color: #232526;
+}
+
+.dark-mode .servico-detalhes h2 {
+    color: #ffa500;
 }
 
 .servico-detalhes img {
@@ -44,6 +58,10 @@ header {
     font-size: 1.1em;
     color: #555;
     margin-bottom: 25px;
+}
+
+.dark-mode .servico-detalhes p {
+    color: #ccc;
 }
 
 .servico-detalhes a {
@@ -62,66 +80,6 @@ header {
     background-color: #ff8800;
 }
 
-
-.botao-voltar {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 100;
-}
-
-.botao {
-    background-color: #ffa500;
-    color: white;
-    padding: 8px 10px; /* Diminui o padding para reduzir o tamanho do botão */
-    border: none;
-    border-radius: 5px; /* Diminui o raio da borda para combinar com o tamanho menor */
-    font-size: 1em; /* Diminui o tamanho da fonte */
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-.botao:hover {
-    background-color: #ff8800;
-}
-
-.orcamento-enviado {
-    max-width: 600px;
-    margin: 100px auto;
-    padding: 30px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.orcamento-enviado h2 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    color: #232526;
-}
-
-.orcamento-enviado p {
-    font-size: 1.1em;
-    color: #555;
-    margin-bottom: 25px;
-}
-
-.suporte-botao {
-    display: inline-block;
-    background-color: #ffa500;
-    color: white;
-    padding: 15px 30px; /* Aumenta o padding para um botão maior */
-    border: none;
-    border-radius: 10px; /* Aumenta o raio da borda para um visual mais arredondado */
-    font-size: 1.2em; /* Aumenta o tamanho da fonte */
-    font-weight: bold; /* Adiciona negrito ao texto */
-    text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Adiciona transição para a transformação */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adiciona uma sombra suave */
-}
-
-
 .botao-voltar {
     position: fixed;
     top: 20px;
@@ -132,7 +90,7 @@ header {
 .botao {
     display: inline-flex;
     align-items: center;
-    background-color: #3498db; /* Azul mais chamativo */
+    background-color: #3498db;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -155,7 +113,55 @@ header {
     font-size: 1.1em;
 }
 
-/* ... (outros estilos) ... */
+.orcamento-enviado {
+    max-width: 600px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.dark-mode .orcamento-enviado {
+    background-color: #1e1e1e;
+    color: #f4f4f4;
+}
+
+.orcamento-enviado h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #232526;
+}
+
+.dark-mode .orcamento-enviado h2 {
+    color: #ffa500;
+}
+
+.orcamento-enviado p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.dark-mode .orcamento-enviado p {
+    color: #ccc;
+}
+
+.suporte-botao {
+    display: inline-block;
+    background-color: #ffa500;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 footer {
     background-color: black;
     color: white;
@@ -164,6 +170,11 @@ footer {
     position: relative;
     top: 500px;
     margin-top: 50px;
+}
+
+.dark-mode footer {
+    background-color: #0d0d0d;
+    color: #f4f4f4;
 }
 
 footer button {

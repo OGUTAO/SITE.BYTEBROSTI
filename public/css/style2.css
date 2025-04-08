@@ -9,6 +9,7 @@ body {
     font-family: 'Poppins', sans-serif;
     background-color: #f4f4f4;
     color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para o tema */
 }
 
 /* Cabeçalho */
@@ -38,11 +39,13 @@ header .logo a {
     font-weight: bold;
     letter-spacing: 2px;
     color: rgba(23, 189, 240, 0.767);
+    transition: color 0.3s ease; /* Transição suave para o tema */
 }
 
 .logo p {
     font-size: 18px;
     opacity: 0.8;
+    transition: color 0.3s ease; /* Transição suave para o tema */
 }
 
 /* Navegação */
@@ -57,7 +60,7 @@ nav a {
     color: rgba(23, 189, 240, 0.767);
     font-size: 17px;
     margin: 0 15px;
-    transition: color 0.3s;
+    transition: color 0.3s ease;
     font-weight: 800;
 }
 
@@ -89,37 +92,29 @@ nav a:hover {
     background: #45a049;
 }
 
-.settings {
+.buttons button:last-child { /* Estiliza o botão de configurações */
     background: none;
     color: white;
-    font-size: 20px;
-    border: 2px solid white;
-    padding: 10px;
-    border-radius: 50%;
-    cursor: pointer;
+    font-size: 24px;
+    border: none;
+    padding: 0;
+    margin-left: 10px;
 }
 
-.settings:hover {
-    background: #ffa500;
-    color: white;
+.buttons button:last-child:hover {
+    color: #ffa500;
 }
 
 .impact-section {
     position: relative;
-    background-color: #f4f4f4;
+    background-color: transparent; /* Fundo transparente */
     padding: 50px 0;
     top: 150px;
     text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para o tema */
+    background-image: none; /* Tenta remover qualquer imagem de fundo */
 }
 
-.impact-container p {
-    font-size: 24px;
-    font-weight: bold;
-    color: #232526;
-    max-width: 800px;
-    margin: 0 auto;
-    line-height: 1.6;
-}
 
 /* Centralização de tudo não mexer */
 .banner:first-of-type {
@@ -163,6 +158,7 @@ nav a:hover {
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
     background: rgba(0, 0, 0, 0.6);
     padding: 8px 10px 10px;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para o tema */
 }
 
 .banner h3 {
@@ -173,6 +169,7 @@ nav a:hover {
     font-weight: bold;
     margin-bottom: 15px;
     font-size: 50px;
+    transition: color 0.3s ease; /* Transição suave para o tema */
 }
 
 /* Carrossel */
@@ -192,41 +189,24 @@ nav a:hover {
     align-items: center;
     text-decoration: none;
     color: #333;
-    /* width: 33.33%; */ /* REMOVA ou COMENTE esta linha */
-    flex: 0 0 50%;      /* ADICIONE: Define a base flex para 50%, sem crescer ou encolher */
-    box-sizing: border-box; /* ADICIONE: Garante que padding/border sejam incluídos na largura */
-    padding: 0 5px;    /* AJUSTE: Mude margin para padding se quiser espaçamento interno */
-                          /* Ou mantenha a margin e ajuste o JS (veja Passo 2) */
+    flex: 0 0 50%;
+    box-sizing: border-box;
+    padding: 0 5px;
 }
 
-/* Se você optar por manter margin: 0 10px; em vez de padding,
-   remova a linha padding acima e mantenha a margin original: */
-/* .carousel-images a { ... margin: 0 10px; ... } */
-
-/* Opcional mas recomendado: Adicionar gap ao container flex para espaçamento */
 .carousel-images {
     display: flex;
     transition: transform 0.5s ease-in-out;
-    /* gap: 20px; */ /* ADICIONE se quiser 20px de espaço *entre* os itens.
-                       Nesse caso, remova margin/padding horizontal dos itens 'a'
-                       e ajuste o cálculo da largura no JS ou use 'scroll-snap'.
-                       Para manter simples, vamos focar em corrigir com margin/padding primeiro. */
 }
 
 /* Garanta que a imagem não ultrapasse o container 'a' */
-/* Em style2.css */
-
-/* Em style2.css */
-
 .carousel-images a img {
-    display: block;     /* Importante para evitar espaços extras */
-    max-width: 100%;   /* Garante que a imagem não ultrapasse o container 'a' */
-    width: auto;       /* Deixa a largura ajustar automaticamente com a altura */
-    height: auto;      /* Necessário para que max-height funcione bem */
-    max-height: 400px; /* <<< AJUSTE ESTE VALOR (em pixels) para a altura máxima desejada */
-    margin: 0 auto;    /* Centraliza a imagem horizontalmente se ela ficar mais estreita que o container 'a' */
-
-    /* Mantenha seus estilos existentes */
+    display: block;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    max-height: 400px;
+    margin: 0 auto;
     border-radius: 10px;
     box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
 }
@@ -235,6 +215,7 @@ nav a:hover {
     margin-top: 10px;
     font-size: 16px;
     font-weight: bold;
+    transition: color 0.3s ease; /* Transição suave para o tema */
 }
 
 /* Overlay Rodapé */
@@ -257,6 +238,7 @@ nav a:hover {
     background: none;
     text-align: center;
     line-height: 1.4;
+    transition: color 0.3s ease; /* Transição suave para o tema */
 }
 
 #over a {
@@ -295,6 +277,7 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para o tema */
 }
 
 .footer-button {
@@ -318,6 +301,7 @@ footer {
     color: white;
     text-decoration: none;
     display: block;
+    transition: color 0.3s ease; /* Transição suave para o tema */
 }
 
 .footer-link:hover {
@@ -330,6 +314,7 @@ footer p.copyright {
     text-align: center;
     width: 100%;
     margin: 10px 0 0;
+    transition: color 0.3s ease; /* Transição suave para o tema */
 }
 
 /* Exemplo para posicionar cada botão */
@@ -372,6 +357,26 @@ footer p.copyright {
     .carousel-images img {
         width: 90%;
     }
+
+    .logo {
+        right: auto;
+        text-align: center;
+        padding-right: 0;
+        margin-bottom: 10px;
+    }
+
+    nav {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    nav a {
+        margin: 0 10px;
+    }
+
+    .buttons {
+        justify-content: center;
+    }
 }
 
 /* nova regra para a imagem fundo.png */
@@ -383,4 +388,268 @@ footer p.copyright {
     border: 5px solid rgba(23, 189, 240, 0.767);
     border-radius: 10px;
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilos para a aba lateral de configurações */
+.settings-sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background-color: #f8f8f8;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    transition: right 0.3s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.settings-sidebar.open {
+    right: 0;
+}
+
+.settings-sidebar h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+    transition: color 0.3s ease; /* Transição suave para o tema */
+}
+
+.setting {
+    margin-bottom: 15px;
+}
+
+.setting label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+    transition: color 0.3s ease; /* Transição suave para o tema */
+}
+
+.setting input[type="number"],
+.setting select,
+.setting input[type="checkbox"],
+.setting button {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin-left: 10px;
+    background-color: #fff;
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Transição suave para o tema */
+}
+
+.setting button {
+    background-color: #ffa500;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.setting button#chatbot-button { /* Assumindo que o botão de logout tem o ID "logout-button" */
+    background-color: #ffa500; /* Cor vermelha */
+    color: white;
+}
+
+.setting button#chatbot-button:hover {
+    background-color: #18bdf0; /* Vermelho mais claro no hover */
+}
+
+.setting button#logout-button { /* Assumindo que o botão de logout tem o ID "logout-button" */
+    background-color: #ffa500; /* Cor vermelha */
+    color: white;
+}
+
+.setting button#logout-button:hover {
+    background-color: #f44336; /* Vermelho mais claro no hover */
+}
+
+.setting button:hover {
+    background-color: #45a049;
+}
+
+body.dark-theme .setting button:hover {
+    background-color: #45a049;
+}
+
+.close-sidebar-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 18px; /* Diminuindo o tamanho da fonte */
+    background-color: #ddd; /* Adicionando um fundo cinza claro */
+    color: #333;
+    border-radius: 5px; /* Arredondando as bordas (opcional) */
+    width: 25px; /* Definindo uma largura menor */
+    height: 25px; /* Definindo uma altura menor */
+    display: flex;
+    justify-content: center; /* Centralizando o "X" horizontalmente */
+    align-items: center; /* Centralizando o "X" verticalmente */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.close-sidebar-button:hover {
+    background-color: #f44336; /* Vermelho ao passar o mouse */
+    color: white;
+}
+
+/* Estilos para o tema escuro */
+/* Ajuste geral para o modo escuro */
+body.dark-theme {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-theme header {
+    background: linear-gradient(to right, #1c1c1c, #2b2b2b);
+    color: #e0e0e0;
+}
+
+body.dark-theme .logo h1 {
+    color: #18bdf0;
+}
+
+body.dark-theme .logo p {
+    color: #bbbbbb;
+}
+
+body.dark-theme nav a {
+    color: #18bdf0;
+}
+
+body.dark-theme nav a:hover {
+    color: #ffa500;
+}
+
+body.dark-theme .buttons button {
+    background-color: #ffa500;
+    color: white;
+}
+
+body.dark-theme .buttons button:hover {
+    background-color: #45a049;
+}
+
+body.dark-theme .buttons button:last-child {
+    background: none !important;
+    color: white;
+}
+
+
+body.dark-theme .buttons button:last-child:hover {
+    color: #ffa500;
+}
+
+body.dark-theme .impact-section {
+    color: #e0e0e0;
+}
+
+body.dark-theme .banner .overlay2 {
+    background: rgba(30, 30, 30, 0.8);
+    color: #f1f1f1;
+}
+
+body.dark-theme .banner h3 {
+    color: #f1f1f1;
+}
+
+body.dark-theme .carousel-images a {
+    color: #e0e0e0;
+}
+
+body.dark-theme .carousel-images a p {
+    color: #e0e0e0;
+}
+
+body.dark-theme #over {
+    color: #e0e0e0;
+}
+
+body.dark-theme #over a {
+    color: #e0e0e0;
+}
+
+body.dark-theme #over a:hover {
+    color: #ffa500;
+}
+
+
+body.dark-theme footer {
+    background-color: #1c1c1c;
+    color: #e0e0e0;
+}
+
+body.dark-theme .footer-link {
+    color: #e0e0e0;
+}
+
+body.dark-theme .footer-link:hover {
+    color: #ffa500;
+}
+
+body.dark-theme footer p.copyright {
+    color: #888;
+}
+
+body.dark-theme .settings-sidebar {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+body.dark-theme .settings-sidebar h3,
+body.dark-theme .setting label {
+    color: #e0e0e0;
+}
+
+body.dark-theme .setting input,
+body.dark-theme .setting select {
+    background-color: #2b2b2b;
+    color: #e0e0e0;
+    border-color: #444;
+}
+
+body.dark-theme .setting button {
+    background-color: #ffa500;
+    color: white;
+}
+
+body.dark-theme .close-sidebar-button {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-theme .close-sidebar-button:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+.carousel-images {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    cursor: grab; /* mostra que pode ser arrastado */
+}
+
+.carousel-images:active {
+    cursor: grabbing;
+}
+
+.carousel-container {
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.carousel-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari e Opera */
 }

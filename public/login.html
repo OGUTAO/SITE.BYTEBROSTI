@@ -24,7 +24,20 @@
         <img src="img/bytebros.png" alt="Imagem de Registro">
         <p class="copyright">&copy; 2024 Byte Bros. Todos os direitos reservados.</p>
     </div>
-
+    <script>
+        // Função para aplicar o tema com classe 'dark-mode'
+        function applyTheme() {
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+          } else {
+            document.body.classList.remove('dark-mode');
+          }
+        }
+    
+        // Aplica o tema ao carregar a página
+        applyTheme();
+      </script>
     <script src="js/script.js"></script>
 </body>
 </html>

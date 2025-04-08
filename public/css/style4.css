@@ -404,4 +404,62 @@ footer button:hover {
     background-color: #ff8800;
 }
 
-/* ... (outros estilos) ... */
+body.dark-theme {
+    background-color: #121212;
+    color: #eee;
+}
+
+body.dark-theme .atendimento,
+body.dark-theme .fale-conosco,
+body.dark-theme .servicos,
+body.dark-theme .orcamento {
+    background-color: #1e1e1e;
+    color: #eee;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme header {
+    background: linear-gradient(to right, #000000, #2c3e50);
+}
+
+body.dark-theme header nav a {
+    color: #1abc9c;
+}
+
+body.dark-theme .logo h1 {
+    color: #1abc9c;
+}
+
+body.dark-theme .fale-conosco p,
+body.dark-theme .fale-conosco h2,
+body.dark-theme .fale-conosco h3,
+body.dark-theme .fale-conosco label,
+body.dark-theme .fale-conosco li,
+body.dark-theme .servico p,
+body.dark-theme .servicos h2,
+body.dark-theme .servico h3,
+body.dark-theme .orcamento h2,
+body.dark-theme .orcamento h3,
+body.dark-theme .orcamento p,
+body.dark-theme .orcamento label {
+    color: #ccc;
+}
+
+body.dark-theme .servico {
+    border-color: #444;
+}
+
+body.dark-theme .orcamento input,
+body.dark-theme .orcamento textarea,
+body.dark-theme .fale-conosco input,
+body.dark-theme .fale-conosco textarea,
+body.dark-theme .atendimento input,
+body.dark-theme .atendimento textarea {
+    background-color: #2a2a2a;
+    color: #eee;
+    border: 1px solid #555;
+}
+
+body.dark-theme footer {
+    background-color: #111;
+}

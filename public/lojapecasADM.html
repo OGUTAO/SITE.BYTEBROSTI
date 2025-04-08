@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADM Loja de Peças - Byte Bros</title>
+    <link rel="stylesheet" href="css/style6.css">
+    <style>
+        .login-container {
+            display: none; /* Inicialmente escondido */
+            flex-direction: column;
+            width: 300px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            gap: 10px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .login-container label {
+            display: block;
+        }
+
+        .login-container input[type="email"],
+        .login-container input[type="password"],
+        .login-container button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 1em;
+        }
+
+        .login-container button {
+            background-color: #5cb85c;
+            color: white;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #4cae4c;
+        }
+
+        .admin-content {
+            display: none; /* Inicialmente escondido */
+        }
+    </style>
+</head>
+<body>
+    <div id="loginSection" class="login-container">
+        <h2>Login de Administrador</h2>
+        <div id="initialSetup" style="display: none;">
+            <h3>Primeiro Acesso - Criar Administrador</h3>
+            <label for="new-admin-email">Email:</label>
+            <input type="email" id="new-admin-email" required>
+            <label for="new-admin-password">Senha:</label>
+            <input type="password" id="new-admin-password" required>
+            <button onclick="createAdmin()">Criar Admin</button>
+            <p id="creation-message" style="color: green; display: none;">Administrador criado com sucesso! Faça login abaixo.</p>
+            <p id="creation-error" style="color: red; display: none;">Erro ao criar administrador.</p>
+        </div>
+        <div id="loginForm">
+            <label for="admin-email">Email:</label>
+            <input type="email" id="admin-email" name="admin-email" required>
+            <label for="admin-password">Senha:</label>
+            <input type="password" id="admin-password" name="admin-password" required>
+            <button onclick="loginAdmin()">Entrar</button>
+            <p id="login-error" style="color: red; display: none;">Credenciais inválidas.</p>
+        </div>
+    </div>
+
+    <div id="adminContent" class="container admin-content">
+        <button id="theme-toggle" class="button theme-toggle-button" title="Alternar Tema"></button>
+        <button onclick="logoutAdmin()" class="button">Logout</button>
+
+        <h2>Adicionar Novo Produto</h2>
+        <form id="add-product-form" class="product-form">
+            <div class="form-group">
+                <label for="new-product-name">Nome:</label>
+                <input type="text" id="new-product-name" required>
+            </div>
+            <div class="form-group">
+                <label for="new-product-details">Detalhes:</label>
+                <textarea id="new-product-details"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="new-product-value">Valor (Ex: 99.90):</label>
+                <input type="number" step="0.01" min="0" id="new-product-value" placeholder="99.90" required>
+            </div>
+            <div class="form-group">
+                <label for="new-product-quantity">Quantidade:</label>
+                <input type="number" id="new-product-quantity" value="1" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="new-product-image">URL da Imagem:</label>
+                <input type="text" id="new-product-image" placeholder="Ex: img/nova_peca.jpg">
+            </div>
+            <button type="submit" class="button submit-button">Adicionar Produto</button>
+        </form>
+
+        <hr>
+
+        <h2>Peças Disponíveis</h2>
+        <ul class="product-list"></ul>
+
+        <a href="lojapecascliente.html" class="button temp-button">Acessar Loja como Cliente</a>
+
+        <hr>
+
+        <h2>Gerenciar Administradores (Apenas Admin Superior)</h2>
+        <div id="adminManagement" style="display: none;">
+            <h3>Adicionar Novo Administrador</h3>
+            <label for="add-admin-email">Email:</label>
+            <input type="email" id="add-admin-email">
+            <label for="add-admin-password">Senha:</label>
+            <input type="password" id="add-admin-password">
+            <button onclick="addAdmin()">Adicionar Admin</button>
+            <p id="add-admin-message" style="color: green; display: none;">Administrador adicionado com sucesso!</p>
+            <p id="add-admin-error" style="color: red; display: none;">Erro ao adicionar administrador.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginSection = document.getElementById('loginSection');
+            const initialSetupDiv = document.getElementById('initialSetup');
+            const loginFormDiv = document.getElementById('loginForm');
+            const adminContent = document.getElementById('adminContent');
+            const addProductForm = document.getElementById('add-product-form');
+            const productList = document.querySelector('.product-list');
+            const themeToggleButton = document.getElementById('theme-toggle');
+            const adminManagementDiv = document.getElementById('adminManagement');
+            const creationMessage = document.getElementById('creation-message');
+            const creationError = document.getElementById('creation-error');
+            const loginError = document.getElementById('login-error');
+            const addAdminMessage = document.getElementById('add-admin-message');
+            const addAdminError = document.getElementById('add-admin-error');
+
+            let products = loadProductsFromLocalStorage();
+            let isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+            let adminAccounts = loadAdminAccounts();
+
+            function loadAdminAccounts() {
+                const storedAdmins = localStorage.getItem('adminAccounts');
+                return storedAdmins ? JSON.parse(storedAdmins) : [];
+            }
+
+            function saveAdminAccounts(accounts) {
+                localStorage.setItem('adminAccounts', JSON.stringify(accounts));
+            }
+
+            function checkAdminSession() {
+                if (isAdminLoggedIn) {
+                    loginSection.style.display = 'none';
+                    initialSetupDiv.style.display = 'none';
+                    loginFormDiv.style.display = 'none';
+                    adminContent.style.display = 'block';
+                    renderAdminProducts(products);
+                    attachAdminEventListeners();
+                    // Apenas o primeiro admin tem permissão para gerenciar outros admins
+                    if (adminAccounts.length > 0 && getLoggedInAdminEmail() === adminAccounts[0].email) {
+                        adminManagementDiv.style.display = 'block';
+                    } else {
+                        adminManagementDiv.style.display = 'none';
+                    }
+                } else {
+                    adminContent.style.display = 'none';
+                    if (adminAccounts.length === 0) {
+                        loginSection.style.display = 'flex';
+                        initialSetupDiv.style.display = 'block';
+                        loginFormDiv.style.display = 'none';
+                    } else {
+                        loginSection.style.display = 'flex';
+                        initialSetupDiv.style.display = 'none';
+                        loginFormDiv.style.display = 'block';
+                    }
+                }
+            }
+
+            function createAdmin() {
+                const newEmail = document.getElementById('new-admin-email').value;
+                const newPassword = document.getElementById('new-admin-password').value;
+
+                if (!newEmail || !newPassword) {
+                    alert('Por favor, preencha email e senha.');
+                    return;
+                }
+
+                if (adminAccounts.find(admin => admin.email === newEmail)) {
+                    creationError.textContent = 'Este email já está cadastrado.';
+                    creationError.style.display = 'block';
+                    creationMessage.style.display = 'none';
+                    return;
+                }
+
+                adminAccounts.push({ email: newEmail, password: newPassword });
+                saveAdminAccounts(adminAccounts);
+                creationMessage.style.display = 'block';
+                creationError.style.display = 'none';
+                loginFormDiv.style.display = 'block';
+                initialSetupDiv.style.display = 'none';
+            }
+
+            function loginAdmin() {
+                const emailInput = document.getElementById('admin-email').value;
+                const passwordInput = document.getElementById('admin-password').value;
+                const admin = adminAccounts.find(acc => acc.email === emailInput && acc.password === passwordInput);
+
+                if (admin) {
+                    isAdminLoggedIn = true;
+                    localStorage.setItem('isAdminLoggedIn', 'true');
+                    localStorage.setItem('loggedInAdminEmail', emailInput); // Salva o email do admin logado
+                    loginError.style.display = 'none';
+                    checkAdminSession();
+                } else {
+                    loginError.style.display = 'block';
+                }
+            }
+
+            function getLoggedInAdminEmail() {
+                return localStorage.getItem('loggedInAdminEmail');
+            }
+
+            function addAdmin() {
+                const newEmail = document.getElementById('add-admin-email').value;
+                const newPassword = document.getElementById('add-admin-password').value;
+
+                if (!newEmail || !newPassword) {
+                    alert('Por favor, preencha email e senha para o novo administrador.');
+                    return;
+                }
+
+                if (adminAccounts.find(admin => admin.email === newEmail)) {
+                    addAdminError.textContent = 'Este email já está cadastrado como administrador.';
+                    addAdminError.style.display = 'block';
+                    addAdminMessage.style.display = 'none';
+                    return;
+                }
+
+                adminAccounts.push({ email: newEmail, password: newPassword });
+                saveAdminAccounts(adminAccounts);
+                addAdminMessage.style.display = 'block';
+                addAdminError.style.display = 'none';
+                document.getElementById('add-admin-email').value = '';
+                document.getElementById('add-admin-password').value = '';
+            }
+
+            function logoutAdmin() {
+                isAdminLoggedIn = false;
+                localStorage.removeItem('isAdminLoggedIn');
+                localStorage.removeItem('loggedInAdminEmail');
+                checkAdminSession();
+            }
+
+            function saveProductsToLocalStorage(productsToSave) {
+                localStorage.setItem('products', JSON.stringify(productsToSave));
+            }
+
+            function loadProductsFromLocalStorage() {
+                const storedProducts = localStorage.getItem('products');
+                return storedProducts ? JSON.parse(storedProducts) : [];
+            }
+
+            function renderAdminProducts(productsToRender) {
+                productList.innerHTML = '';
+                if (!productsToRender || productsToRender.length === 0) {
+                    productList.innerHTML = '<li class="no-products-message">Nenhuma peça cadastrada ainda.</li>';
+                    return;
+                }
+
+                productsToRender.forEach((product, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('product-item');
+                    listItem.dataset.productId = product.id || index;
+
+                    const valueAsNumber = parseFloat(product.value);
+                    const formattedValue = !isNaN(valueAsNumber)
+                        ? valueAsNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : 'Valor inválido';
+
+                    listItem.innerHTML = `
+                        <div class="product-info">
+                            <div class="product-name"><span class="math-inline">\{product\.name \|\| 'Nome Indefinido'\}</div\>
+<div class\="product\-details"\></span>{product.details || 'Sem detalhes'}</div>
+                        </div>
+                        <div class="product-actions">
+                            <div class="stats">
+                                <span class="product-value">Valor: ${formattedValue}</span>
+                                <span class="product-quantity">Quantidade: <span class="math-inline">\{product\.quantity \|\| 0\}</span\>
+</div\>
+<div class\="action\-buttons"\>
+<button class\="button edit\-button" data\-index\="</span>{index}" title="Editar Produto">Editar</button>
+                                <button class="button delete-button danger" data-index="<span class="math-inline">\{index\}" title\="Excluir Produto"\>Excluir</button\>
+</div\>
+</div\>
+<div class\="edit\-controls"\>
+<div class\="edit\-control\-group"\>
+<label for\="value\-</span>{index}">Novo Valor (Ex: 1800.00):</label>
+                                <input type="number" step="0.01" min="0" id="value-<span class="math-inline">\{index\}" value\="</span>{product.value || ''}">
+                            </div>
+                            <div class="edit-control-group">
+                                <label for="quantity-<span class="math-inline">\{index\}"\>Nova Qtd\:</label\>
+<input type\="number" id\="quantity\-</span>{index}" value="<span class="math-inline">\{product\.quantity \|\| 0\}" min\="0"\>
+</div\>
+<div class\="edit\-action\-buttons"\>
+<button class\="button save" data\-index\="</span>{index}">Salvar</button>
+                                <button class="button cancel" data-index="${index}">Cancelar</button>
+                            </div>
+                        </div>
+                    `;
+                    productList.appendChild(listItem);
+                });
+
+                attachAdminEventListeners();
+            }
+
+            function attachAdminEventListeners() {
+                productList.querySelectorAll('.edit-button').forEach(button => {
+                    button.removeEventListener('click', handleEditClick);
+                    button.addEventListener('click', handleEditClick);
+                });
+                productList.querySelectorAll('.save').forEach(button => {
+                    button.removeEventListener('click', handleSaveClick);
+                    button.addEventListener('click', handleSaveClick);
+                });
+                productList.querySelectorAll('.cancel').forEach(button => {
+                    button.removeEventListener('click', handleCancelClick);
+                    button.addEventListener('click', handleCancelClick);
+                });
+                productList.querySelectorAll('.delete-button').forEach(button => {
+                    button.removeEventListener('click', handleDeleteClick);
+                    button.addEventListener('click', handleDeleteClick);
+                });
+            }
+
+            function handleEditClick(event) {
+                const button = event.currentTarget;
+                const listItem = button.closest('.product-item');
+                if (!listItem) return;
+                const editControls = listItem.querySelector('.edit-controls');
+                const productActions = listItem.querySelector('.product-actions');
+
+                closeAllEditControls(listItem);
+
+                if (editControls) editControls.classList.add('active');
+                if (productActions) productActions.style.display = 'none';
+            }
+
+            function handleSaveClick(event) {
+                const button = event.currentTarget;
+                const listItem = button.closest('.product-item');
+                if (!listItem) return;
+                const index = parseInt(button.dataset.index);
+                const editControls = listItem.querySelector('.edit-controls');
+                const newValueInput = editControls.querySelector(`#value-${index}`);
+                const newQuantityInput = editControls.querySelector(`#quantity-${index}`);
+
+                const newValue = parseFloat(newValueInput.value);
+                const newQuantity = parseInt(newQuantityInput.value);
+
+                if (isNaN(newValue) || newValue < 0 || isNaN(newQuantity) || newQuantity < 0) {
+                    alert("Por favor, insira valores válidos para Valor (número positivo) e Quantidade (número inteiro positivo).");
+                    return;
+                }
+
+                products = products.map((product, i) => {
+                    if (i === index) {
+                        return { ...product, value: newValue.toFixed(2), quantity: newQuantity };
+                    }
+                    return product;
+                });
+
+                saveProductsToLocalStorage(products);
+                renderAdminProducts(products);
+                alert(`Produto atualizado!`);
+            }
+
+            function handleCancelClick(event) {
+                const button = event.currentTarget;
+                const listItem = button.closest('.product-item');
+                if (!listItem) return;
+                const editControls = listItem.querySelector('.edit-controls');
+                const productActions = listItem.querySelector('.product-actions');
+
+                if (editControls) editControls.classList.remove('active');
+                if (productActions) productActions.style.display = 'flex';
+            }
+
+            function handleDeleteClick(event) {
+                const button = event.currentTarget;
+                const indexToDelete = parseInt(button.dataset.index);
+                const productToDelete = products[indexToDelete];
+                const productName = productToDelete ? productToDelete.name : `Item ${indexToDelete + 1}`;
+
+                if (confirm(`Tem certeza que deseja excluir "${productName}"?`)) {
+                    products = products.filter((_, index) => index !== indexToDelete);
+                    saveProductsToLocalStorage(products);
+                    renderAdminProducts(products);
+                    alert(`"${productName}" foi excluído!`);
+                }
+            }
+
+            function closeAllEditControls(excludeItem = null) {
+                productList.querySelectorAll('.product-item').forEach(item => {
+                    if (item === excludeItem) return;
+                    const editControls = item.querySelector('.edit-controls');
+                    const productActions = item.querySelector('.product-actions');
+                    if (editControls) editControls.classList.remove('active');
+                    if (productActions) productActions.style.display = 'flex';
+                });
+            }
+
+            if (addProductForm) {
+                addProductForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const nameInput = document.getElementById('new-product-name');
+                    const detailsInput = document.getElementById('new-product-details');
+                    const valueInput = document.getElementById('new-product-value');
+                    const quantityInput = document.getElementById('new-product-quantity');
+                    const imageInput = document.getElementById('new-product-image');
+
+                    const value = parseFloat(valueInput.value);
+                    const quantity = parseInt(quantityInput.value);
+
+                    if (!nameInput.value.trim()) {
+                        alert("O nome do produto é obrigatório.");
+                        nameInput.focus();
+                        return;
+                    }
+                    if (isNaN(value) || value < 0) {
+                        alert("Por favor, insira um valor monetário válido (Ex: 99.90).");
+                        valueInput.focus();
+                        return;
+                    }
+                    if (isNaN(quantity) || quantity < 0) {
+                        alert("Por favor, insira uma quantidade válida (número inteiro positivo).");
+                        quantityInput.focus();
+                        return;
+                    }
+
+                    const newProduct = {
+                        id: Date.now().toString(),
+                        name: nameInput.value.trim(),
+                        details: detailsInput.value.trim(),
+                        value: value.toFixed(2),
+                        quantity: quantity,
+                        image: imageInput.value.trim()
+                    };
+
+                    products.push(newProduct);
+                    saveProductsToLocalStorage(products);
+                    renderAdminProducts(products);
+                    addProductForm.reset();
+                    alert(`"${newProduct.name}" adicionado com sucesso!`);
+                });
+            } else {
+                console.warn("Formulário #add-product-form não encontrado.");
+            }
+
+            // --- Lógica do Tema Claro/Escuro ---
+            const sunIcon = '☀️';
+            const moonIcon = '🌙';
+
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    if (themeToggleButton) themeToggleButton.innerHTML = sunIcon;
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    if (themeToggleButton) themeToggleButton.innerHTML = moonIcon;
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+
+            function toggleTheme() {
+                if (document.body.classList.contains('dark-mode')) {
+                    setTheme('light');
+                } else {
+                    setTheme('dark');
+                }
+            }
+
+            function loadTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                if (savedTheme) {
+                    setTheme(savedTheme);
+                } else if (prefersDark) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            }
+
+            // --- Inicialização Geral ---
+            if (themeToggleButton) {
+                themeToggleButton.addEventListener('click', toggleTheme);
+            } else {
+                console.warn("Botão de tema #theme-toggle não encontrado.");
+            }
+
+            loadTheme();
+            checkAdminSession();
+        });
+    </script>
+</body>
+</html>

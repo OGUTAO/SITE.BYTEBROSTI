@@ -18,5 +18,13 @@
             <a href="orcamento.html?servico=montagem-computadores" class="servico-botao">Solicitar Orçamento</a>
         </section>
     </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark-mode");
+            }
+        });
+    </script>
 </body>
 </html>

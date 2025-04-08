@@ -1,88 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso - Byte Bros</title>
-    <link rel="stylesheet" href="css/style2.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Acesso - Byte Bros</title>
+  <link rel="stylesheet" href="css/style2.css" />
 </head>
 <body>
-    <div class="page-container">
-        <header>
-            <script>
-                function scrollToTop() {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            </script>
-            <section class="banner"></section>
-            <div class="logo">
-                <a href="login_menu.html"><h1>BYTE BROS.TI</h1></a>
-                <p>Manutenção Digital</p>
-            </div>
-            <nav>
-                <a href="atendimento.html">Suporte</a>
-                <a href="servicos.html">Serviços</a>
-                <a href="faleconosco.html">Fale Conosco</a>
-            </nav>
-            <div class="buttons">
-                <button onclick="window.location.href='register.html'">Cadastrar</button>
-                <button onclick="window.location.href='login.html'">Fazer Login</button>
-                <button onclick="window.location.href='settings.html'">⚙</button>
-            </div>
-        </header>
-        <main>
-            <section class="banner">
-                <div class="overlay2">HÁ UM ANO OFERECENDO SUPORTE TÉCNICO DE MÁQUINAS EM TODO DISTRITO FEDERAL! </div>
-                <img src="img/assistencia.png">
-            </section>
-            <section class="impact-section">
-                <div class="impact-container">
-                    <img src="img/fundo.png">
-                </div>
-            </section>
-            <section class="banner">
-                <h3>Nossos Serviços:</h3>
-                <div class="carousel-container">
-                    <div class="carousel-images">
-                        <a href="troca-pecas.html">
-                            <img src="img/assistencia2.png" alt="Serviço 1">
-                            <p>Troca de Peças</p>
-                        </a>
-                        <a href="formatacao-instalacao.html">
-                            <img src="img/assistencia3.png" alt="Serviço 2">
-                            <p>Formatação e Instalação de Sistemas</p>
-                        </a>
-                        <a href="montagem-computadores.html">
-                            <img src="img/assistencia4.png" alt="Serviço 3">
-                            <p>Montagem de Computadores</p>
-                        </a>
-                        <a href="limpeza.html">
-                            <img src="img/assistencia5.png" alt="Serviço 4">
-                            <p>Limpeza</p>
-                        </a>
-                        <a href="remocao-virus.html">
-                            <img src="img/assistencia6.png" alt="Serviço 5">
-                            <p>Remoção de Hacks e Vírus</p>
-                        </a>
-                        <a href="diagnostico-problemas.html">
-                            <img src="img/assistencia7.png" alt="Serviço 6">
-                            <p>Diagnóstico de Problemas</p>
-                        </a>
-                    </div>
-                </div>
-                <p id="over">
-                    <a href="orcamento.html">Faça seu orçamento hoje mesmo!</a>
-                </p> 
-            </section>
-        </main>
-        <footer>
-            <button class="footer-button left-button">
-                <a href="sobrenos.html" class="footer-link">Sobre Nós</a>
-            </button>
-            <p class="copyright">&copy; 2024 Byte Bros. Todos os direitos reservados.</p>
-            <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="footer-button right-button">Voltar ao Topo</button>
-        </footer>
+  <div class="settings-sidebar">
+    <h3>Configurações</h3>
+    <div class="setting">
+      <label for="theme-select">Tema:</label>
+      <select id="theme-select">
+        <option value="light">Claro</option>
+        <option value="dark">Escuro</option>
+      </select>
     </div>
-    <script src="js/carousel.js"></script>
+    <div class="setting">
+      <label for="font-size-input">Tamanho da Fonte:</label>
+      <input type="number" id="font-size-input" value="16" />
+    </div>
+    <div class="setting">
+      <button id="chatbot-button">Chatbot (Em breve)</button>
+    </div>
+    <div class="setting">
+      <button id="change-email-button">Alterar E-mail</button>
+    </div>
+    <div class="setting">
+      <button id="change-password-button">Alterar Senha</button>
+    </div>
+    <div class="setting">
+      <button id="logout-button">Logout</button>
+    </div>
+    <button class="close-sidebar-button" aria-label="Fechar Configurações">&times;</button>
+  </div>
+
+  <div class="page-container">
+    <header>
+      <section class="banner"></section>
+      <div class="logo">
+        <a href="index.html"><h1>BYTE BROS.TI</h1></a>
+        <p>Manutenção Digital</p>
+      </div>
+      <nav>
+        <a href="lojapecascliente.html">Loja</a>
+        <a href="servicos.html">Serviços</a>
+        <a href="atendimento.html">Suporte</a>
+        <a href="faleconosco.html">Fale Conosco</a>
+      </nav>
+      <div class="buttons">
+        <button onclick="window.location.href='register.html'">Cadastrar</button>
+        <button onclick="window.location.href='login.html'">Fazer Login</button>
+        <button onclick="event.preventDefault(); document.querySelector('.settings-sidebar').classList.add('open');" aria-label="Abrir Configurações">⚙</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="banner">
+        <div class="overlay2">
+          HÁ UM ANO OFERECENDO SUPORTE TÉCNICO DE MÁQUINAS EM TODO DISTRITO FEDERAL!
+        </div>
+        <img src="img/assistencia.png" alt="Imagem de assistência técnica" />
+      </section>
+
+      <section class="impact-section">
+        <div class="impact-container">
+          <img src="img/fundo.png" alt="Imagem de impacto" />
+        </div>
+      </section>
+
+      <section class="banner">
+        <h3>Nossos Serviços:</h3>
+        <div class="carousel-container">
+          <div class="carousel-images">
+            <a href="troca-pecas.html">
+              <img src="img/assistencia2.png" alt="Troca de Peças" />
+              <p>Troca de Peças</p>
+            </a>
+            <a href="formatacao-instalacao.html">
+              <img src="img/assistencia3.png" alt="Formatação e Instalação" />
+              <p>Formatação e Instalação de Sistemas</p>
+            </a>
+            <a href="montagem-computadores.html">
+              <img src="img/assistencia4.png" alt="Montagem de Computadores" />
+              <p>Montagem de Computadores</p>
+            </a>
+            <a href="limpeza.html">
+              <img src="img/assistencia5.png" alt="Limpeza de Computadores" />
+              <p>Limpeza</p>
+            </a>
+            <a href="remocao-virus.html">
+              <img src="img/assistencia6.png" alt="Remoção de Vírus" />
+              <p>Remoção de Hacks e Vírus</p>
+            </a>
+            <a href="diagnostico-problemas.html">
+              <img src="img/assistencia7.png" alt="Diagnóstico de Problemas" />
+              <p>Diagnóstico de Problemas</p>
+            </a>
+          </div>
+        </div>
+        <p id="over">
+          <a href="servicos.html">Faça seu orçamento hoje mesmo!</a>
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <button class="footer-button left-button">
+        <a href="sobrenos.html" class="footer-link">Sobre Nós</a>
+      </button>
+      <p class="copyright">&copy; 2024 Byte Bros. Todos os direitos reservados.</p>
+      <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="footer-button right-button">
+        Voltar ao Topo
+      </button>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const settingsSidebar = document.querySelector('.settings-sidebar');
+      const closeSidebarButton = document.querySelector('.close-sidebar-button');
+      const themeSelect = document.getElementById('theme-select');
+      const fontSizeInput = document.getElementById('font-size-input');
+      const logoutButton = document.getElementById('logout-button');
+      const changeEmailButton = document.getElementById('change-email-button');
+      const changePasswordButton = document.getElementById('change-password-button');
+      const chatbotButton = document.getElementById('chatbot-button');
+
+      closeSidebarButton.addEventListener('click', () => {
+        settingsSidebar.classList.remove('open');
+      });
+
+      function applyTheme(theme) {
+        const isDark = theme === 'dark';
+        document.body.classList.toggle('dark-theme', isDark);
+        localStorage.setItem('theme', theme);
+        themeSelect.innerHTML = `
+          <option value="light" ${!isDark ? 'selected' : ''}>Claro</option>
+          <option value="dark" ${isDark ? 'selected' : ''}>Escuro</option>
+        `;
+      }
+
+      themeSelect.addEventListener('change', (event) => {
+        applyTheme(event.target.value);
+      });
+
+      fontSizeInput.addEventListener('change', (event) => {
+        const newFontSize = event.target.value + 'px';
+        document.documentElement.style.fontSize = newFontSize;
+        localStorage.setItem('fontSize', newFontSize);
+      });
+
+      if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+          alert('Logout realizado (funcionalidade a ser implementada)');
+        });
+      }
+
+      if (changeEmailButton) {
+        changeEmailButton.addEventListener('click', () => {
+          window.location.href = 'change-email.html';
+        });
+      }
+
+      if (changePasswordButton) {
+        changePasswordButton.addEventListener('click', () => {
+          window.location.href = 'forgot-password.html';
+        });
+      }
+
+      if (chatbotButton) {
+        chatbotButton.addEventListener('click', () => {
+          alert('Chatbot estará disponível em breve!');
+        });
+      }
+
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      applyTheme(savedTheme);
+
+      const savedFontSize = localStorage.getItem('fontSize');
+      if (savedFontSize) {
+        document.documentElement.style.fontSize = savedFontSize;
+        fontSizeInput.value = savedFontSize.replace('px', '');
+      }
+    });
+  </script>
+  <script src="js/carousel.js"></script>
 </body>
 </html>
