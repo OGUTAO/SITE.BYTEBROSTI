@@ -28,11 +28,11 @@
                 <label for="font-size-input">Tamanho da Fonte:</label>
                 <input type="number" id="font-size-input" value="16" />
             </div>
-            <div class="setting">
-                <button id="change-email-button">Alterar E-mail</button>
+            <div class="setting" id="change-email-setting-sidebar" style="display: none;">
+                <button id="change-email-button-sidebar">Alterar E-mail</button>
             </div>
-            <div class="setting">
-                <button id="change-password-button">Alterar Senha</button>
+            <div class="setting" id="change-password-setting-sidebar" style="display: none;">
+                <button id="change-password-button-sidebar">Alterar Senha</button>
             </div>
             <div class="setting" id="logout-setting" style="display: none;">
                 <button id="logout-button">Logout</button>
@@ -109,7 +109,7 @@
         </footer>
     </div>
 
-  <script src="js/version.js"></script>
+    <script src="js/version.js"></script>
 
     <div id="chatbot-container" class="chatbot-container closed">
         <div class="chatbot-header">
@@ -138,8 +138,12 @@
             const fontSizeInput = document.getElementById('font-size-input');
             const logoutSetting = document.getElementById('logout-setting');
             const logoutButton = document.getElementById('logout-button');
-            const changeEmailButton = document.getElementById('change-email-button');
-            const changePasswordButton = document.getElementById('change-password-button');
+            const changeEmailButtonHeader = document.getElementById('change-email-button');
+            const changePasswordButtonHeader = document.getElementById('change-password-button');
+            const changeEmailSettingSidebar = document.getElementById('change-email-setting-sidebar');
+            const changePasswordSettingSidebar = document.getElementById('change-password-setting-sidebar');
+            const changeEmailButtonSidebar = document.getElementById('change-email-button-sidebar');
+            const changePasswordButtonSidebar = document.getElementById('change-password-button-sidebar');
             const chatbotContainer = document.getElementById('chatbot-container');
             const chatbotToggle = document.getElementById('chatbot-toggle');
             const chatbotCloseButton = document.getElementById('chatbot-close');
@@ -179,14 +183,26 @@
                 });
             }
 
-            if (changeEmailButton) {
-                changeEmailButton.addEventListener('click', () => {
+            if (changeEmailButtonHeader) {
+                changeEmailButtonHeader.addEventListener('click', () => {
                     window.location.href = 'change-email.html';
                 });
             }
 
-            if (changePasswordButton) {
-                changePasswordButton.addEventListener('click', () => {
+            if (changePasswordButtonHeader) {
+                changePasswordButtonHeader.addEventListener('click', () => {
+                    window.location.href = 'forgot-password.html';
+                });
+            }
+
+            if (changeEmailButtonSidebar) {
+                changeEmailButtonSidebar.addEventListener('click', () => {
+                    window.location.href = 'change-email.html';
+                });
+            }
+
+            if (changePasswordButtonSidebar) {
+                changePasswordButtonSidebar.addEventListener('click', () => {
                     window.location.href = 'forgot-password.html';
                 });
             }
@@ -228,6 +244,12 @@
                 }
                 if (logoutSetting) {
                     logoutSetting.style.display = isLoggedIn ? 'block' : 'none';
+                }
+                if (changeEmailSettingSidebar) {
+                    changeEmailSettingSidebar.style.display = isLoggedIn ? 'block' : 'none';
+                }
+                if (changePasswordSettingSidebar) {
+                    changePasswordSettingSidebar.style.display = isLoggedIn ? 'block' : 'none';
                 }
 
                 if (isLoggedIn && userName) {

@@ -12,6 +12,8 @@ body {
 }
 
 .container {
+    position: relative;
+    top: -20px;
     width: 450px;
     background: white;
     padding: 20px;
