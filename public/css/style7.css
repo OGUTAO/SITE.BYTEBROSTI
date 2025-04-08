@@ -391,3 +391,7 @@ body.dark-mode .no-products-message {
     color: var(--muted-text-dark);
     border-color: var(--border-color-dark);
 }
+
+body.dark-theme #system-version {
+    color: #fafcfd !important;
+}

@@ -3,28 +3,29 @@
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    background-color: var(--bg-color-light); /* Usando variável de cor */
+    color: var(--text-color-light); /* Usando variável de cor */
     line-height: 1.6;
     transition: background-color 0.3s, color 0.3s;
 }
 
 body.dark-mode {
-    background-color: #121212;
-    color: #f0f0f0;
+    background-color: var(--bg-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 .container {
     max-width: 960px;
     margin: 40px auto;
     padding: 30px;
-    background-color: #fff;
+    background-color: var(--container-bg-light); /* Usando variável de cor */
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-light); /* Usando variável de cor */
 }
 
 body.dark-mode .container {
-    background-color: #1e1e1e;
+    background-color: var(--container-bg-dark); /* Usando variável de cor */
+    box-shadow: var(--shadow-dark); /* Usando variável de cor */
 }
 
 .header-carrinho {
@@ -32,64 +33,48 @@ body.dark-mode .container {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    border-bottom: 2px solid #eee;
+    border-bottom: 2px solid var(--border-color-light); /* Usando variável de cor */
     padding-bottom: 15px;
 }
 
 body.dark-mode .header-carrinho {
-    border-bottom-color: #444;
+    border-bottom-color: var(--border-color-dark); /* Usando variável de cor */
 }
 
 .header-carrinho h1 {
     margin: 0;
     font-size: 24px;
+    color: var(--text-color-light); /* Usando variável de cor */
 }
 
-/* Botão de alternar tema */
-.theme-toggle {
-    margin-left: auto;
-    background-color: #ddd;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-body.dark-mode .theme-toggle {
-    background-color: #333;
-    color: #f0f0f0;
+body.dark-mode .header-carrinho h1 {
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 .back-button {
     display: inline-flex;
     align-items: center;
     padding: 8px 15px;
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
+    background-color: var(--bg-color-light); /* Usando variável de cor */
+    color: var(--muted-text-light); /* Usando variável de cor */
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
     border-radius: 5px;
     text-decoration: none;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 body.dark-mode .back-button {
-    background-color: #2d3748;
-    color: #e2e8f0;
-    border-color: #4a5568;
-}
-
-.back-button i {
-    margin-right: 5px;
+    background-color: var(--container-bg-dark); /* Usando variável de cor */
+    color: var(--muted-text-dark); /* Usando variável de cor */
+    border-color: var(--border-color-dark); /* Usando variável de cor */
 }
 
 .back-button:hover {
-    background-color: #e0e0e0;
+    background-color: var(--hover-bg-light); /* Usando variável de cor */
 }
 
 body.dark-mode .back-button:hover {
-    background-color: #3a3f4b;
+    background-color: var(--hover-bg-dark); /* Usando variável de cor */
 }
 
 .lista-carrinho {
@@ -106,11 +91,11 @@ body.dark-mode .back-button:hover {
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color-light); /* Usando variável de cor */
 }
 
 body.dark-mode .item-carrinho {
-    border-bottom-color: #444;
+    border-bottom-color: var(--border-color-dark); /* Usando variável de cor */
 }
 
 .item-carrinho:last-child {
@@ -120,11 +105,11 @@ body.dark-mode .item-carrinho {
 .item-carrinho.empty-cart {
     text-align: center;
     padding: 40px 0;
-    color: #777;
+    color: var(--muted-text-light); /* Usando variável de cor */
 }
 
 body.dark-mode .item-carrinho.empty-cart {
-    color: #a0aec0;
+    color: var(--muted-text-dark); /* Usando variável de cor */
 }
 
 .item-carrinho.empty-cart i {
@@ -133,12 +118,12 @@ body.dark-mode .item-carrinho.empty-cart {
 }
 
 .item-carrinho.empty-cart a {
-    color: #007bff;
+    color: var(--accent-color-light); /* Usando variável de cor */
     text-decoration: none;
 }
 
 body.dark-mode .item-carrinho.empty-cart a {
-    color: #81a1c1;
+    color: var(--accent-color-dark); /* Usando variável de cor */
 }
 
 .info-produto {
@@ -152,93 +137,87 @@ body.dark-mode .item-carrinho.empty-cart a {
     object-fit: cover;
     border-radius: 5px;
     margin-right: 15px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
+    background-color: var(--container-bg-light); /* Fallback */
 }
 
 body.dark-mode .info-produto img {
-    border-color: #4a5568;
-    background-color: #4a5568;
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+    background-color: var(--container-bg-dark); /* Fallback */
 }
 
 .detalhes-produto h3 {
     margin: 0 0 5px;
     font-size: 18px;
+    color: var(--text-color-light); /* Usando variável de cor */
 }
 
 body.dark-mode .detalhes-produto h3 {
-    color: #e2e8f0;
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 .preco-unitario {
-    color: #777;
+    color: var(--muted-text-light); /* Usando variável de cor */
     font-size: 14px;
 }
 
 body.dark-mode .preco-unitario {
-    color: #a0aec0;
-}
-
-.acoes-produto {
-    display: flex;
-    align-items: center;
-}
-
-.quantidade {
-    display: flex;
-    align-items: center;
-    margin-right: 15px;
+    color: var(--muted-text-dark); /* Usando variável de cor */
 }
 
 .botao-quantidade {
     background: none;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
     border-radius: 5px;
     padding: 5px 10px;
     margin: 0 5px;
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
+    color: var(--text-color-light); /* Usando variável de cor */
 }
 
 body.dark-mode .botao-quantidade {
-    border-color: #718096;
-    color: #e2e8f0;
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 .input-quantidade {
     width: 40px;
     text-align: center;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
     border-radius: 3px;
     padding: 5px;
     font-size: 14px;
+    background-color: var(--input-bg-light); /* Usando variável de cor */
+    color: var(--text-color-light); /* Usando variável de cor */
 }
 
 body.dark-mode .input-quantidade {
-    border-color: #718096;
-    background-color: #2d3748;
-    color: #e2e8f0;
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+    background-color: var(--input-bg-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 .botao-remover {
     background: none;
     border: none;
-    color: #dc3545;
+    color: var(--danger-color-light); /* Usando variável de cor */
     cursor: pointer;
     font-size: 16px;
     transition: color 0.3s ease;
 }
 
 .botao-remover:hover {
-    color: #c82333;
+    color: var(--danger-hover-light); /* Usando variável de cor */
 }
 
 body.dark-mode .botao-remover {
-    color: #f56565;
+    color: var(--danger-color-dark); /* Usando variável de cor */
 }
 
 body.dark-mode .botao-remover:hover {
-    color: #e53e3e;
+    color: var(--danger-hover-dark); /* Usando variável de cor */
 }
 
 .preco-total-item {
@@ -247,21 +226,24 @@ body.dark-mode .botao-remover:hover {
     margin-left: auto;
     min-width: 100px;
     text-align: right;
+    color: var(--text-color-light); /* Usando variável de cor */
 }
 
 body.dark-mode .preco-total-item {
-    color: #e2e8f0;
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 .resumo-carrinho {
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 2px solid #eee;
+    border-top: 2px solid var(--border-color-light); /* Usando variável de cor */
     text-align: right;
+    color: var(--text-color-light); /* Usando variável de cor */
 }
 
 body.dark-mode .resumo-carrinho {
-    border-top-color: #4a5568;
+    border-top-color: var(--border-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 .subtotal, .frete, .total {
@@ -269,24 +251,24 @@ body.dark-mode .resumo-carrinho {
     justify-content: space-between;
     margin-bottom: 10px;
     font-size: 16px;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .subtotal,
+body.dark-mode .frete,
+body.dark-mode .total {
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 .total {
     font-size: 18px;
     font-weight: bold;
-    margin-top: 20px;
-}
-
-body.dark-mode .subtotal span,
-body.dark-mode .frete span,
-body.dark-mode .total span {
-    color: #e2e8f0;
 }
 
 .checkout-button {
     display: inline-block;
     padding: 12px 25px;
-    background-color: #007bff;
+    background-color: var(--accent-color-light); /* Usando variável de cor */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -297,39 +279,36 @@ body.dark-mode .total span {
 }
 
 .checkout-button:hover {
-    background-color: #0056b3;
+    background-color: var(--accent-hover-light); /* Usando variável de cor */
 }
 
 .checkout-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
-}
-
-.checkout-button i {
-    margin-right: 8px;
+    color: #666;
 }
 
 body.dark-mode .checkout-button {
-    background-color: #60a5fa;
-    color: #1a202c;
+    background-color: var(--accent-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
 }
 
 body.dark-mode .checkout-button:hover {
-    background-color: #3b82f6;
+    background-color: var(--accent-hover-dark); /* Usando variável de cor */
 }
 
 body.dark-mode .checkout-button:disabled {
     background-color: #718096;
-    color: #a0aec0;
+    color: var(--muted-text-dark);
 }
 
 .observacao-checkout {
-    color: #777;
+    color: var(--muted-text-light); /* Usando variável de cor */
     font-size: 14px;
     margin-top: 10px;
     display: none;
 }
 
 body.dark-mode .observacao-checkout {
-    color: #a0aec0;
+    color: var(--muted-text-dark); /* Usando variável de cor */
 }
