@@ -1,191 +1,276 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Acesso - Byte Bros</title>
-  <link rel="stylesheet" href="css/style2.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Acesso - Byte Bros</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/style2.css" />
 </head>
 <body>
-  <div class="settings-sidebar">
-    <h3>Configurações</h3>
-    <div class="setting">
-      <label for="theme-select">Tema:</label>
-      <select id="theme-select">
-        <option value="light">Claro</option>
-        <option value="dark">Escuro</option>
-      </select>
-    </div>
-    <div class="setting">
-      <label for="font-size-input">Tamanho da Fonte:</label>
-      <input type="number" id="font-size-input" value="16" />
-    </div>
-    <div class="setting">
-      <button id="chatbot-button">Chatbot (Em breve)</button>
-    </div>
-    <div class="setting">
-      <button id="change-email-button">Alterar E-mail</button>
-    </div>
-    <div class="setting">
-      <button id="change-password-button">Alterar Senha</button>
-    </div>
-    <div class="setting">
-      <button id="logout-button">Logout</button>
-    </div>
-    <button class="close-sidebar-button" aria-label="Fechar Configurações">&times;</button>
-  </div>
-
-  <div class="page-container">
-    <header>
-      <section class="banner"></section>
-      <div class="logo">
-        <a href="index.html"><h1>BYTE BROS.TI</h1></a>
-        <p>Manutenção Digital</p>
-      </div>
-      <nav>
-        <a href="lojapecascliente.html">Loja</a>
-        <a href="servicos.html">Serviços</a>
-        <a href="atendimento.html">Suporte</a>
-        <a href="faleconosco.html">Fale Conosco</a>
-      </nav>
-      <div class="buttons">
-        <button onclick="window.location.href='register.html'">Cadastrar</button>
-        <button onclick="window.location.href='login.html'">Fazer Login</button>
-        <button onclick="event.preventDefault(); document.querySelector('.settings-sidebar').classList.add('open');" aria-label="Abrir Configurações">⚙</button>
-      </div>
-    </header>
-
-    <main>
-      <section class="banner">
-        <div class="overlay2">
-          HÁ UM ANO OFERECENDO SUPORTE TÉCNICO DE MÁQUINAS EM TODO DISTRITO FEDERAL!
+    <div class="page-container">
+        <div class="settings-sidebar">
+            <h3>Configurações</h3>
+            <div class="profile-icon sidebar-profile-icon" id="sidebar-profile-icon" style="display: none; margin-bottom: 15px; text-align: center; cursor: pointer; flex-direction: column; align-items: center;">
+                <a href="seu-link-perfil.html" aria-label="Perfil">
+                    <i class="fa-regular fa-circle-user" style="font-size: 40px; color: #333;"></i>
+                </a>
+                <p id="sidebar-user-name" style="margin-top: 5px; font-size: 0.9em; color: #333;"></p>
+            </div>
+            <div class="setting">
+                <label for="theme-select">Tema:</label>
+                <select id="theme-select">
+                    <option value="light">Claro</option>
+                    <option value="dark">Escuro</option>
+                </select>
+            </div>
+            <div class="setting">
+                <label for="font-size-input">Tamanho da Fonte:</label>
+                <input type="number" id="font-size-input" value="16" />
+            </div>
+            <div class="setting">
+                <button id="change-email-button">Alterar E-mail</button>
+            </div>
+            <div class="setting">
+                <button id="change-password-button">Alterar Senha</button>
+            </div>
+            <div class="setting" id="logout-setting" style="display: none;">
+                <button id="logout-button">Logout</button>
+            </div>
+            <button class="close-sidebar-button" aria-label="Fechar Configurações">&times;</button>
         </div>
-        <img src="img/assistencia.png" alt="Imagem de assistência técnica" />
-      </section>
 
-      <section class="impact-section">
-        <div class="impact-container">
-          <img src="img/fundo.png" alt="Imagem de impacto" />
+        <header>
+            <section class="banner"></section>
+            <div class="logo">
+                <a href="index.html"><h1>BYTE BROS.TI</h1></a>
+                <p>Manutenção Digital</p>
+            </div>
+            <nav>
+                <a href="lojapecascliente.html">Loja</a>
+                <a href="servicos.html">Serviços</a>
+                <a href="atendimento.html">Suporte</a>
+                <a href="faleconosco.html">Fale Conosco</a>
+            </nav>
+            <div class="buttons" id="header-auth-buttons">
+                <button onclick="window.location.href='register.html'">Cadastrar</button>
+                <button onclick="window.location.href='login.html'">Fazer Login</button>
+                <button onclick="event.preventDefault(); document.querySelector('.settings-sidebar').classList.add('open');" aria-label="Abrir Configurações">⚙</button>
+            </div>
+            <div class="profile-icon" id="header-profile-icon" style="display: none; cursor: pointer; flex-direction: column; align-items: center;">
+                <a href="#" aria-label="Perfil" class="profile-icon-link">
+                    <i class="fa-regular fa-circle-user" style="font-size: 30px; color: white;"></i>
+                </a>
+                <p id="header-user-name" style="margin-top: 5px; font-size: 0.8em; color: white;"></p>
+            </div>
+        </header>
+
+        <main>
+            <section class="banner">
+                <div class="overlay2">
+                    HÁ UM ANO OFERECENDO SUPORTE TÉCNICO DE MÁQUINAS EM TODO DISTRITO FEDERAL!
+                </div>
+                <img src="img/assistencia.png" alt="Imagem de assistência técnica" />
+            </section>
+
+            <section class="impact-section">
+                <div class="impact-container">
+                    <img src="img/fundo.png" alt="Imagem de impacto" />
+                </div>
+            </section>
+
+            <section class="banner">
+                <h3>Nossos Serviços:</h3>
+                <div class="carousel-container">
+                    <div class="carousel-images">
+                        <a href="troca-pecas.html"><img src="img/assistencia2.png" alt="Troca de Peças" /><p>Troca de Peças</p></a>
+                        <a href="formatacao-instalacao.html"><img src="img/assistencia3.png" alt="Formatação e Instalação" /><p>Formatação e Instalação de Sistemas</p></a>
+                        <a href="montagem-computadores.html"><img src="img/assistencia4.png" alt="Montagem de Computadores" /><p>Montagem de Computadores</p></a>
+                        <a href="limpeza.html"><img src="img/assistencia5.png" alt="Limpeza de Computadores" /><p>Limpeza</p></a>
+                        <a href="remocao-virus.html"><img src="img/assistencia6.png" alt="Remoção de Vírus" /><p>Remoção de Hacks e Vírus</p></a>
+                        <a href="diagnostico-problemas.html"><img src="img/assistencia7.png" alt="Diagnóstico de Problemas" /><p>Diagnóstico de Problemas</p></a>
+                    </div>
+                </div>
+                <p id="over">
+                    <a href="servicos.html">Faça seu orçamento hoje mesmo!</a>
+                </p>
+            </section>
+        </main>
+
+        <footer>
+            <button class="footer-button left-button">
+                <a href="sobrenos.html" class="footer-link">Sobre Nós</a>
+            </button>
+            <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+            <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="footer-button right-button">
+                Voltar ao Topo
+            </button>
+        </footer>
+    </div>
+
+    <div id="chatbot-container" class="chatbot-container closed">
+        <div class="chatbot-header">
+            Chatbot Byte Bros
+            <div class="chatbot-header-buttons">
+                <button id="chatbot-maximize" class="chatbot-header-button" aria-label="Maximizar Chatbot">&#x26F6;</button>
+                <button id="chatbot-close" class="chatbot-header-button" aria-label="Fechar Chatbot">&times;</button>
+            </div>
         </div>
-      </section>
-
-      <section class="banner">
-        <h3>Nossos Serviços:</h3>
-        <div class="carousel-container">
-          <div class="carousel-images">
-            <a href="troca-pecas.html">
-              <img src="img/assistencia2.png" alt="Troca de Peças" />
-              <p>Troca de Peças</p>
-            </a>
-            <a href="formatacao-instalacao.html">
-              <img src="img/assistencia3.png" alt="Formatação e Instalação" />
-              <p>Formatação e Instalação de Sistemas</p>
-            </a>
-            <a href="montagem-computadores.html">
-              <img src="img/assistencia4.png" alt="Montagem de Computadores" />
-              <p>Montagem de Computadores</p>
-            </a>
-            <a href="limpeza.html">
-              <img src="img/assistencia5.png" alt="Limpeza de Computadores" />
-              <p>Limpeza</p>
-            </a>
-            <a href="remocao-virus.html">
-              <img src="img/assistencia6.png" alt="Remoção de Vírus" />
-              <p>Remoção de Hacks e Vírus</p>
-            </a>
-            <a href="diagnostico-problemas.html">
-              <img src="img/assistencia7.png" alt="Diagnóstico de Problemas" />
-              <p>Diagnóstico de Problemas</p>
-            </a>
-          </div>
+        <div id="chatbot-messages" class="chatbot-messages">
+            <div class="bot-message">Olá! Como posso ajudar você hoje?</div>
         </div>
-        <p id="over">
-          <a href="servicos.html">Faça seu orçamento hoje mesmo!</a>
-        </p>
-      </section>
-    </main>
+        <div class="chatbot-input">
+            <input type="text" id="user-input" placeholder="Digite sua mensagem...">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
+    </div>
 
-    <footer>
-      <button class="footer-button left-button">
-        <a href="sobrenos.html" class="footer-link">Sobre Nós</a>
-      </button>
-      <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
-      <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="footer-button right-button">
-        Voltar ao Topo
-      </button>
-    </footer>
-  </div>
+    <button id="chatbot-toggle" class="chatbot-toggle">💬</button>
 
-  <!-- Scripts -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const settingsSidebar = document.querySelector('.settings-sidebar');
-      const closeSidebarButton = document.querySelector('.close-sidebar-button');
-      const themeSelect = document.getElementById('theme-select');
-      const fontSizeInput = document.getElementById('font-size-input');
-      const logoutButton = document.getElementById('logout-button');
-      const changeEmailButton = document.getElementById('change-email-button');
-      const changePasswordButton = document.getElementById('change-password-button');
-      const chatbotButton = document.getElementById('chatbot-button');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const settingsSidebar = document.querySelector('.settings-sidebar');
+            const closeSidebarButton = document.querySelector('.close-sidebar-button');
+            const themeSelect = document.getElementById('theme-select');
+            const fontSizeInput = document.getElementById('font-size-input');
+            const logoutSetting = document.getElementById('logout-setting');
+            const logoutButton = document.getElementById('logout-button');
+            const changeEmailButton = document.getElementById('change-email-button');
+            const changePasswordButton = document.getElementById('change-password-button');
+            const chatbotContainer = document.getElementById('chatbot-container');
+            const chatbotToggle = document.getElementById('chatbot-toggle');
+            const chatbotCloseButton = document.getElementById('chatbot-close');
+            const chatbotMaximizeButton = document.getElementById('chatbot-maximize');
+            const headerAuthButtons = document.getElementById('header-auth-buttons');
+            const headerProfileIcon = document.getElementById('header-profile-icon');
+            const sidebarProfileIcon = document.getElementById('sidebar-profile-icon');
+            const headerUserNameElement = document.getElementById('header-user-name');
+            const sidebarUserNameElement = document.getElementById('sidebar-user-name');
 
-      closeSidebarButton.addEventListener('click', () => {
-        settingsSidebar.classList.remove('open');
-      });
+            closeSidebarButton.addEventListener('click', () => {
+                settingsSidebar.classList.remove('open');
+            });
 
-      function applyTheme(theme) {
-        const isDark = theme === 'dark';
-        document.body.classList.toggle('dark-theme', isDark);
-        localStorage.setItem('theme', theme);
-        themeSelect.innerHTML = `
-          <option value="light" ${!isDark ? 'selected' : ''}>Claro</option>
-          <option value="dark" ${isDark ? 'selected' : ''}>Escuro</option>
-        `;
-      }
+            function applyTheme(theme) {
+                const isDark = theme === 'dark';
+                document.body.classList.toggle('dark-theme', isDark);
+                localStorage.setItem('theme', theme);
+                themeSelect.value = theme;
+            }
 
-      themeSelect.addEventListener('change', (event) => {
-        applyTheme(event.target.value);
-      });
+            themeSelect.addEventListener('change', (event) => {
+                applyTheme(event.target.value);
+            });
 
-      fontSizeInput.addEventListener('change', (event) => {
-        const newFontSize = event.target.value + 'px';
-        document.documentElement.style.fontSize = newFontSize;
-        localStorage.setItem('fontSize', newFontSize);
-      });
+            fontSizeInput.addEventListener('change', (event) => {
+                const newFontSize = event.target.value + 'px';
+                document.documentElement.style.fontSize = newFontSize;
+                localStorage.setItem('fontSize', newFontSize);
+            });
 
-      if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
-          alert('Logout realizado (funcionalidade a ser implementada)');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', () => {
+                    localStorage.removeItem('userLoggedIn');
+                    localStorage.removeItem('userName');
+                    window.location.reload();
+                });
+            }
+
+            if (changeEmailButton) {
+                changeEmailButton.addEventListener('click', () => {
+                    window.location.href = 'change-email.html';
+                });
+            }
+
+            if (changePasswordButton) {
+                changePasswordButton.addEventListener('click', () => {
+                    window.location.href = 'forgot-password.html';
+                });
+            }
+
+            chatbotToggle.addEventListener('click', () => {
+                chatbotContainer.classList.toggle('closed');
+                chatbotToggle.style.display = chatbotContainer.classList.contains('closed') ? 'flex' : 'none';
+            });
+
+            chatbotCloseButton.addEventListener('click', () => {
+                chatbotContainer.classList.add('closed');
+                chatbotToggle.style.display = 'flex';
+                chatbotContainer.classList.remove('maximized');
+            });
+
+            chatbotMaximizeButton.addEventListener('click', () => {
+                chatbotContainer.classList.toggle('maximized');
+            });
+
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+
+            const savedFontSize = localStorage.getItem('fontSize');
+            if (savedFontSize) {
+                document.documentElement.style.fontSize = savedFontSize;
+                fontSizeInput.value = savedFontSize.replace('px', '');
+            }
+
+            function checkLoginStatusOnLoad() {
+                const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+                const userName = localStorage.getItem('userName');
+
+                if (headerAuthButtons && headerProfileIcon) {
+                    headerAuthButtons.style.display = isLoggedIn ? 'none' : 'flex';
+                    headerProfileIcon.style.display = isLoggedIn ? 'flex' : 'none';
+                }
+                if (sidebarProfileIcon) {
+                    sidebarProfileIcon.style.display = isLoggedIn ? 'flex' : 'none';
+                }
+                if (logoutSetting) {
+                    logoutSetting.style.display = isLoggedIn ? 'block' : 'none';
+                }
+
+                if (isLoggedIn && userName) {
+                    if (headerUserNameElement) headerUserNameElement.textContent = userName;
+                    if (sidebarUserNameElement) sidebarUserNameElement.textContent = userName;
+                }
+            }
+
+            checkLoginStatusOnLoad();
+
+            const profileIconHeaderElement = document.getElementById('header-profile-icon');
+            if (profileIconHeaderElement) {
+                profileIconHeaderElement.addEventListener('click', () => {
+                    settingsSidebar.classList.add('open');
+                });
+            }
+
+            const profileIconSidebarElement = document.getElementById('sidebar-profile-icon');
+            if (profileIconSidebarElement) {
+                profileIconSidebarElement.addEventListener('click', () => {
+                    settingsSidebar.classList.add('open');
+                });
+            }
         });
-      }
 
-      if (changeEmailButton) {
-        changeEmailButton.addEventListener('click', () => {
-          window.location.href = 'change-email.html';
-        });
-      }
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const chatMessages = document.getElementById('chatbot-messages');
+            const message = userInput.value.trim();
 
-      if (changePasswordButton) {
-        changePasswordButton.addEventListener('click', () => {
-          window.location.href = 'forgot-password.html';
-        });
-      }
+            if (message) {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user-message';
+                userDiv.textContent = message;
+                chatMessages.appendChild(userDiv);
 
-      if (chatbotButton) {
-        chatbotButton.addEventListener('click', () => {
-          alert('Chatbot estará disponível em breve!');
-        });
-      }
+                const botDiv = document.createElement('div');
+                botDiv.className = 'bot-message';
+                botDiv.textContent = 'Obrigado pela sua mensagem! Em breve responderemos.';
+                chatMessages.appendChild(botDiv);
 
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      applyTheme(savedTheme);
-
-      const savedFontSize = localStorage.getItem('fontSize');
-      if (savedFontSize) {
-        document.documentElement.style.fontSize = savedFontSize;
-        fontSizeInput.value = savedFontSize.replace('px', '');
-      }
-    });
-  </script>
-  <script src="js/carousel.js"></script>
+                userInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+    </script>
+    <script src="js/carousel.js"></script>
 </body>
 </html>

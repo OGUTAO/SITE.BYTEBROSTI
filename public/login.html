@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <h2>Fazer Login:</h2>
-        <input type="text" id="login-email" placeholder="Email">
+        <input type="email" id="login-email" placeholder="Email">
         <input type="password" id="login-password" placeholder="Senha">
         <p class="error" id="login-error"></p>
         <button onclick="validateLogin()">Entrar</button>
@@ -26,6 +26,26 @@
         <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
     </div>
     <script>
+        function validateLogin() {
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            const errorElement = document.getElementById('login-error');
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+
+            if (users[email] && users[email].password === password) {
+                // Login bem-sucedido (simulado)
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('loggedInUserEmail', email); // Salva o email do usuário logado
+                window.location.href = 'index.html';
+            } else {
+                // Credenciais inválidas
+                errorElement.textContent = 'Email ou senha incorretos.';
+            }
+        }
+
         // Função para aplicar o tema com classe 'dark-mode'
         function applyTheme() {
           const savedTheme = localStorage.getItem('theme');
@@ -35,10 +55,10 @@
             document.body.classList.remove('dark-mode');
           }
         }
-    
+
         // Aplica o tema ao carregar a página
         applyTheme();
-      </script>
+    </script>
     <script src="js/script.js"></script>
 </body>
 </html>
