@@ -92,19 +92,7 @@
         <img id="admin-logo" src="img/bytebros.png" alt="Logo da Administração">
     </div>
     <div id="loginSection" class="login-container">
-        <div class="admin-login-page">
-        </div>
         <h2>Login de Administrador</h2>
-        <div id="initialSetup" style="display: none;">
-            <h3>Primeiro Acesso - Criar Admin Superior</h3>
-            <label for="new-admin-email">Email:</label>
-            <input type="email" id="new-admin-email" required>
-            <label for="new-admin-password">Senha:</label>
-            <input type="password" id="new-admin-password" required>
-            <button onclick="createSuperAdmin()">Criar Admin Superior</button>
-            <p id="creation-message" style="color: green; display: none;">Administrador superior criado com sucesso! Faça login abaixo.</p>
-            <p id="creation-error" style="color: red; display: none;">Erro ao criar administrador.</p>
-        </div>
         <div id="loginForm">
             <label for="admin-email">Email:</label>
             <input type="email" id="admin-email" name="admin-email" required>
@@ -125,7 +113,6 @@
             </div>
         </div>
         
-
         <!-- Abas de navegação -->
         <div class="tabs">
             <button id="tab-products" class="tab-button active">Produtos</button>
@@ -205,7 +192,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Elementos da página
             const loginSection = document.getElementById('loginSection');
-            const initialSetupDiv = document.getElementById('initialSetup');
             const loginFormDiv = document.getElementById('loginForm');
             const adminContent = document.getElementById('adminContent');
             const addProductForm = document.getElementById('add-product-form');
@@ -227,19 +213,6 @@
             let isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
             let isSuperAdmin = localStorage.getItem('isAdminSuper') === 'true';
 
-            // Verificar se há admin superior cadastrado
-            function checkInitialSetup() {
-                if (adminAccounts.length === 0) {
-                    // Primeiro acesso, mostrar tela de criação do admin superior
-                    initialSetupDiv.style.display = 'block';
-                    loginFormDiv.style.display = 'none';
-                } else {
-                    // Já existe admin, mostrar tela de login
-                    initialSetupDiv.style.display = 'none';
-                    loginFormDiv.style.display = 'block';
-                }
-            }
-
             // Funções para manipulação de contas de administrador
             function loadAdminAccounts() {
                 const storedAdmins = localStorage.getItem('adminAccounts');
@@ -250,68 +223,41 @@
                 localStorage.setItem('adminAccounts', JSON.stringify(accounts));
             }
 
-            // Criar o primeiro admin (Admin Superior)
-            function createSuperAdmin() {
-                const newEmail = document.getElementById('new-admin-email').value;
-                const newPassword = document.getElementById('new-admin-password').value;
-                const creationMessage = document.getElementById('creation-message');
-                const creationError = document.getElementById('creation-error');
-
-                if (!newEmail || !newPassword) {
-                    creationError.textContent = 'Por favor, preencha todos os campos.';
-                    creationError.style.display = 'block';
-                    creationMessage.style.display = 'none';
-                    return;
-                }
-
-                // Verifica se já existe algum admin cadastrado
-                if (adminAccounts.length > 0) {
-                    creationError.textContent = 'Já existe um administrador cadastrado no sistema.';
-                    creationError.style.display = 'block';
-                    creationMessage.style.display = 'none';
-                    return;
-                }
-
-                // Cria o admin superior
-                adminAccounts.push({ 
-                    email: newEmail, 
-                    password: newPassword, 
-                    isSuper: true // Marca como admin superior
-                });
-                saveAdminAccounts(adminAccounts);
-
-                creationMessage.style.display = 'block';
-                creationError.style.display = 'none';
-                
-                // Mostrar o formulário de login
-                setTimeout(() => {
-                    initialSetupDiv.style.display = 'none';
-                    loginFormDiv.style.display = 'block';
-                }, 1500);
-            }
-
             // Login de administrador
             function loginAdmin() {
                 const emailInput = document.getElementById('admin-email').value;
                 const passwordInput = document.getElementById('admin-password').value;
                 const loginError = document.getElementById('login-error');
                 
-                const admin = adminAccounts.find(acc => acc.email === emailInput && acc.password === passwordInput);
-
-                if (admin) {
-                    // Login bem-sucedido
+                // Verifique se o email e a senha correspondem ao seu login
+                if (emailInput === 'bytebrosti@gmail.com' && passwordInput === 'lipe1310@') {
                     isAdminLoggedIn = true;
-                    isSuperAdmin = admin.isSuper;
+                    isSuperAdmin = true; // Você é o admin superior
                     
                     // Salva estado na sessão
                     localStorage.setItem('isAdminLoggedIn', 'true');
                     localStorage.setItem('loggedInAdminEmail', emailInput);
-                    localStorage.setItem('isAdminSuper', admin.isSuper ? 'true' : 'false');
+                    localStorage.setItem('isAdminSuper', 'true');
                     
                     loginError.style.display = 'none';
                     showAdminPanel();
                 } else {
-                    loginError.style.display = 'block';
+                    // Verifica se é um admin normal
+                    const admin = adminAccounts.find(acc => acc.email === emailInput && acc.password === passwordInput);
+                    if (admin) {
+                        isAdminLoggedIn = true;
+                        isSuperAdmin = false; // Não é admin superior
+                        
+                        // Salva estado na sessão
+                        localStorage.setItem('isAdminLoggedIn', 'true');
+                        localStorage.setItem('loggedInAdminEmail', emailInput);
+                        localStorage.setItem('isAdminSuper', 'false');
+                        
+                        loginError.style.display = 'none';
+                        showAdminPanel();
+                    } else {
+                        loginError.style.display = 'block';
+                    }
                 }
             }
 
@@ -344,24 +290,6 @@
                 } else {
                     tabAdmins.style.display = 'none';
                 }
-                // ... seu código JavaScript existente ...
-
-        const productSearchInput = document.getElementById('product-search');
-
-        if (productSearchInput) {
-            productSearchInput.addEventListener('input', handleProductSearch);
-        }
-
-        function handleProductSearch(event) {
-            const searchText = event.target.value.toLowerCase();
-            const filteredProducts = products.filter(product =>
-                product.name.toLowerCase().includes(searchText) ||
-                product.details.toLowerCase().includes(searchText)
-            );
-            renderAdminProducts(filteredProducts);
-        }
-
-        // ... o restante do seu código JavaScript ...
                 
                 // Carrega as listas
                 renderAdminProducts(products);
@@ -395,6 +323,59 @@
                     tabAdmins.classList.add('active');
                     adminsContent.classList.add('active');
                 }
+            }
+
+            // Adicionar novo admin (por um admin superior)
+            if (addAdminBtn) {
+                addAdminBtn.addEventListener('click', () => {
+                    if (!isSuperAdmin) {
+                        alert('Você não tem permissão para adicionar novos administradores.');
+                        return;
+                    }
+                    
+                    const addAdminMessage = document.getElementById('add-admin-message');
+                    const addAdminError = document.getElementById('add-admin-error');
+                    const emailInput = document.getElementById('add-admin-email');
+                    const passwordInput = document.getElementById('add-admin-password');
+                    
+                    const newEmail = emailInput.value;
+                    const newPassword = passwordInput.value;
+                    
+                    if (!newEmail || !newPassword) {
+                        addAdminError.textContent = 'Por favor, preencha todos os campos.';
+                        addAdminError.style.display = 'block';
+                        addAdminMessage.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Verifica se o email já está cadastrado
+                    if (adminAccounts.some(admin => admin.email === newEmail)) {
+                        addAdminError.textContent = 'Este email já está cadastrado.';
+                        addAdminError.style.display = 'block';
+                        addAdminMessage.style.display = 'none';
+                        return;
+                    }
+                    
+                    // Adiciona o novo admin (não superior)
+                    adminAccounts.push({
+                        email: newEmail,
+                        password: newPassword,
+                        isSuper: false
+                    });
+                    
+                    saveAdminAccounts(adminAccounts);
+                    renderAdminList();
+                    
+                    // Limpa o formulário e exibe mensagem de sucesso
+                    emailInput.value = '';
+                    passwordInput.value = '';
+                    addAdminMessage.style.display = 'block';
+                    addAdminError.style.display = 'none';
+                    
+                    setTimeout(() => {
+                        addAdminMessage.style.display = 'none';
+                    }, 3000);
+                });
             }
 
             // Funções para gerenciar produtos
@@ -481,23 +462,6 @@
                     button.addEventListener('click', handleDeleteProduct);
                 });
             }
-            // ... seu código JavaScript existente ...
-
-        const productSearchInput = document.getElementById('product-search');
-
-        if (productSearchInput) {
-            productSearchInput.addEventListener('input', handleProductSearch);
-        }
-
-        function handleProductSearch(event) {
-            const searchText = event.target.value.toLowerCase();
-            const filteredProducts = products.filter(product =>
-                product.name.toLowerCase().includes(searchText) ||
-                product.details.toLowerCase().includes(searchText)
-            );
-            renderAdminProducts(filteredProducts);
-        }
-            
 
             function handleEditProduct(event) {
                 const button = event.currentTarget;
@@ -634,54 +598,6 @@
                 }
             }
 
-            // Adicionar novo admin (por um admin superior)
-            if (addAdminBtn) {
-                addAdminBtn.addEventListener('click', () => {
-                    const addAdminMessage = document.getElementById('add-admin-message');
-                    const addAdminError = document.getElementById('add-admin-error');
-                    const emailInput = document.getElementById('add-admin-email');
-                    const passwordInput = document.getElementById('add-admin-password');
-                    
-                    const newEmail = emailInput.value;
-                    const newPassword = passwordInput.value;
-                    
-                    if (!newEmail || !newPassword) {
-                        addAdminError.textContent = 'Por favor, preencha todos os campos.';
-                        addAdminError.style.display = 'block';
-                        addAdminMessage.style.display = 'none';
-                        return;
-                    }
-                    
-                    // Verifica se o email já está cadastrado
-                    if (adminAccounts.some(admin => admin.email === newEmail)) {
-                        addAdminError.textContent = 'Este email já está cadastrado.';
-                        addAdminError.style.display = 'block';
-                        addAdminMessage.style.display = 'none';
-                        return;
-                    }
-                    
-                    // Adiciona o novo admin (não superior)
-                    adminAccounts.push({
-                        email: newEmail,
-                        password: newPassword,
-                        isSuper: false
-                    });
-                    
-                    saveAdminAccounts(adminAccounts);
-                    renderAdminList();
-                    
-                    // Limpa o formulário e exibe mensagem de sucesso
-                    emailInput.value = '';
-                    passwordInput.value = '';
-                    addAdminMessage.style.display = 'block';
-                    addAdminError.style.display = 'none';
-                    
-                    setTimeout(() => {
-                        addAdminMessage.style.display = 'none';
-                    }, 3000);
-                });
-            }
-
             // Adicionar produto
             if (addProductForm) {
                 addProductForm.addEventListener('submit', (event) => {
@@ -771,47 +687,38 @@
             } else {
                 loginSection.style.display = 'flex';
                 adminContent.style.display = 'none';
-                checkInitialSetup();
             }
             
             // Configurar sistema de abas
             setupTabs();
 
             // Expor funções para uso global (fora do escopo DOMContentLoaded)
-            window.createSuperAdmin = createSuperAdmin;
             window.loginAdmin = loginAdmin;
             window.logoutAdmin = logoutAdmin;
         });
 
-  let inactivityTimeout;
-  const inactivityTime = 10 * 60 * 1000; // 10 minutos em milissegundos
+        let inactivityTimeout;
+        const inactivityTime = 10 * 60 * 1000; // 10 minutos em milissegundos
 
-  function logoutAdminAutomatically() {
-    // Aqui você deve colocar a lógica de logout do seu sistema.
-    // Isso pode envolver:
-    // 1. Limpar informações de sessão/localStorage/cookies relacionados ao login.
-    // 2. Redirecionar o usuário para a página de login.
+        function logoutAdminAutomatically() {
+            // Limpa informações de sessão/localStorage/cookies relacionados ao login.
+            localStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('loggedInAdminEmail');
+            localStorage.removeItem('isAdminSuper');
+            window.location.href = 'index.html'; // Redireciona para a página de login
+        }
 
-    console.log("Logout automático após inatividade.");
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimeout);
+            inactivityTimeout = setTimeout(logoutAdminAutomatically, inactivityTime);
+        }
 
-    // Exemplo de limpeza de localStorage e redirecionamento:
-    localStorage.removeItem('isAdminLoggedIn');
-    localStorage.removeItem('loggedInAdminEmail');
-    localStorage.removeItem('isAdminSuper');
-    window.location.href = 'index.html'; // Redireciona para a página de login (ajuste o caminho se necessário)
-  }
-
-  function resetInactivityTimer() {
-    clearTimeout(inactivityTimeout);
-    inactivityTimeout = setTimeout(logoutAdminAutomatically, inactivityTime);
-  }
-
-  // Adiciona listeners de eventos para resetar o timer em caso de atividade
-  window.onload = resetInactivityTimer; // Reseta o timer ao carregar a página
-  document.addEventListener('mousemove', resetInactivityTimer);
-  document.addEventListener('keypress', resetInactivityTimer);
-  document.addEventListener('click', resetInactivityTimer);
-  document.addEventListener('scroll', resetInactivityTimer);     
+        // Adiciona listeners de eventos para resetar o timer em caso de atividade
+        window.onload = resetInactivityTimer; // Reseta o timer ao carregar a página
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keypress', resetInactivityTimer);
+        document.addEventListener('click', resetInactivityTimer);
+        document.addEventListener('scroll', resetInactivityTimer);     
     </script>
 </body>
 </html>

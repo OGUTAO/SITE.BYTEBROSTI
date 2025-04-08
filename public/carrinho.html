@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carrinho de Compras - Byte Bros</title>
+  <link rel="stylesheet" href="css/style-carrinho.css" />
+  <link rel="stylesheet" href="css/style9.css" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header-carrinho">
+      <a href="lojapecascliente.html" class="button back-button">
+        <i class="fas fa-arrow-left"></i> Voltar para a Loja
+      </a>
+      <h1>Seu Carrinho de Compras</h1>
+    </div>
+
+    <section class="lista-carrinho">
+      <ul class="itens-carrinho"></ul>
+    </section>
+
+    <section class="resumo-carrinho">
+      <div class="subtotal">
+        <span>Subtotal:</span>
+        <span class="valor-subtotal">R$ 0,00</span>
+      </div>
+      <div class="frete">
+        <span>Frete:</span>
+        <span class="valor-frete">A calcular</span>
+      </div>
+      <div class="total">
+        <span>Total:</span>
+        <span class="valor-total">R$ 0,00</span>
+      </div>
+      <button class="button checkout-button" disabled>
+        <i class="fas fa-check"></i> Finalizar Compra
+      </button>
+      <p class="observacao-checkout">Para finalizar a compra, adicione itens ao carrinho.</p>
+    </section>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Seletores
+      const itensCarrinhoLista = document.querySelector('.itens-carrinho');
+      const valorSubtotalElement = document.querySelector('.valor-subtotal');
+      const valorTotalElement = document.querySelector('.valor-total');
+      const botaoCheckout = document.querySelector('.checkout-button');
+      const observacaoCheckout = document.querySelector('.observacao-checkout');
+
+      // Importante: utilize a mesma chave "cart" usada na loja
+      let carrinho = JSON.parse(localStorage.getItem('cart')) || [];
+
+      function salvarCarrinho() {
+        localStorage.setItem('cart', JSON.stringify(carrinho));
+      }
+
+      function renderizarCarrinho() {
+        itensCarrinhoLista.innerHTML = '';
+
+        if (carrinho.length === 0) {
+          itensCarrinhoLista.innerHTML = `
+            <li class="item-carrinho empty-cart">
+              <i class="fas fa-shopping-cart"></i>
+              <p>Seu carrinho está vazio!</p>
+            </li>
+          `;
+          botaoCheckout.disabled = true;
+          observacaoCheckout.style.display = 'block';
+        } else {
+          botaoCheckout.disabled = false;
+          observacaoCheckout.style.display = 'none';
+
+          carrinho.forEach(item => {
+            const li = document.createElement('li');
+            li.classList.add('item-carrinho');
+            li.innerHTML = `
+              <div class="info-produto">
+                <img src="${item.imagem || 'img/default_product_carrinho.jpg'}" alt="${item.name}" />
+                <div class="detalhes-produto">
+                  <h3>${item.name}</h3>
+                  <p class="preco-unitario">Preço Unitário: R$ ${parseFloat(item.value).toFixed(2)}</p>
+                </div>
+              </div>
+              <div class="acoes-produto">
+                <div class="quantidade">
+                  <button class="botao-quantidade menos">-</button>
+                  <input type="number" value="${item.quantity}" min="1" class="input-quantidade">
+                  <button class="botao-quantidade mais">+</button>
+                </div>
+                <button class="botao-remover"><i class="fas fa-trash-alt"></i> Remover</button>
+              </div>
+              <p class="preco-total-item">Total: R$ ${(parseFloat(item.value) * item.quantity).toFixed(2)}</p>
+            `;
+            itensCarrinhoLista.appendChild(li);
+
+            // Eventos para alterar quantidade e remover item
+            li.querySelector('.menos').addEventListener('click', () => alterarQuantidade(item.id, -1));
+            li.querySelector('.mais').addEventListener('click', () => alterarQuantidade(item.id, 1));
+            li.querySelector('.input-quantidade').addEventListener('change', (e) => {
+              const novaQuantidade = parseInt(e.target.value);
+              if (novaQuantidade > 0) {
+                alterarQuantidadeAbsoluta(item.id, novaQuantidade);
+              } else {
+                e.target.value = item.quantity;
+              }
+            });
+            li.querySelector('.botao-remover').addEventListener('click', () => removerItem(item.id));
+          });
+        }
+
+        atualizarResumo();
+      }
+
+      function alterarQuantidade(id, delta) {
+        const item = carrinho.find(p => p.id === id);
+        if (item) {
+          item.quantity = Math.max(1, item.quantity + delta);
+          salvarCarrinho();
+          renderizarCarrinho();
+        }
+      }
+
+      function alterarQuantidadeAbsoluta(id, novaQuantidade) {
+        const item = carrinho.find(p => p.id === id);
+        if (item) {
+          item.quantity = novaQuantidade;
+          salvarCarrinho();
+          renderizarCarrinho();
+        }
+      }
+
+      function removerItem(id) {
+        carrinho = carrinho.filter(p => p.id !== id);
+        salvarCarrinho();
+        renderizarCarrinho();
+      }
+
+      function atualizarResumo() {
+        const subtotal = carrinho.reduce((total, item) => total + parseFloat(item.value) * item.quantity, 0);
+        valorSubtotalElement.textContent = `R$ ${subtotal.toFixed(2)}`;
+        valorTotalElement.textContent = `R$ ${subtotal.toFixed(2)}`;
+      }
+
+      // Lógica de tema claro/escuro
+      const toggleThemeBtn = document.getElementById('toggle-theme');
+      const body = document.body;
+
+      if (toggleThemeBtn) {
+        toggleThemeBtn.addEventListener('click', () => {
+          const dark = body.classList.toggle('dark-mode');
+          localStorage.setItem('tema', dark ? 'dark' : 'light');
+        });
+      }
+
+      const temaSalvo = localStorage.getItem('tema');
+      if (temaSalvo === 'dark') {
+        body.classList.add('dark-mode');
+      }
+
+      renderizarCarrinho();
+    });
+  </script>
+</body>
+</html>
