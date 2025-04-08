@@ -112,6 +112,7 @@
             <input type="password" id="admin-password" name="admin-password" required>
             <button onclick="loginAdmin()">Entrar</button>
             <p id="login-error" style="color: red; display: none;">Credenciais inválidas.</p>
+            <p><a href="index.html">Menu</a></p>
         </div>
     </div>
     <div id="adminContent" class="container admin-content">
@@ -123,6 +124,7 @@
                 <button onclick="logoutAdmin()" class="button">Sair</button>
             </div>
         </div>
+        
 
         <!-- Abas de navegação -->
         <div class="tabs">
@@ -780,6 +782,36 @@
             window.loginAdmin = loginAdmin;
             window.logoutAdmin = logoutAdmin;
         });
+
+  let inactivityTimeout;
+  const inactivityTime = 10 * 60 * 1000; // 10 minutos em milissegundos
+
+  function logoutAdminAutomatically() {
+    // Aqui você deve colocar a lógica de logout do seu sistema.
+    // Isso pode envolver:
+    // 1. Limpar informações de sessão/localStorage/cookies relacionados ao login.
+    // 2. Redirecionar o usuário para a página de login.
+
+    console.log("Logout automático após inatividade.");
+
+    // Exemplo de limpeza de localStorage e redirecionamento:
+    localStorage.removeItem('isAdminLoggedIn');
+    localStorage.removeItem('loggedInAdminEmail');
+    localStorage.removeItem('isAdminSuper');
+    window.location.href = 'index.html'; // Redireciona para a página de login (ajuste o caminho se necessário)
+  }
+
+  function resetInactivityTimer() {
+    clearTimeout(inactivityTimeout);
+    inactivityTimeout = setTimeout(logoutAdminAutomatically, inactivityTime);
+  }
+
+  // Adiciona listeners de eventos para resetar o timer em caso de atividade
+  window.onload = resetInactivityTimer; // Reseta o timer ao carregar a página
+  document.addEventListener('mousemove', resetInactivityTimer);
+  document.addEventListener('keypress', resetInactivityTimer);
+  document.addEventListener('click', resetInactivityTimer);
+  document.addEventListener('scroll', resetInactivityTimer);     
     </script>
 </body>
 </html>
