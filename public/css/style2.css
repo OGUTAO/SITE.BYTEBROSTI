@@ -14,7 +14,7 @@ body {
 
 /* Cabeçalho */
 header {
-    background: linear-gradient(to right, #232526, #414345);
+    background: linear-gradient(to right, #020202, #777a7e);
     color: white;
     padding: 20px;
     display: flex;
@@ -650,16 +650,22 @@ body.dark-theme header {
     color: #e0e0e0;
 }
 
-body.dark-theme .logo h1 {
-    color: #18bdf0;
+body.dark-theme header {
+    background: linear-gradient(to right, #000000, #2c3e50);
 }
+
 
 body.dark-theme .logo p {
     color: #bbbbbb;
 }
 
-body.dark-theme nav a {
-    color: #18bdf0;
+
+body.dark-theme header nav a {
+    color: #1abc9c;
+}
+
+body.dark-theme .logo h1 {
+    color: #1abc9c;
 }
 
 body.dark-theme nav a:hover {

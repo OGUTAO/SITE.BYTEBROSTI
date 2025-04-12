@@ -117,6 +117,18 @@
             localStorage.removeItem('loggedInUserEmail');
             window.location.reload();
         }
+
+        function applyTheme() {
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+          } else {
+            document.body.classList.remove('dark-mode');
+          }
+        }
+
+        // Aplica o tema ao carregar a página
+        applyTheme();
     </script>
 </body>
 </html>
