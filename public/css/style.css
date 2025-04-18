@@ -18,7 +18,7 @@ body {
     background: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 10px rgba(230, 167, 167, 0.1);
     text-align: center;
     margin-left: 20px;
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -33,6 +33,12 @@ input {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+input:hover {
+    border-color: #007bff; /* Cor de foco */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sutil sombra ao focar */
+}
+
 button {
     width: 100%;
     padding: 10px;
@@ -42,6 +48,13 @@ button {
     border-radius: 5px;
     cursor: pointer;
 }
+
+input[type="tel"]:focus {
+    border-color: #007bff; /* Cor de foco */
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sutil sombra ao focar */
+}
+
 
 button:hover {
     background: #45a049;
@@ -141,6 +154,7 @@ button:hover {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
+
 .copyright {
     margin-top: 20px;
     font-size: 0.9em;
@@ -148,7 +162,7 @@ button:hover {
 }
 
 /* ============================ */
-/*         MODO ESCURO         */
+/* MODO ESCURO          */
 /* ============================ */
 
 .dark-mode {
@@ -208,4 +222,98 @@ button:hover {
 
 .dark-mode .copyright {
     color: #aaa;
+}
+
+/* ============================ */
+/* RESPONSIVIDADE        */
+/* ============================ */
+
+/* Para telas menores que 600px (telefones) */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+        flex-direction: column; /* Coloca os elementos em coluna */
+        align-items: stretch; /* Estica os itens para a largura total */
+        justify-content: flex-start; /* Alinha ao topo */
+    }
+
+    .container {
+        width: 95%;
+        margin-left: 0;
+        margin-top: 20px;
+        top: 0;
+    }
+
+    input {
+        width: 90%;
+    }
+
+    .registration-image {
+        margin-top: 20px;
+    }
+
+    .registration-image img {
+        max-width: 100%;
+    }
+}
+
+/* Para telas entre 601px e 768px (tablets menores) */
+@media (min-width: 601px) and (max-width: 768px) {
+    body {
+        padding: 15px;
+        flex-direction: column; /* Coloca os elementos em coluna */
+        align-items: stretch; /* Estica os itens para a largura total */
+        justify-content: center; /* Centraliza verticalmente */
+    }
+
+    .container {
+        width: 80%;
+        margin-left: 0;
+        margin-top: 30px;
+        top: 0;
+    }
+
+    .registration-image img {
+        max-width: 80%;
+    }
+}
+
+/* Para telas entre 769px e 992px (tablets maiores) */
+@media (min-width: 769px) and (max-width: 992px) {
+    body {
+        padding: 20px;
+        flex-direction: row-reverse; /* Mantém a ordem original */
+        align-items: center;
+        justify-content: center;
+    }
+
+    .container {
+        width: 60%;
+        margin-left: 20px;
+        top: -10px;
+    }
+
+    .registration-image img {
+        max-width: 50%;
+    }
+}
+
+/* Para telas maiores que 992px (desktops) - Os estilos base já servem bem */
+@media (min-width: 993px) {
+    body {
+        padding: 20px;
+        flex-direction: row-reverse;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .container {
+        width: 450px;
+        margin-left: 20px;
+        top: -20px;
+    }
+
+    .registration-image img {
+        max-width: 400px;
+    }
 }

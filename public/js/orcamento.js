@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const servico = urlParams.get('servico');
+    const orcamentoForm = document.getElementById('orcamento-form');
 
     if (servico) {
         let imagem = '';
@@ -28,7 +29,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         document.getElementById('servico-imagem').src = `img/${imagem}`;
         document.getElementById('servico-nome').textContent = getServicoNome(servico);
-        document.getElementById('voltar-detalhes').href = getServicoDetalhesLink(servico);
+        const voltarDetalhesLink = document.querySelector('.servico-info .botao-voltar a');
+        if (voltarDetalhesLink) {
+            voltarDetalhesLink.href = getServicoDetalhesLink(servico);
+        }
+    }
+
+    if (orcamentoForm) {
+        orcamentoForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const descricao = document.getElementById('descricao').value;
+            const dataEnvio = new Date().toLocaleString();
+            const servicoSolicitado = servico ? getServicoNome(servico) : 'Não especificado';
+
+            const novoOrcamento = { nome, email, telefone, descricao, dataEnvio, servico: servicoSolicitado };
+
+            let orcamentos = localStorage.getItem('orcamentos');
+            orcamentos = orcamentos ? JSON.parse(orcamentos) : [];
+            orcamentos.push(novoOrcamento);
+            localStorage.setItem('orcamentos', JSON.stringify(orcamentos));
+
+            alert('Orçamento enviado com sucesso!');
+            orcamentoForm.reset(); // Limpa o formulário
+            window.location.href = 'orcamento-enviado.html'; // Redireciona para a página de confirmação
+        });
     }
 });
 
@@ -50,12 +78,6 @@ function getServicoNome(servico) {
             return '';
     }
 }
-
-document.getElementById('orcamento-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Impede o envio padrão do formulário
-    // Adicione aqui o código para enviar os dados do formulário para o servidor, se necessário
-    window.location.href = 'orcamento-enviado.html'; // Redireciona para a página de confirmação
-});
 
 function getServicoDetalhesLink(servico) {
     switch (servico) {

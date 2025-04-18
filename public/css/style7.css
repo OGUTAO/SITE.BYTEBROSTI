@@ -395,3 +395,63 @@ body.dark-mode .no-products-message {
 body.dark-theme #system-version {
     color: #fafcfd !important;
 }
+
+/* === Media Queries Adicionais para Responsividade Fina === */
+@media (max-width: 992px) {
+    .container {
+        margin: 30px 20px;
+        padding: 30px;
+    }
+    h2 {
+        font-size: 2em;
+        margin-bottom: 30px;
+    }
+    .product-list {
+        gap: 30px;
+    }
+}
+
+@media (max-width: 576px) {
+    .top-buttons-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    .top-buttons-container .theme-toggle-button {
+        margin-left: 0;
+        align-self: flex-end;
+        position: static; /* Remove posicionamento absoluto */
+    }
+    .button.back-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 320px) {
+    h2 {
+        font-size: 1.6em;
+        margin-bottom: 25px;
+    }
+    .button {
+        font-size: 0.85em;
+        padding: 8px 14px;
+    }
+    .button.add-to-cart-button {
+        font-size: 0.85em;
+        padding: 8px 15px;
+    }
+    .product-name {
+        font-size: 1.1em;
+        margin-bottom: 6px;
+    }
+    .product-details {
+        font-size: 0.85em;
+        margin-bottom: 10px;
+    }
+    .product-price {
+        font-size: 1.1em;
+    }
+    .product-quantity {
+        font-size: 0.8em;
+    }
+}

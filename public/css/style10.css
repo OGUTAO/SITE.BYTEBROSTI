@@ -1,0 +1,410 @@
+/* style10.css - Estilos para Aba de Notícias (Sidebar) com Ícones de Tema */
+
+/* === Variáveis de Cor Globais (Usando as de style7.css para consistência) === */
+:root {
+    --bg-color-light: #f8f9fa;
+    --container-bg-light: #ffffff;
+    --text-color-light: #212529;
+    --muted-text-light: #6c757d;
+    --border-color-light: #dee2e6;
+    --accent-color-light: #0d6efd;
+    --accent-hover-light: #0b5ed7;
+    --bg-color-dark: #1a202c;
+    --container-bg-dark: #2d3748;
+    --text-color-dark: #e2e8f0;
+    --muted-text-dark: #a0aec0;
+    --border-color-dark: #4a5568;
+    --accent-color-dark: #60a5fa;
+    --accent-hover-dark: #3b82f6;
+}
+
+/* === Estilos Base para a Aba de Notícias na Sidebar === */
+.settings-sidebar h4 {
+    color: var(--text-color-light);
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-left: 15px;
+    border-left: 3px solid var(--accent-color-light);
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.settings-sidebar .news-sidebar-item {
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border-color-light);
+    font-size: 0.9em;
+    transition: border-color 0.3s ease;
+}
+
+.settings-sidebar .news-sidebar-item a {
+    text-decoration: none;
+    color: var(--text-color-light);
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.settings-sidebar .news-sidebar-item a:hover {
+    color: var(--accent-color-light);
+}
+
+.settings-sidebar .loading-sidebar {
+    padding: 10px 15px;
+    font-size: 0.9em;
+    color: var(--muted-text-light);
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+.settings-sidebar .no-news {
+    padding: 10px 15px;
+    font-size: 0.9em;
+    color: var(--muted-text-light);
+    text-align: center;
+    font-style: italic;
+    transition: color 0.3s ease;
+}
+
+.settings-sidebar .error-news {
+    padding: 10px 15px;
+    font-size: 0.9em;
+    color: var(--danger-color-light); /* Usando cor de perigo de style7 */
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+.settings-sidebar .news-button-sidebar {
+    display: block;
+    width: calc(100% - 30px); /* Considerar o padding da sidebar */
+    padding: 10px 15px;
+    margin-top: 20px;
+    background-color: var(--accent-color-light); /* Cor de destaque */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, filter 0.2s ease, transform 0.1s ease;
+    box-sizing: border-box;
+}
+
+.settings-sidebar .news-button-sidebar:hover {
+    filter: brightness(90%);
+    transform: translateY(-1px);
+}
+
+.settings-sidebar .news-button-sidebar:active {
+    filter: brightness(85%);
+    transform: translateY(1px);
+}
+
+/* === Estilos para Tema Escuro === */
+body.dark-theme .settings-sidebar h4 {
+    color: var(--text-color-dark);
+    border-left-color: var(--accent-color-dark);
+}
+
+body.dark-theme .settings-sidebar .news-sidebar-item {
+    border-bottom-color: var(--border-color-dark);
+}
+
+body.dark-theme .settings-sidebar .news-sidebar-item a {
+    color: var(--text-color-dark);
+}
+
+body.dark-theme .settings-sidebar .news-sidebar-item a:hover {
+    color: var(--accent-color-dark);
+}
+
+body.dark-theme .settings-sidebar .loading-sidebar {
+    color: var(--muted-text-dark);
+}
+
+body.dark-theme .settings-sidebar .no-news {
+    color: var(--muted-text-dark);
+}
+
+body.dark-theme .settings-sidebar .error-news {
+    color: var(--danger-color-dark); /* Usando cor de perigo de style7 */
+}
+
+body.dark-theme .settings-sidebar .news-button-sidebar {
+    background-color: var(--accent-color-dark);
+    color: var(--text-color-dark);
+}
+
+/* === REMOVIDOS OS ESTILOS PARA O SELETOR DE TEMA COM ÍCONES === */
+
+/* Estilos específicos para a página de notícias (fora da sidebar) */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f0f0; /* Cor de fundo clara e sutil */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para o modo escuro */
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 25px 20px; /* Aumentei um pouco o padding vertical */
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Adicionei uma leve sombra */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin-bottom: 0;
+    font-size: 2.2em; /* Ajustei o tamanho da fonte */
+}
+
+header nav a {
+    color: rgba(23, 189, 240, 0.767);
+    margin: 0 18px; /* Aumentei um pouco a margem horizontal */
+    text-decoration: none;
+    font-size: 1.1em; /* Ajustei o tamanho da fonte */
+    transition: color 0.3s ease;
+}
+
+header nav a:hover {
+    color: #ffa500;
+}
+
+main {
+    flex-grow: 1;
+    padding: 30px 20px; /* Aumentei um pouco o padding */
+}
+
+.news-section {
+    background-color: white;
+    padding: 25px; /* Aumentei um pouco o padding */
+    border-radius: 10px; /* Bordas mais arredondadas */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Sombra mais suave */
+}
+
+.news-section h2 {
+    color: #1abc9c;
+    margin-bottom: 20px; /* Aumentei um pouco a margem inferior */
+    text-align: center;
+    font-size: 1.8em; /* Ajustei o tamanho da fonte */
+}
+
+#news-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Largura mínima ligeiramente maior */
+    gap: 25px; /* Aumentei um pouco o espaçamento */
+}
+
+.news-item {
+    border: 1px solid #ddd;
+    border-radius: 10px; /* Bordas mais arredondadas */
+    padding: 20px; /* Aumentei um pouco o padding */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06); /* Sombra mais suave */
+    transition: box-shadow 0.3s ease;
+}
+
+.news-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Leve efeito ao passar o mouse */
+}
+
+.news-item h3 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 12px; /* Aumentei um pouco a margem inferior */
+    font-size: 1.3em; /* Ajustei o tamanho da fonte */
+}
+
+.news-item p {
+    color: #555; /* Cor do texto um pouco mais escura */
+    font-size: 0.95em; /* Ligeiramente maior */
+    margin-bottom: 15px; /* Aumentei um pouco a margem inferior */
+    line-height: 1.6; /* Melhor legibilidade */
+}
+
+.news-item a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.news-item a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+.loading {
+    text-align: center;
+    color: #777;
+    padding: 30px; /* Aumentei um pouco o padding */
+    font-size: 1.1em; /* Ajustei o tamanho da fonte */
+}
+
+#load-more-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 25px; /* Aumentei um pouco o padding */
+    border: none;
+    border-radius: 8px; /* Bordas mais arredondadas */
+    cursor: pointer;
+    font-size: 1.1em; /* Ajustei o tamanho da fonte */
+    display: block;
+    margin: 30px auto; /* Aumentei um pouco a margem */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Adicionei transição de transformação */
+}
+
+#load-more-btn:hover {
+    background-color: #218838;
+    transform: scale(1.03); /* Leve efeito de "pulo" ao passar o mouse */
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 15px; /* Aumentei um pouco o padding */
+    font-size: 0.9em; /* Ajustei o tamanho da fonte */
+}
+
+/* Estilos para o botão de tema */
+.theme-toggle-button {
+    background: none;
+    border: none;
+    color: white; /* Cor padrão (para a lua, inicialmente) */
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+.theme-toggle-button:hover {
+    color: #ddd;
+}
+
+/* Estilos para a cor do ícone no modo claro */
+body:not(.dark-theme) .theme-toggle-button {
+    color: #a0aec0; /* Cor da lua no modo claro */
+}
+
+/* Estilos para a cor do ícone no modo escuro */
+body.dark-theme .theme-toggle-button {
+    color: gold; /* Cor do sol no modo escuro */
+}
+
+/* Estilos para modo escuro (opcional) */
+body.dark-theme {
+    background-color: #1a1a1a; /* Fundo mais escuro */
+    color: #eee; /* Texto mais claro */
+}
+
+body.dark-theme header {
+    background-color: #222;
+    color: #eee;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.05); /* Sombra sutil */
+}
+
+body.dark-theme header nav a {
+    color: #bbb;
+}
+
+body.dark-theme header nav a:hover {
+    color: #ddd;
+}
+
+body.dark-theme .news-section {
+    background-color: #333;
+    color: #eee;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme .news-section h2 {
+    color: #64b5f6; /* Cor de destaque no modo escuro */
+}
+
+body.dark-theme #news-container {
+    border-color: #555;
+}
+
+body.dark-theme .news-item {
+    border-color: #555;
+    background-color: #444;
+    color: #eee;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.03);
+}
+
+body.dark-theme .news-item h3 {
+    color: #eee;
+}
+
+body.dark-theme .news-item p {
+    color: #ccc;
+}
+
+body.dark-theme .news-item a {
+    color: #64b5f6;
+}
+
+body.dark-theme .loading {
+    color: #ccc;
+}
+
+body.dark-theme #load-more-btn {
+    background-color: #673ab7; /* Cor destaque no botão */
+    color: #eee;
+}
+
+body.dark-theme #load-more-btn:hover {
+    background-color: #512da8;
+}
+
+body.dark-theme footer {
+    background-color: #222;
+    color: #eee;
+}
+
+/* === Media Queries para Responsividade === */
+@media (max-width: 768px) {
+    .settings-sidebar h4 {
+        font-size: 1em;
+        padding-left: 10px;
+        border-left-width: 2px;
+        margin-top: 15px;
+        margin-bottom: 8px;
+    }
+
+    .settings-sidebar .news-sidebar-item {
+        padding: 8px 12px;
+        font-size: 0.85em;
+        margin-bottom: 6px;
+    }
+
+    .settings-sidebar .news-button-sidebar {
+        font-size: 0.85em;
+        padding: 8px 12px;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .settings-sidebar h4 {
+        font-size: 0.95em;
+    }
+
+    .settings-sidebar .news-sidebar-item {
+        font-size: 0.8em;
+    }
+
+    .settings-sidebar .news-button-sidebar {
+        font-size: 0.8em;
+    }
+}

@@ -6,6 +6,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f8f9fa; /* Tom mais suave de fundo */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para o tema */
 }
 
 
@@ -175,4 +176,155 @@ body.dark-mode .botao-voltar .botao:hover {
 body.dark-mode footer {
     background-color: #1e40af;
     color: #e0e0e0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    header {
+        padding: 30px 15px;
+    }
+
+    header h1 {
+        font-size: 2em;
+        margin-bottom: 8px;
+    }
+
+    header p {
+        font-size: 1em;
+    }
+
+    nav {
+        padding: 10px 0;
+    }
+
+    nav a {
+        padding: 10px 15px;
+        font-size: 0.9em;
+    }
+
+    .sobre-nos {
+        margin: 30px auto;
+        padding: 30px;
+        border-radius: 10px;
+    }
+
+    .sobre-nos h2 {
+        font-size: 2em;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+    }
+
+    .sobre-nos p {
+        font-size: 1em;
+        margin-bottom: 20px;
+        line-height: 1.7;
+    }
+
+    .sobre-nos li {
+        margin-bottom: 12px;
+        padding-left: 25px;
+        font-size: 1em;
+    }
+
+    .sobre-nos li::before {
+        font-size: 1.1em;
+    }
+
+    .sobre-nos .botao {
+        padding: 10px 20px;
+        font-size: 1em;
+        margin-top: 20px;
+        border-radius: 6px;
+    }
+
+    footer {
+        padding: 15px;
+        margin-top: 30px;
+        font-size: 0.9em;
+    }
+
+    .botao-voltar {
+        margin: 20px 0;
+    }
+
+    .botao-voltar .botao {
+        padding: 10px 20px;
+        font-size: 1em;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 20px 10px;
+    }
+
+    header h1 {
+        font-size: 1.8em;
+        margin-bottom: 5px;
+    }
+
+    header p {
+        font-size: 0.9em;
+    }
+
+    nav {
+        padding: 8px 0;
+    }
+
+    nav a {
+        padding: 8px 12px;
+        font-size: 0.8em;
+    }
+
+    .sobre-nos {
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .sobre-nos h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+
+    .sobre-nos p {
+        font-size: 0.9em;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .sobre-nos li {
+        margin-bottom: 10px;
+        padding-left: 20px;
+        font-size: 0.9em;
+    }
+
+    .sobre-nos li::before {
+        font-size: 1em;
+    }
+
+    .sobre-nos .botao {
+        padding: 8px 18px;
+        font-size: 0.9em;
+        margin-top: 15px;
+        border-radius: 5px;
+    }
+
+    footer {
+        padding: 10px;
+        margin-top: 20px;
+        font-size: 0.8em;
+    }
+
+    .botao-voltar {
+        margin: 15px 0;
+    }
+
+    .botao-voltar .botao {
+        padding: 8px 18px;
+        font-size: 0.9em;
+        border-radius: 5px;
+    }
 }

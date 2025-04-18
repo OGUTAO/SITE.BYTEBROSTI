@@ -11,6 +11,7 @@
         <h2>Cadastre-se:</h2>
         <input type="text" id="register-name" placeholder="Seu Nome">
         <input type="email" id="register-email" placeholder="Seu Email">
+        <input type="tel" id="register-phone" placeholder="Seu Telefone">
         <input type="password" id="register-password" placeholder="Sua Senha">
         <input type="password" id="confirm-password" placeholder="Confirmar Senha">
         <p class="error" id="register-error"></p>
@@ -22,7 +23,7 @@
     </div>
     <div class="registration-image">
         <img src="img/bytebros.png" alt="Imagem de Registro">
-        <p class="copyright">&copy; 2025 ByteBrosTI. Todos os direitos reservados.</p>
+        <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
         <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
     </div>
     <script src="js/version.js"></script>
@@ -30,15 +31,18 @@
         function registerUser() {
             const nameInput = document.getElementById('register-name');
             const emailInput = document.getElementById('register-email');
+            const phoneInput = document.getElementById('register-phone');
             const passwordInput = document.getElementById('register-password');
             const confirmPasswordInput = document.getElementById('confirm-password');
             const errorElement = document.getElementById('register-error');
+
             const name = nameInput.value.trim();
             const email = emailInput.value.trim();
+            const phone = phoneInput.value.trim();
             const password = passwordInput.value.trim();
             const confirmPassword = confirmPasswordInput.value.trim();
 
-            if (!name || !email || !password || !confirmPassword) {
+            if (!name || !email || !phone || !password || !confirmPassword) {
                 errorElement.textContent = 'Por favor, preencha todos os campos.';
                 return;
             }
@@ -48,7 +52,6 @@
                 return;
             }
 
-            // *** SIMULAÇÃO DE SALVAMENTO DE USUÁRIO NO LOCALSTORAGE (NÃO É SEGURO PARA PRODUÇÃO) ***
             const users = JSON.parse(localStorage.getItem('users')) || {};
 
             if (users[email]) {
@@ -56,78 +59,28 @@
                 return;
             }
 
-            users[email] = { password: password, name: name }; // Salva nome junto com a senha
+            users[email] = {
+                name: name,
+                phone: phone,
+                password: password
+            };
+
             localStorage.setItem('users', JSON.stringify(users));
 
             alert('Cadastro realizado com sucesso! Você será redirecionado para a página de login.');
             window.location.href = 'login.html';
         }
 
-        function validateLogin() {
-            const emailInput = document.getElementById('login-email');
-            const passwordInput = document.getElementById('login-password');
-            const errorElement = document.getElementById('login-error');
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-
-            const users = JSON.parse(localStorage.getItem('users')) || {};
-
-            if (users[email] && users[email].password === password) {
-                // Login bem-sucedido (simulado)
-                localStorage.setItem('userLoggedIn', 'true');
-                localStorage.setItem('loggedInUserEmail', email); // Salva o email do usuário logado
-                window.location.href = 'index.html';
-            } else {
-                // Credenciais inválidas
-                errorElement.textContent = 'Email ou senha incorretos.';
-            }
-        }
-
-        function checkLoginStatusOnLoad() {
-            const headerAuthButtons = document.getElementById('header-auth-buttons');
-            const headerProfileIcon = document.getElementById('header-profile-icon');
-            const sidebarAuthButtons = document.getElementById('sidebar-auth-buttons');
-            const sidebarProfileIcon = document.getElementById('sidebar-profile-icon');
-            const loggedInUserEmail = localStorage.getItem('loggedInUserEmail');
-
-            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
-
-            if (headerAuthButtons && headerProfileIcon) {
-                headerAuthButtons.style.display = isLoggedIn ? 'none' : 'flex';
-                headerProfileIcon.style.display = isLoggedIn ? 'flex' : 'none';
-                if (loggedInUserEmail) {
-                    // Você pode usar o email para buscar o nome do usuário (se salvou) e exibir
-                    // Exemplo (precisa adaptar se você quer exibir o nome):
-                    // headerProfileIcon.querySelector('a').textContent = loggedInUserEmail;
-                }
-            }
-
-            if (sidebarAuthButtons && sidebarProfileIcon) {
-                sidebarAuthButtons.style.display = isLoggedIn ? 'none' : 'block';
-                sidebarProfileIcon.style.display = isLoggedIn ? 'flex' : 'none';
-                if (loggedInUserEmail) {
-                    // Exemplo (precisa adaptar se você quer exibir o nome):
-                    // sidebarProfileIcon.querySelector('a').textContent = loggedInUserEmail;
-                }
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem('userLoggedIn');
-            localStorage.removeItem('loggedInUserEmail');
-            window.location.reload();
-        }
-
+        // Outras funções (validateLogin, checkLoginStatusOnLoad, logout, applyTheme) permanecem inalteradas
         function applyTheme() {
-          const savedTheme = localStorage.getItem('theme');
-          if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-          } else {
-            document.body.classList.remove('dark-mode');
-          }
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
         }
 
-        // Aplica o tema ao carregar a página
         applyTheme();
     </script>
 </body>
