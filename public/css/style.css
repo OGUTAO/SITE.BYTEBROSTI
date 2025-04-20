@@ -162,7 +162,7 @@ button:hover {
 }
 
 /* ============================ */
-/* MODO ESCURO          */
+/* MODO ESCURO                 */
 /* ============================ */
 
 .dark-mode {
@@ -225,7 +225,7 @@ button:hover {
 }
 
 /* ============================ */
-/* RESPONSIVIDADE        */
+/* RESPONSIVIDADE             */
 /* ============================ */
 
 /* Para telas menores que 600px (telefones) */
@@ -316,4 +316,9 @@ button:hover {
     .registration-image img {
         max-width: 400px;
     }
+}
+
+/* Garante que o container é o contexto de posicionamento */
+.container {
+    position: relative;
 }

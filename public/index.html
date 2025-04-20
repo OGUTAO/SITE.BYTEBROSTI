@@ -28,6 +28,15 @@
                 <label for="font-size-input">Tamanho da Fonte:</label>
                 <input type="number" id="font-size-input" value="16" />
             </div>
+            <div class="setting" id="meus-pedidos-setting-sidebar" style="display: none;">
+                <button id="meus-pedidos-button-sidebar">Meus Pedidos</button>
+            </div>
+            <div class="setting" id="favoritos-setting-sidebar" style="display: none;">
+                <button id="favoritos-button-sidebar">Favoritos</button>
+            </div>
+            <div class="setting" id="avaliacao-setting-sidebar" style="display: none;">
+                <button id="avaliacao-button-sidebar">Avaliações</button>
+            </div>
             <div class="setting" id="change-email-setting-sidebar" style="display: none;">
                 <button id="change-email-button-sidebar">Alterar E-mail</button>
             </div>
@@ -41,6 +50,7 @@
                 <button id="logout-button">Logout</button>
             </div>
 
+            <a href="destaques.html" class="news-button-sidebar">Destaques/ Novos Produtos/ Ofertas</a>
             <a href="noticias.html" class="news-button-sidebar">Ver Novas Notícias</a>
 
             <button class="close-sidebar-button" aria-label="Fechar Configurações">&times;</button>
@@ -107,8 +117,10 @@
             <button class="footer-button left-button">
                 <a href="sobrenos.html" class="footer-link">Sobre Nós</a>
             </button>
-            <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
-            <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
+            <div class="footer-center-content">
+                <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+                <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
+            </div>
             <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="footer-button right-button">
                 Voltar ao Topo
             </button>
@@ -142,6 +154,8 @@
             const closeSidebarButton = document.querySelector('.close-sidebar-button');
             const themeSelect = document.getElementById('theme-select');
             const fontSizeInput = document.getElementById('font-size-input');
+            const avaliacaoSettingSidebar = document.getElementById('avaliacao-setting-sidebar');
+            const avaliacaoButtonSidebar = document.getElementById('avaliacao-button-sidebar');
             const logoutSetting = document.getElementById('logout-setting');
             const logoutButton = document.getElementById('logout-button');
             const changeEmailButtonHeader = document.getElementById('change-email-button');
@@ -150,8 +164,8 @@
             const changePasswordSettingSidebar = document.getElementById('change-password-setting-sidebar');
             const changeEmailButtonSidebar = document.getElementById('change-email-button-sidebar');
             const changePasswordButtonSidebar = document.getElementById('change-password-button-sidebar');
-            const changePhoneSettingSidebar = document.getElementById('change-phone-setting-sidebar'); // Novo elemento
-            const changePhoneButtonSidebar = document.getElementById('change-phone-button-sidebar'); // Novo elemento
+            const changePhoneSettingSidebar = document.getElementById('change-phone-setting-sidebar'); 
+            const changePhoneButtonSidebar = document.getElementById('change-phone-button-sidebar'); 
             const chatbotContainer = document.getElementById('chatbot-container');
             const chatbotToggle = document.getElementById('chatbot-toggle');
             const chatbotCloseButton = document.getElementById('chatbot-close');
@@ -161,6 +175,11 @@
             const sidebarProfileIcon = document.getElementById('sidebar-profile-icon');
             const headerUserNameElement = document.getElementById('header-user-name');
             const sidebarUserNameElement = document.getElementById('sidebar-user-name');
+            const meusPedidosSettingSidebar = document.getElementById('meus-pedidos-setting-sidebar');
+            const meusPedidosButtonSidebar = document.getElementById('meus-pedidos-button-sidebar');
+            const favoritosSettingSidebar = document.getElementById('favoritos-setting-sidebar');
+            const favoritosButtonSidebar = document.getElementById('favoritos-button-sidebar');
+
 
             closeSidebarButton.addEventListener('click', () => {
                 settingsSidebar.classList.remove('open');
@@ -191,6 +210,18 @@
                 });
             }
 
+            if (favoritosButtonSidebar) {
+                favoritosButtonSidebar.addEventListener('click', () => {
+                    window.location.href = 'favoritos.html'; 
+                });
+            }
+
+            if (avaliacaoButtonSidebar) {
+                avaliacaoButtonSidebar.addEventListener('click', () => {
+                    window.location.href = 'avaliacao.html'; 
+                });
+            }
+
             if (changeEmailButtonHeader) {
                 changeEmailButtonHeader.addEventListener('click', () => {
                     window.location.href = 'change-email.html';
@@ -217,9 +248,15 @@
 
             if (changePhoneButtonSidebar) {
                 changePhoneButtonSidebar.addEventListener('click', () => {
-                    window.location.href = 'trocar-telefone.html'; // Crie esta página
+                    window.location.href = 'trocar-telefone.html'; 
                 });
             }
+            if (meusPedidosButtonSidebar) {
+                meusPedidosButtonSidebar.addEventListener('click', () => {
+                    window.location.href = 'meuspedidos.html'; 
+                });
+            }
+
 
             chatbotToggle.addEventListener('click', () => {
                 chatbotContainer.classList.toggle('closed');
@@ -249,12 +286,19 @@
                 const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
                 const userName = localStorage.getItem('userName');
 
+                
                 if (headerAuthButtons && headerProfileIcon) {
                     headerAuthButtons.style.display = isLoggedIn ? 'none' : 'flex';
                     headerProfileIcon.style.display = isLoggedIn ? 'flex' : 'none';
                 }
                 if (sidebarProfileIcon) {
                     sidebarProfileIcon.style.display = isLoggedIn ? 'flex' : 'none';
+                }
+                if (favoritosSettingSidebar) {
+                    favoritosSettingSidebar.style.display = isLoggedIn ? 'block' : 'none'; 
+                }
+                if (avaliacaoSettingSidebar) {
+                    avaliacaoSettingSidebar.style.display = isLoggedIn ? 'block' : 'none'; 
                 }
                 if (logoutSetting) {
                     logoutSetting.style.display = isLoggedIn ? 'block' : 'none';
@@ -267,6 +311,9 @@
                 }
                 if (changePhoneSettingSidebar) {
                     changePhoneSettingSidebar.style.display = isLoggedIn ? 'block' : 'none';
+                }
+                if (meusPedidosSettingSidebar) {
+                    meusPedidosSettingSidebar.style.display = isLoggedIn ? 'block' : 'none';
                 }
 
                 if (isLoggedIn && userName) {

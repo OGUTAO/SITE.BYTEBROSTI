@@ -6,6 +6,8 @@
     <title>Loja de Peças - Byte Bros</title>
     <link rel="stylesheet" href="css/style7.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         /* Estilos para o modal de quantidade */
         .quantity-modal-overlay {
@@ -172,7 +174,7 @@
     <div>
         <footer>
             <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
-            <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #080808;"></p>
+            <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em;"></p>
         </footer>
     </div>
     <script src="js/version.js"></script>
@@ -187,34 +189,34 @@
             const quantityModalOk = document.getElementById('quantityModalOk');
             const quantityModalCancel = document.getElementById('quantityModalCancel');
             const quantityErrorMessage = document.getElementById('quantityErrorMessage');
-
+        
             let cartItemCount = 0;
             let currentProductToAdd = null;
             const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
             cartItemCount = storedCart.reduce((total, item) => total + item.quantity, 0);
-
+        
             function updateCartBadge() {
                 cartBadgeElement.textContent = cartItemCount;
                 cartBadgeElement.classList.toggle('empty', cartItemCount === 0);
             }
-
+        
             function showQuantityModal(product, availableQuantity) {
                 currentProductToAdd = { ...product, available: availableQuantity };
                 quantityModalTitle.textContent = `Quantas unidades de "${product.name}" você deseja adicionar? (Disponível: ${availableQuantity})`;
-                quantityInput.value = 1; // Resetar o valor padrão
-                quantityInput.max = availableQuantity; // Define o máximo permitido no input
-                quantityErrorMessage.style.display = 'none'; // Garantir que a mensagem de erro esteja oculta ao abrir o modal
-                quantityInput.classList.remove('error'); // Remover classe de erro, se existir
+                quantityInput.value = 1;
+                quantityInput.max = availableQuantity;
+                quantityErrorMessage.style.display = 'none';
+                quantityInput.classList.remove('error');
                 quantityModalOverlay.style.display = 'flex';
             }
-
+        
             function handleAddToCartButtonClick(event) {
                 const button = event.currentTarget;
                 const productId = button.dataset.productId;
                 const productName = button.dataset.productName;
                 const productValue = parseFloat(button.dataset.productValue);
                 const productQuantityAvailable = parseInt(button.dataset.productQuantity, 10);
-
+        
                 const product = {
                     id: productId,
                     name: productName,
@@ -222,34 +224,31 @@
                 };
                 showQuantityModal(product, productQuantityAvailable);
             }
-
+        
             quantityModalOk.addEventListener('click', () => {
                 if (!currentProductToAdd) return;
-
                 const quantity = parseInt(quantityInput.value, 10);
-
-                // Limpar qualquer mensagem de erro anterior
                 quantityErrorMessage.style.display = 'none';
                 quantityErrorMessage.textContent = '';
                 quantityInput.classList.remove('error');
-
+        
                 if (isNaN(quantity) || quantity <= 0) {
                     quantityErrorMessage.textContent = "Por favor, digite uma quantidade válida.";
                     quantityErrorMessage.style.display = 'block';
-                    quantityInput.classList.add('error'); // Adicionar classe de erro para feedback visual
+                    quantityInput.classList.add('error');
                     return;
                 }
-
+        
                 if (quantity > currentProductToAdd.available) {
                     quantityErrorMessage.textContent = `A quantidade desejada (${quantity}) excede a disponível (${currentProductToAdd.available}).`;
                     quantityErrorMessage.style.display = 'block';
                     quantityInput.classList.add('error');
                     return;
                 }
-
+        
                 const cart = JSON.parse(localStorage.getItem('cart')) || [];
                 const existingItem = cart.find(item => item.id === currentProductToAdd.id);
-
+        
                 if (existingItem) {
                     const newQuantity = existingItem.quantity + quantity;
                     if (newQuantity > currentProductToAdd.available) {
@@ -267,24 +266,24 @@
                         quantity: quantity
                     });
                 }
-
+        
                 localStorage.setItem('cart', JSON.stringify(cart));
                 cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
                 updateCartBadge();
                 quantityModalOverlay.style.display = 'none';
                 currentProductToAdd = null;
             });
-
+        
             quantityModalCancel.addEventListener('click', () => {
                 quantityModalOverlay.style.display = 'none';
                 currentProductToAdd = null;
-                quantityErrorMessage.style.display = 'none'; // Ocultar mensagem ao cancelar
+                quantityErrorMessage.style.display = 'none';
                 quantityInput.classList.remove('error');
             });
-
+        
             const sunIcon = '☀️';
             const moonIcon = '🌙';
-
+        
             function setTheme(theme) {
                 if (theme === 'dark') {
                     document.body.classList.add('dark-mode');
@@ -296,52 +295,64 @@
                     localStorage.setItem('theme', 'light');
                 }
             }
-
+        
             function toggleTheme() {
                 const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
                 setTheme(currentTheme === 'dark' ? 'light' : 'dark');
             }
-
+        
             function loadTheme() {
                 const savedTheme = localStorage.getItem('theme');
                 const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
                 if (savedTheme) {
                     setTheme(savedTheme);
                 } else {
                     setTheme(prefersDark ? 'dark' : 'light');
                 }
             }
-
+        
             function loadProductsFromLocalStorage() {
                 const storedProducts = localStorage.getItem('products');
                 return storedProducts ? JSON.parse(storedProducts) : [];
             }
-
+        
+            function getFavoritos() {
+                return JSON.parse(localStorage.getItem("favoritos")) || [];
+            }
+        
+            function salvarFavoritos(favoritos) {
+                localStorage.setItem("favoritos", JSON.stringify(favoritos));
+            }
+        
             function renderClientProducts(productsToRender) {
                 productList.innerHTML = '';
-
+        
                 if (!productsToRender || productsToRender.length === 0) {
                     productList.innerHTML = '<li class="no-products-message">Nenhuma peça disponível no momento (EM BREVE).</li>';
                     return;
                 }
-
+        
+                const favoritos = getFavoritos();
+        
                 productsToRender.forEach((product, index) => {
                     if (product.quantity > 0) {
                         const listItem = document.createElement('li');
                         listItem.classList.add('product-item');
                         listItem.dataset.productId = product.id || index;
-
+        
                         const valueAsNumber = parseFloat(product.value);
                         const formattedValue = !isNaN(valueAsNumber)
                             ? valueAsNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
                             : 'Valor Indisponível';
-
+        
+                        const isFavorited = favoritos.includes(product.name);
+        
                         listItem.innerHTML = `
                             <div class="product-image-container">
                                 <img src="${product.image || 'img/default_product.jpg'}" alt="${product.name || 'Produto'}" class="product-image">
                             </div>
                             <div class="product-info">
+                                <span class="coracao ${isFavorited ? 'favoritado' : ''}" title="Favoritar"><i class="fas fa-heart"></i></span>
                                 <h3 class="product-name">${product.name || 'Nome Indisponível'}</h3>
                                 <p class="product-details">${product.details || ''}</p>
                                 <div class="product-price-quantity">
@@ -356,14 +367,15 @@
                                 data-product-quantity="${product.quantity}"> Adicionar ao Carrinho
                             </button>
                         `;
-
+        
                         productList.appendChild(listItem);
                     }
                 });
-
+        
                 attachCartEventListeners();
+                attachHeartListeners(); // <- adiciona os eventos nos corações
             }
-
+        
             function attachCartEventListeners() {
                 const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
                 addToCartButtons.forEach(button => {
@@ -371,17 +383,40 @@
                     button.addEventListener('click', handleAddToCartButtonClick);
                 });
             }
-
+        
+            function attachHeartListeners() {
+                const coracoes = document.querySelectorAll(".coracao");
+        
+                coracoes.forEach(coracao => {
+                    const produto = coracao.closest(".product-item");
+                    const titulo = produto.querySelector(".product-name").textContent;
+        
+                    coracao.addEventListener("click", () => {
+                        let favoritos = getFavoritos();
+        
+                        if (favoritos.includes(titulo)) {
+                            favoritos = favoritos.filter(item => item !== titulo);
+                            coracao.classList.remove("favoritado");
+                        } else {
+                            favoritos.push(titulo);
+                            coracao.classList.add("favoritado");
+                        }
+        
+                        salvarFavoritos(favoritos);
+                    });
+                });
+            }
+        
             if (themeToggleButton) {
                 themeToggleButton.addEventListener('click', toggleTheme);
             }
-
+        
             loadTheme();
             updateCartBadge();
-
+        
             const products = loadProductsFromLocalStorage();
             renderClientProducts(products);
         });
-    </script>
+        </script>        
 </body>
 </html>

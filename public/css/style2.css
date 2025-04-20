@@ -245,8 +245,7 @@ nav a:hover {
 
 #over {
     position: relative;
-    top: 450px;
-    right: 0px;
+    top: 410px;
     font-weight: bold;
     font-size: 30px;
     color: #232526;
@@ -296,21 +295,21 @@ footer {
 }
 
 .footer-button {
+    padding: 10px 20px;
+    font-size: 16px;
     background-color: #ffa500;
     color: white;
-    padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: 0.3s;
-    white-space: nowrap;
-}
+    width: 100%;
+    max-width: 200px; /* limite no tamanho do botão */
+    transition: background-color 0.3s;
+  }
 
 .footer-button:hover {
     background-color: #ff8800;
-}
+  }
 
 .footer-link {
     color: white;
@@ -442,6 +441,32 @@ footer p.copyright {
 
 body.dark-theme .setting button:hover {
     background-color: #45a049;
+}
+
+/* Estilos para o container do ícone de perfil no cabeçalho quando logado */
+.profile-icon#header-profile-icon {
+    position: relative;
+    display: flex; /* Garante que os itens internos (como o SVG) se alinhem */
+    align-items: center; /* Alinha verticalmente o ícone */
+    left: -10px; /* Adiciona uma margem à esquerda para afastá-lo da borda */
+}
+
+.profile-icon#header-profile-icon a {
+    display: flex; /* Garante que o link também se comporte como um flex container */
+    text-decoration: none;
+    justify-content: center; /* Centraliza o conteúdo horizontalmente dentro do link */
+    align-items: center; /* Centraliza o conteúdo verticalmente dentro do link */
+}
+
+.profile-icon#header-profile-icon svg {
+    width: 30px;
+    height: 30px;
+    fill: white; /* Mantém a cor branca do ícone */
+}
+
+/* Para o tema escuro, se você quiser manter a cor */
+body.dark-theme .profile-icon#header-profile-icon svg {
+    fill: #e0e0e0;
 }
 
 .close-sidebar-button {
@@ -739,6 +764,7 @@ body.dark-theme .close-sidebar-button:hover {
     color: white;
 }
 
+
 .carousel-images {
     display: flex;
     transition: transform 0.5s ease-in-out;
@@ -842,7 +868,7 @@ body.dark-theme .profile-icon#sidebar-profile-icon svg {
 }
 
 .settings-sidebar .news-button-sidebar:hover {
-    background-color: #45a049; /* Usar a cor de hover dos outros botões */
+    background-color: #5b9fd6; /* Usar a cor de hover dos outros botões */
 }
 
 /* Estilos para tema escuro */
@@ -852,7 +878,7 @@ body.dark-theme .settings-sidebar .news-button-sidebar {
 }
 
 body.dark-theme .settings-sidebar .news-button-sidebar:hover {
-    background-color: #45a049; /* Manter a cor de hover */
+    background-color: #5b9fd6; /* Manter a cor de hover */
 }
 
 /* Responsividade */
@@ -973,21 +999,20 @@ body.dark-theme .settings-sidebar .news-button-sidebar:hover {
     }
 
     footer {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 15px;
+        flex-direction: column; /* Organiza os botões e o texto em coluna */
+        align-items: center; /* Centraliza os itens horizontalmente */
+        text-align: center; /* Alinha o texto centralmente */
     }
 
     .footer-button {
-        margin-bottom: 10px;
-        width: 80%;
+        width: 80%; /* Limita a largura dos botões */
+        margin-bottom: 10px; /* Adiciona espaço entre os botões */
+        display: block; /* Garante que cada botão ocupe uma linha */
     }
 
     footer p.copyright {
-        padding-top: 10px;
-        border-top: 1px solid #333;
-        margin-top: 10px;
+        width: auto; /* O copyright ocupa a largura do conteúdo */
+        text-align: center; /* Garante que o copyright permaneça centralizado */
     }
 
 
@@ -1099,18 +1124,13 @@ body.dark-theme .settings-sidebar .news-button-sidebar:hover {
         font-size: 18px;
     }
     .footer-button {
-        width: 95%;
-        font-size: 14px;
-        padding: 8px 16px;
-    }
-
-    .footer-link {
-        font-size: 0.9em;
-        margin: 5px 0;
+        width: 95%; /* Aumenta a largura dos botões para ocupar mais espaço em telefones */
+        font-size: 14px; /* Reduz a fonte dos botões */
+        padding: 8px 16px; /* Reduz o padding dos botões */
     }
 
     footer p.copyright {
-        font-size: 0.8em;
+        font-size: 0.8em; /* Reduz a fonte do copyright */
     }
 
 }
@@ -1159,16 +1179,12 @@ body.dark-theme .settings-sidebar .news-button-sidebar:hover {
     }
 
     .footer-button {
-        font-size: 12px;
-        padding: 6px 12px;
-    }
-
-    .footer-link {
-        font-size: 0.75em;
+        font-size: 12px; /* Reduz ainda mais a fonte dos botões */
+        padding: 6px 12px; /* Reduz ainda mais o padding dos botões */
     }
 
     footer p.copyright {
-        font-size: 0.7em;
+        font-size: 0.7em; /* Reduz ainda mais a fonte do copyright */
     }
 
     .settings-sidebar h3 {
@@ -1215,3 +1231,4 @@ body.dark-theme .settings-sidebar .news-button-sidebar:hover {
         font-size: 16px;
     }
 }
+

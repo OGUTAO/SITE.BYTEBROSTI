@@ -739,68 +739,90 @@ body.dark-theme .footer {
         margin-top: 10px;
     }
 
-    /* Estilos responsivos específicos para a seção de login */
+    /* Estilos responsivos específicos para a seção de login (TABLETS E CELULARES MAIORES) */
     #loginSection {
-        max-width: 95%; /* Ocupa mais largura em telas menores */
-        margin-top: 30px;
-        margin-bottom: 30px;
-        padding: 15px;
+        max-width: 90%; /* Reduzi um pouco para dar mais espaço nas laterais */
+        margin-top: 40px; /* Ajustei a margem superior */
+        margin-bottom: 40px; /* Ajustei a margem inferior */
+        padding: 20px; /* Aumentei um pouco o padding */
     }
 
     #loginSection h2 {
-        font-size: 1.4em;
-        margin-bottom: 15px;
+        font-size: 1.6em; /* Aumentei um pouco a fonte do título */
+        margin-bottom: 20px; /* Aumentei o espaço abaixo do título */
     }
 
     #loginSection label {
-        font-size: 0.95em;
+        font-size: 1em; /* Aumentei um pouco a fonte do label */
     }
 
     #loginSection input[type="email"],
     #loginSection input[type="password"] {
-        font-size: 0.95em;
-        padding: 8px;
-        margin-bottom: 12px;
+        font-size: 1em; /* Aumentei um pouco a fonte dos inputs */
+        padding: 10px; /* Aumentei o padding dos inputs */
+        margin-bottom: 15px; /* Aumentei o espaço abaixo dos inputs */
     }
 
     #loginSection button {
-        font-size: 1em;
-        padding: 10px 15px;
+        font-size: 1.1em; /* Aumentei um pouco a fonte do botão */
+        padding: 12px 18px; /* Aumentei o padding do botão */
     }
 
     .login-logo img {
-        max-width: 120px;
+        max-width: 150px; /* Aumentei um pouco o tamanho do logo */
+        margin-bottom: 25px; /* Adicionei margem inferior ao logo */
     }
 }
 
-/* Para telas menores que 600px (telefones menores) */
+/* Para telas menores que 600px (CELULARES MENORES) */
 @media (max-width: 600px) {
     #loginSection {
-        max-width: 98%;
-        margin-top: 20px;
-        margin-bottom: 20px;
-        padding: 10px;
+        max-width: 95%; /* Ocupa ainda mais largura */
+        margin-top: 30px; /* Ajustei a margem superior */
+        margin-bottom: 30px; /* Ajustei a margem inferior */
+        padding: 15px; /* Ajustei o padding */
     }
 
     #loginSection h2 {
-        font-size: 1.2em;
-        margin-bottom: 10px;
+        font-size: 1.4em; /* Ajustei a fonte do título */
+        margin-bottom: 15px; /* Ajustei o espaço abaixo do título */
     }
 
     #loginSection label {
-        font-size: 0.9em;
+        font-size: 0.9em; /* Mantenho o tamanho da fonte do label */
     }
 
     #loginSection input[type="email"],
     #loginSection input[type="password"] {
-        font-size: 0.9em;
-        padding: 6px;
-        margin-bottom: 10px;
+        font-size: 0.9em; /* Mantenho o tamanho da fonte dos inputs */
+        padding: 8px; /* Ajustei o padding dos inputs */
+        margin-bottom: 12px; /* Ajustei o espaço abaixo dos inputs */
     }
 
     #loginSection button {
-        font-size: 0.9em;
-        padding: 8px 12px;
+        font-size: 1em; /* Ajustei a fonte do botão */
+        padding: 10px 15px; /* Ajustei o padding do botão */
+    }
+
+    .login-logo img {
+        max-width: 120px; /* Ajustei o tamanho do logo */
+        margin-bottom: 20px; /* Ajustei a margem inferior do logo */
+    }
+}
+
+/* Para telas ainda menores (opcional) */
+@media (max-width: 480px) {
+    #loginSection h2 {
+        font-size: 1.3em;
+    }
+
+    #loginSection input[type="email"],
+    #loginSection input[type="password"] {
+        padding: 6px;
+    }
+
+    #loginSection button {
+        font-size: 0.95em;
     }
 
     .login-logo img {

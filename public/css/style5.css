@@ -5,6 +5,10 @@ body {
     margin: 0;
     padding: 0;
     transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para o tema */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .dark-mode {
@@ -117,12 +121,16 @@ header {
 
 .orcamento-enviado {
     max-width: 600px;
-    margin: 100px auto;
+    margin: auto; /* Centraliza horizontalmente */
     padding: 30px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    flex-grow: 1; /* Permite que a seção cresça e empurre o footer para baixo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza verticalmente o conteúdo dentro da seção */
 }
 
 .dark-mode .orcamento-enviado {
@@ -163,6 +171,7 @@ header {
     text-decoration: none;
     transition: background-color 0.3s ease, transform 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 20px; /* Adiciona um pouco de espaço acima do botão */
 }
 
 footer {
@@ -170,7 +179,9 @@ footer {
     color: white;
     text-align: center;
     padding: 20px 0;
-    margin-top: 50px;
+    margin-top: auto; /* Empurra o footer para a parte inferior */
+    width: 100%; /* Garante a largura total do footer */
+    box-sizing: border-box; /* Garante que padding não afete a largura total */
 }
 
 .dark-mode footer {
@@ -231,7 +242,7 @@ footer button:hover {
 
     .orcamento-enviado {
         padding: 20px;
-        margin: 50px auto;
+        margin: auto; /* Mantém a centralização */
     }
 
     .orcamento-enviado h2 {
@@ -251,7 +262,7 @@ footer button:hover {
 
     footer {
         padding: 15px 0;
-        margin-top: 30px;
+        margin-top: auto; /* Garante que o footer continue embaixo */
     }
 
     footer button {
@@ -319,7 +330,7 @@ footer button:hover {
 
     footer {
         padding: 10px 0;
-        margin-top: 20px;
+        margin-top: auto; /* Garante que o footer continue embaixo */
     }
 
     footer button {

@@ -10,19 +10,17 @@
     <div class="container">
         <h2>Alterar Telefone</h2>
         <form id="change-phone-form">
-            <label for="current-phone">Telefone Atual:</label>
-            <input type="tel" id="current-phone" name="current-phone" placeholder="Seu telefone atual" required>
+          <input type="tel" id="current-phone" name="current-phone" placeholder="Seu telefone atual" required>
 
-            <label for="new-phone">Novo Telefone:</label>
-            <input type="tel" id="new-phone" name="new-phone" placeholder="Novo número de telefone" required>
+          <input type="tel" id="new-phone" name="new-phone" placeholder="Novo número de telefone" required>
 
-            <label for="confirm-new-phone">Confirmar Novo Telefone:</label>
-            <input type="tel" id="confirm-new-phone" name="confirm-new-phone" placeholder="Confirme o novo telefone" required>
-
-            <div class="error-message" id="error-message"></div>
-
-            <button type="submit">Salvar Novo Telefone</button>
-        </form>
+          <label for="confirm-new-phone">Confirmar Novo Telefone:</label>
+          <input type="tel" id="confirm-new-phone" name="confirm-new-phone" placeholder="Confirme o novo telefone" required>
+      
+          <div class="error-message" id="error-message"></div>
+      
+          <button type="submit">Salvar Novo Telefone</button>
+      </form>
         <div class="button-group">
           <div class="button-wrapper">
               <a href="index.html" class="button voltar-login">Voltar ao Menu</a>
@@ -45,8 +43,8 @@
                 event.preventDefault();
 
                 const currentPhone = document.getElementById('current-phone').value;
-                const newPhone = document.getElementById('new-phone').value;
                 const confirmNewPhone = document.getElementById('confirm-new-phone').value;
+                const newPhone = document.getElementById('new-phone').value;
 
                 errorMessage.textContent = ''; // Limpa mensagens de erro anteriores
 
@@ -58,9 +56,9 @@
                 // Aqui você pode adicionar a lógica para enviar os dados para o servidor
                 // para atualizar o telefone do usuário.
                 console.log('Telefone atual:', currentPhone);
-                console.log('Novo telefone:', newPhone);
                 console.log('Confirmação:', confirmNewPhone);
-                alert('Telefone atualizado com sucesso (simulação)!');
+                console.log('Novo Telefone:', newPhone);
+                alert('Telefone atualizado com sucesso!');
                 window.location.href = 'index.html'; // Redireciona para a página inicial após a tentativa de atualização
             });
         });
