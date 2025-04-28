@@ -1,0 +1,674 @@
+/* Estilos gerais (adapte do seu style2.css) */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #edeef1;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+header {
+    background: linear-gradient(to right, #020202, #777a7e);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+
+header nav a {
+    color: rgba(23, 189, 240, 0.767);
+    margin: 0 10px;
+    position: relative;
+    text-decoration: none;
+    font-size: 17px;
+    margin: 0 15px;
+    transition: color 0.3s;
+    font-weight: 800;
+}
+
+header nav a:hover {
+    color: #ff8800;
+}
+
+header .logo a {
+    text-decoration: none;
+}
+
+.logo {
+    position: relative;
+    display: flex;
+    right: -4%;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.logo h1 {
+    font-size: 36px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: rgba(23, 189, 240, 0.767);
+    margin-bottom: 5px;
+}
+
+.logo:hover h1 {
+    color: #ffa500;
+}
+
+.logo p {
+    font-size: 1em;
+    color: white;
+    margin-top: 0;
+}
+
+
+.atendimento {
+    position: relative;
+    top: 250px;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 40px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.atendimento h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.atendimento ul {
+    list-style: none;
+    padding: 0;
+}
+
+.atendimento li {
+    margin-bottom: 10px;
+}
+
+.atendimento form {
+    margin-top: 20px;
+}
+
+.atendimento label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.atendimento input[type="text"],
+.atendimento input[type="email"],
+.atendimento textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.atendimento input[type="submit"] {
+    background-color: #ffa500;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.atendimento input[type="submit"]:hover {
+    background-color: #ff8800;
+}
+
+.fale-conosco {
+    position: relative;
+    top: 250px;
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.fale-conosco h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #232526;
+}
+
+.fale-conosco p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.fale-conosco form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fale-conosco label {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 8px;
+    align-self: flex-start;
+}
+
+.fale-conosco input[type="text"],
+.fale-conosco input[type="email"],
+.fale-conosco textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.fale-conosco textarea {
+    resize: vertical;
+}
+
+.fale-conosco input[type="submit"] {
+    background-color: #ffa500;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.fale-conosco input[type="submit"]:hover {
+    background-color: #ff8800;
+}
+
+.fale-conosco ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 25px;
+}
+
+.fale-conosco li {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.servicos {
+    position: relative;
+    top: 250px;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.servicos h2 {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    color: #232526;
+}
+
+.servicos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.servico {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.servico:hover {
+    transform: translateY(-5px);
+}
+
+.servico-imagem {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.servico h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #232526;
+}
+
+.servico p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.servico-botao {
+    display: inline-block;
+    background-color: #ffa500;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.servico-botao:hover {
+    background-color: #ff8800;
+}
+
+
+.orcamento {
+    position: relative;
+    max-width: 1000px;
+    left: auto; /* Removendo posicionamento absoluto para centralizar */
+    top: 250px;
+    margin: 30px auto; /* Centralizando horizontalmente e adicionando margem vertical */
+    padding: 40px; /* Reduzindo o padding para melhor adaptação em telas menores */
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.orcamento h2 {
+    font-size: 3em;
+    margin-bottom: 25px;
+    color: #232526;
+}
+
+.orcamento p {
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.orcamento-conteudo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: row; /* Garante que os itens fiquem lado a lado por padrão */
+}
+
+.orcamento-imagem {
+    width: 45%;
+    margin-right: 30px;
+}
+
+.orcamento-imagem img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.orcamento form {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+
+.orcamento label {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+    align-self: flex-start;
+}
+
+.orcamento input[type="text"],
+.orcamento input[type="email"],
+.orcamento input[type="tel"],
+.orcamento textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 25px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.1em;
+    box-sizing: border-box;
+}
+
+.orcamento textarea {
+    resize: vertical;
+}
+
+.orcamento input[type="submit"] {
+    background-color: #ffa500;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.orcamento input[type="submit"]:hover {
+    background-color: #ff8800;
+}
+
+.servico-info {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.servico-info img {
+    width: 450px;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    max-width: 100%; /* Garante que a imagem não ultrapasse a largura do container pai */
+}
+
+.servico-info h3 {
+    font-size: 1.8em;
+    color: #232526;
+    margin-top: 10px;
+}
+
+footer {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    position: relative;
+    top: 500px;
+    margin-top: 50px;
+}
+
+
+footer button {
+    background-color: #ffa500;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+footer button:hover {
+    background-color: #ff8800;
+}
+
+body.dark-theme {
+    background-color: #121212;
+    color: #eee;
+}
+
+body.dark-theme .atendimento,
+body.dark-theme .fale-conosco,
+body.dark-theme .servicos,
+body.dark-theme .orcamento {
+    background-color: #1e1e1e;
+    color: #eee;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+body.dark-theme header {
+    background: linear-gradient(to right, #000000, #2c3e50);
+}
+
+body.dark-theme header nav a {
+    color: #1abc9c;
+}
+
+body.dark-theme .logo h1 {
+    color: #1abc9c;
+}
+
+body.dark-theme .fale-conosco p,
+body.dark-theme .fale-conosco h2,
+body.dark-theme .fale-conosco h3,
+body.dark-theme .fale-conosco label,
+body.dark-theme .fale-conosco li,
+body.dark-theme .servico p,
+body.dark-theme .servicos h2,
+body.dark-theme .servico h3,
+body.dark-theme .orcamento h2,
+body.dark-theme .orcamento h3,
+body.dark-theme .orcamento p,
+body.dark-theme .orcamento label {
+    color: #ccc;
+}
+
+body.dark-theme .servico {
+    border-color: #444;
+}
+
+body.dark-theme .orcamento input,
+body.dark-theme .orcamento textarea,
+body.dark-theme .fale-conosco input,
+body.dark-theme .fale-conosco textarea,
+body.dark-theme .atendimento input,
+body.dark-theme .atendimento textarea {
+    background-color: #2a2a2a;
+    color: #eee;
+    border: 1px solid #555;
+}
+
+body.dark-theme footer {
+    background-color: #111;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .orcamento-conteudo {
+        flex-direction: column; /* Empilha imagem e formulário em telas menores */
+        align-items: center; /* Centraliza os itens */
+    }
+
+    .orcamento-imagem {
+        width: 80%;
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .orcamento form {
+        width: 80%;
+    }
+
+    .servicos-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Ajusta largura mínima dos itens da grade */
+    }
+
+    .servico-info img {
+        width: 100%; /* Garante que a imagem ocupe a largura total em telas menores */
+    }
+
+    .atendimento {
+        padding: 30px;
+        margin-top: 200px; /* Ajusta a margem superior */
+    }
+
+    .fale-conosco {
+        padding: 20px;
+        margin-top: 200px; /* Ajusta a margem superior */
+    }
+
+    .servicos {
+        padding: 20px;
+        margin-top: 200px; /* Ajusta a margem superior */
+    }
+
+    .orcamento {
+        padding: 30px;
+        margin-top: 200px; /* Ajusta a margem superior */
+        left: auto; /* Remove o posicionamento absoluto */
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .orcamento h2 {
+        font-size: 2.5em;
+    }
+
+    .orcamento p {
+        font-size: 1.1em;
+    }
+
+    .orcamento label {
+        font-size: 1.1em;
+    }
+
+    .orcamento input[type="text"],
+    .orcamento input[type="email"],
+    .orcamento input[type="tel"],
+    .orcamento textarea,
+    .orcamento input[type="submit"] {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+    }
+
+    header nav {
+        margin-top: 10px;
+    }
+
+    header nav a {
+        margin: 5px;
+        font-size: 16px;
+    }
+
+    .logo {
+        align-items: center;
+        text-align: center;
+    }
+
+    .logo h1 {
+        font-size: 2.5em;
+    }
+
+    .atendimento {
+        padding: 20px;
+        margin-top: 180px; /* Ajusta a margem superior */
+    }
+
+    .atendimento h2 {
+        font-size: 1.8em;
+    }
+
+    .fale-conosco {
+        padding: 15px;
+        margin-top: 180px; /* Ajusta a margem superior */
+    }
+
+    .fale-conosco h2 {
+        font-size: 2em;
+    }
+
+    .servicos {
+        padding: 15px;
+        margin-top: 180px; /* Ajusta a margem superior */
+    }
+
+    .servicos h2 {
+        font-size: 2em;
+    }
+
+    .servicos-grid {
+        grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    }
+
+    .orcamento {
+        padding: 20px;
+        margin-top: 180px; /* Ajusta a margem superior */
+    }
+
+    .orcamento h2 {
+        font-size: 2em;
+    }
+
+    .orcamento p {
+        font-size: 1em;
+    }
+
+    .orcamento label {
+        font-size: 1em;
+    }
+
+    .orcamento input[type="text"],
+    .orcamento input[type="email"],
+    .orcamento input[type="tel"],
+    .orcamento textarea,
+    .orcamento input[type="submit"] {
+        font-size: 0.9em;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    .orcamento-imagem {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo h1 {
+        font-size: 2em;
+    }
+
+    header nav a {
+        font-size: 14px;
+        margin: 5px 2px;
+    }
+
+    .atendimento h2 {
+        font-size: 1.6em;
+    }
+
+    .fale-conosco h2 {
+        font-size: 1.8em;
+    }
+
+    .servicos h2 {
+        font-size: 1.8em;
+    }
+
+    .orcamento h2 {
+        font-size: 1.8em;
+    }
+
+    .orcamento p {
+        font-size: 0.9em;
+    }
+
+    .orcamento label {
+        font-size: 0.9em;
+    }
+
+    .orcamento input[type="text"],
+    .orcamento input[type="email"],
+    .orcamento input[type="tel"],
+    .orcamento textarea,
+    .orcamento input[type="submit"] {
+        font-size: 0.8em;
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+}

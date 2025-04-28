@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento - Byte Bros</title>
+    <link rel="stylesheet" href="css/style4.css">
+    <link rel="stylesheet" href="css/style5.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="index.html"><h1>BYTE BROS.TI</h1></a>
+            <p>Manutenção Digital</p>
+        </div>
+        <nav>
+            <a href="atendimento.html">Atendimento</a>
+            <a href="servicos.html">Serviços</a>
+            <a href="faleconosco.html">Contato</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="orcamento">
+            <h2>Solicitar Orçamento</h2>
+            <p>Preencha o formulário abaixo para solicitar um orçamento para o serviço selecionado:</p>
+
+            <div class="orcamento-conteudo">
+                <div class="servico-info">
+                    <img id="servico-imagem" src="" alt="Imagem do Serviço">
+                    <h3 id="servico-nome"></h3>
+                    <div class="botao-voltar">
+                        <a href="javascript:history.go(-1)" class="botao">Voltar</a>
+                    </div>
+                </div>
+                <form id="orcamento-form">
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" required><br><br>
+
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" required><br><br>
+
+                    <label for="telefone">Telefone:</label>
+                    <input type="tel" id="telefone" name="telefone" required><br><br>
+
+                    <label for="descricao">Digite aqui o que deseja para agilizar o atendimento:</label><br>
+                    <textarea id="descricao" name="descricao" rows="5" required></textarea><br><br>
+
+                    <input type="submit" value="Enviar Solicitação">
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <button onclick="window.location.href='index.html'">Voltar à Tela Inicial</button>
+        <button id="toggle-theme">Mudar para Tema Escuro</button>
+        <p>&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+        <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
+    </footer>
+
+    <script src="js/version.js"></script>
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        const body = document.body;
+        const toggleButton = document.getElementById('toggle-theme');
+
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            toggleButton.textContent = 'Mudar para Tema Claro';
+        }
+
+        toggleButton.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            const isDark = body.classList.contains('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            toggleButton.textContent = isDark ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro';
+        });
+    </script>
+    <script src="js/orcamento.js"></script>
+</body>
+</html>

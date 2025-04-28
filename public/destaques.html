@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destaques - Byte Bros</title>
+    <link rel="stylesheet" href="css/style13.css">
+    <link rel="stylesheet" href="css/style4.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="oferta-fixa">Oferta!</div>
+    <header>
+        <div class="logo">
+            <a href="index.html"><h1>BYTE BROS.TI</h1></a>
+            <p>Manutenção Digital</p>
+        </div>
+        <nav>
+            <a href="index.html">Menu</a>
+            <a href="lojapecascliente.html">Loja</a>
+            <a href="servicos.html">Serviços</a>
+            <a href="faleconosco.html">Contato</a>
+            <a href="sobrenos.html">Sobre Nós</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section id="mais-procurados" class="secao-destaque">
+            <h2><i class="fas fa-fire"></i> Produtos Mais Procurados</h2>
+            <div class="lista-produtos" id="mais-procurados-lista">
+            </div>
+        </section>
+
+        <section id="novos-produtos" class="secao-destaque">
+            <h2><i class="fas fa-plus-circle"></i> Novos Produtos</h2>
+            <div class="lista-produtos" id="novos-produtos-lista">
+            </div>
+        </section>
+
+        <section id="ofertas-da-semana" class="secao-destaque">
+            <h2><i class="fas fa-tags"></i> Ofertas da Semana</h2>
+            <div class="lista-produtos" id="ofertas-da-semana-lista">
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="footer-button right-button">
+            Voltar ao Topo
+        </button>
+        <p>&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+        <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #fdfbfb;"></p>
+    </footer>
+
+    <script>
+        document.getElementById('system-version').textContent = 'Versão 1.0';
+
+        // Função genérica para criar a estrutura de um produto
+        function criarProdutoHTML(produto) {
+            const produtoDiv = document.createElement('div');
+            produtoDiv.classList.add('produto');
+
+            const imagem = document.createElement('img');
+            imagem.src = produto.image;
+            imagem.alt = produto.name;
+
+            const infoProduto = document.createElement('div');
+            infoProduto.classList.add('info-produto');
+
+            const nomeProduto = document.createElement('h3');
+            nomeProduto.textContent = produto.name;
+
+            const preco = document.createElement('p');
+            preco.classList.add('preco');
+            preco.textContent = produto.precoAtual ? `R$ ${parseFloat(produto.precoAtual).toFixed(2).replace('.', ',')}` : `R$ ${parseFloat(produto.value).toFixed(2).replace('.', ',')}`;
+
+            infoProduto.appendChild(nomeProduto);
+            infoProduto.appendChild(preco);
+
+            produtoDiv.appendChild(imagem);
+            produtoDiv.appendChild(infoProduto);
+
+            const botaoDetalhes = document.createElement('button');
+            botaoDetalhes.classList.add('botao-comprar');
+            botaoDetalhes.textContent = 'Ver Detalhes';
+            // Adicione aqui a lógica para redirecionar para a página de detalhes (se necessário)
+            const linkDetalhes = document.createElement('a');
+            linkDetalhes.href = `lojapecascliente.html?produtoId=${produto.id}`;
+            linkDetalhes.appendChild(botaoDetalhes);
+            produtoDiv.appendChild(linkDetalhes);
+
+            if (produto.selo) {
+                const selo = document.createElement('span');
+                selo.classList.add(produto.selo.classe);
+                selo.textContent = produto.selo.texto;
+                produtoDiv.appendChild(selo);
+            } else if (produto.precoAntigo) {
+                const precoAntigo = document.createElement('p');
+                precoAntigo.classList.add('preco', 'preco-antigo');
+                precoAntigo.textContent = `R$ ${parseFloat(produto.precoAntigo).toFixed(2).replace('.', ',')}`;
+                infoProduto.insertBefore(precoAntigo, preco); // Insere antes do preço atual
+
+                const seloOferta = document.createElement('span');
+                seloOferta.classList.add('selo-oferta');
+                seloOferta.textContent = 'Oferta!';
+                produtoDiv.appendChild(seloOferta);
+            }
+
+            return produtoDiv;
+        }
+
+        // Carregar os IDs dos produtos destacados
+        const popularProductIds = JSON.parse(localStorage.getItem('popularProducts')) || [];
+        const newProductIdsAdmin = JSON.parse(localStorage.getItem('newProductsAdmin')) || [];
+        const offerProductData = JSON.parse(localStorage.getItem('offersAdmin')) || [];
+
+        // Carregar a lista completa de produtos
+        const allProducts = JSON.parse(localStorage.getItem('products')) || [];
+
+        const maisProcuradosLista = document.getElementById('mais-procurados-lista');
+        const novosProdutosLista = document.getElementById('novos-produtos-lista');
+        const ofertasDaSemanaLista = document.getElementById('ofertas-da-semana-lista');
+
+        // Função para encontrar um produto pelo ID
+        function findProductById(id) {
+            return allProducts.find(produto => produto.id === id);
+        }
+
+        // Carregar e exibir produtos mais procurados
+        popularProductIds.forEach(id => {
+            const produto = findProductById(id);
+            if (produto) {
+                maisProcuradosLista.appendChild(criarProdutoHTML(produto));
+            }
+        });
+
+        // Carregar e exibir novos produtos
+        newProductIdsAdmin.forEach(id => {
+            const produto = findProductById(id);
+            if (produto) {
+                const produtoComSelo = { ...produto, selo: { texto: 'Novo', classe: 'selo-novo' } };
+                novosProdutosLista.appendChild(criarProdutoHTML(produtoComSelo));
+            }
+        });
+
+        // Carregar e exibir ofertas da semana
+        offerProductData.forEach(offer => {
+            const produto = findProductById(offer.id);
+            if (produto) {
+                const produtoComOferta = { ...produto, precoAntigo: offer.precoAntigo, precoAtual: offer.precoAtual };
+                ofertasDaSemanaLista.appendChild(criarProdutoHTML(produtoComOferta));
+            }
+        });
+    </script>
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        const body = document.body;
+        const toggleButton = document.getElementById('toggle-theme');
+
+        // Aplica o tema salvo ao carregar
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-theme');
+            toggleButton.textContent = 'Mudar para Tema Claro';
+        }
+
+        // Alterna o tema
+        if (toggleButton) {
+            toggleButton.addEventListener('click', () => {
+                body.classList.toggle('dark-theme');
+                const isDark = body.classList.contains('dark-theme');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                toggleButton.textContent = isDark ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro';
+            });
+        }
+    </script>
+    <script src="js/scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Cadastre-se:</h2>
+        <input type="text" id="register-name" placeholder="Seu Nome">
+        <input type="email" id="register-email" placeholder="Seu Email">
+        <input type="tel" id="register-phone" placeholder="Seu Telefone">
+        <input type="password" id="register-password" placeholder="Sua Senha">
+        <input type="password" id="confirm-password" placeholder="Confirmar Senha">
+        <p class="error" id="register-error"></p>
+        <button onclick="registerUser()">Cadastrar</button>
+        <p>Já tem uma conta? <a href="login.html">Faça Login!</a></p>
+        <div class="botao-voltar">
+            <a href="index.html" class="botao">Voltar ao Menu</a>
+        </div>
+    </div>
+    <div class="registration-image">
+        <img src="img/bytebros.png" alt="Imagem de Registro">
+        <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+        <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
+    </div>
+    <script src="js/version.js"></script>
+    <script>
+        function registerUser() {
+            const nameInput = document.getElementById('register-name');
+            const emailInput = document.getElementById('register-email');
+            const phoneInput = document.getElementById('register-phone');
+            const passwordInput = document.getElementById('register-password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const errorElement = document.getElementById('register-error');
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const password = passwordInput.value.trim();
+            const confirmPassword = confirmPasswordInput.value.trim();
+
+            if (!name || !email || !phone || !password || !confirmPassword) {
+                errorElement.textContent = 'Por favor, preencha todos os campos.';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorElement.textContent = 'As senhas não coincidem.';
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+
+            if (users[email]) {
+                errorElement.textContent = 'Este email já está cadastrado.';
+                return;
+            }
+
+            users[email] = {
+                name: name,
+                phone: phone,
+                password: password
+            };
+
+            localStorage.setItem('users', JSON.stringify(users));
+
+            alert('Cadastro realizado com sucesso! Você será redirecionado para a página de login.');
+            window.location.href = 'login.html';
+        }
+
+        // Outras funções (validateLogin, checkLoginStatusOnLoad, logout, applyTheme) permanecem inalteradas
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        applyTheme();
+    </script>
+</body>
+</html>

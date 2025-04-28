@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Carrinho de Compras - Byte Bros</title>
+    <link rel="stylesheet" href="css/style7.css" />
+    <link rel="stylesheet" href="css/style9.css" />
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header-carrinho">
+            <a href="lojapecascliente.html" class="button back-button">
+                <i class="fas fa-arrow-left"></i> Voltar para a Loja
+            </a>
+            <h1>Seu Carrinho de Compras</h1>
+        </div>
+
+        <section class="lista-carrinho">
+            <ul class="itens-carrinho"></ul>
+        </section>
+
+        <section class="resumo-carrinho">
+            <div class="subtotal">
+                <span>Subtotal:</span>
+                <span class="valor-subtotal">R$ 0,00</span>
+            </div>
+
+            <div class="frete-calculo">
+                <label for="cep-destino">CEP de Destino:</label>
+                <input type="text" id="cep-destino" placeholder="Digite seu CEP" maxlength="9">
+                <button class="button calcular-frete-button">Calcular Frete</button>
+                
+            </div>
+
+            <div class="tipo-frete">
+                <span>Tipo de Frete:</span>
+                <select id="tipo-frete">
+                    <option value="padrao">Padrão</option>
+                    <option value="expresso">Expresso</option>
+                </select>
+            </div>
+            <p class="cep-origem-info">Enviamos de: <strong>CEP 71215-100</strong> (Brasília, DF)</p>
+
+            <div class="frete">
+                <span>Frete:</span>
+                <span class="valor-frete">A calcular</span>
+            </div>
+            <div class="prazo-entrega">
+                <span>Prazo de Entrega:</span>
+                <span class="valor-prazo">A calcular</span>
+            </div>
+            <div class="total">
+                <span>Total:</span>
+                <span class="valor-total">R$ 0,00</span>
+            </div>
+            <div class="endereco-entrega">
+                <label for="endereco-input">Endereço para Entrega:</label>
+                <textarea id="endereco-input" rows="3" placeholder="Rua Exemplo, 123 - Bairro - Cidade/Estado"></textarea>
+            </div>
+            <button class="button checkout-button" onclick="window.location.href='pagamento.html'" disabled>
+                <i class="fas fa-check"></i> Finalizar Compra
+            </button>
+            <p class="observacao-checkout">Para finalizar a compra, adicione itens ao carrinho e calcule o frete.</p>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Seletores (mantidos)
+            const itensCarrinhoLista = document.querySelector('.itens-carrinho');
+            const valorSubtotalElement = document.querySelector('.valor-subtotal');
+            const valorFreteElement = document.querySelector('.valor-frete');
+            const valorPrazoElement = document.querySelector('.valor-prazo');
+            const valorTotalElement = document.querySelector('.valor-total');
+            const botaoCheckout = document.querySelector('.checkout-button');
+            const observacaoCheckout = document.querySelector('.observacao-checkout');
+            const body = document.body;
+            const cepDestinoInput = document.getElementById('cep-destino');
+            const calcularFreteButton = document.querySelector('.calcular-frete-button');
+            const tipoFreteSelect = document.getElementById('tipo-frete');
+            const enderecoInput = document.getElementById('endereco-input');
+
+            // CEP de origem (mantido)
+            const cepOrigem = '71215-100';
+            let freteCalculado = 0;
+            let freteFoiCalculado = false;
+            let prazoEntregaSimulado = 'A calcular';
+
+            let carrinho = JSON.parse(localStorage.getItem('cart')) || [];
+
+            function salvarCarrinho() {
+                localStorage.setItem('cart', JSON.stringify(carrinho));
+            }
+
+            function renderizarCarrinho() {
+                // (Função renderizarCarrinho mantida sem alterações significativas)
+                itensCarrinhoLista.innerHTML = '';
+
+                if (carrinho.length === 0) {
+                    itensCarrinhoLista.innerHTML = `
+                        <li class="item-carrinho empty-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <p>Seu carrinho está vazio!</p>
+                        </li>
+                    `;
+                    botaoCheckout.disabled = true;
+                    observacaoCheckout.style.display = 'block';
+                } else {
+                    botaoCheckout.disabled = !freteFoiCalculado || enderecoInput.value.trim() === '';
+                    observacaoCheckout.style.display = 'none';
+
+                    carrinho.forEach(item => {
+                        const li = document.createElement('li');
+                        li.classList.add('item-carrinho');
+                        li.innerHTML = `
+                            <div class="info-produto">
+                                <img src="${item.imagem || 'img/default_product_carrinho.jpg'}" alt="${item.name}" />
+                                <div class="detalhes-produto">
+                                    <h3>${item.name}</h3>
+                                    <p class="preco-unitario">Preço Unitário: R$ ${parseFloat(item.value).toFixed(2)}</p>
+                                </div>
+                            </div>
+                            <div class="acoes-produto">
+                                <div class="quantidade">
+                                    <button class="botao-quantidade menos">-</button>
+                                    <input type="number" value="${item.quantity}" min="1" class="input-quantidade">
+                                    <button class="botao-quantidade mais">+</button>
+                                </div>
+                                <button class="botao-remover"><i class="fas fa-trash-alt"></i> Remover</button>
+                            </div>
+                            <p class="preco-total-item">Total: R$ ${(parseFloat(item.value) * item.quantity).toFixed(2)}</p>
+                        `;
+                        itensCarrinhoLista.appendChild(li);
+
+                        li.querySelector('.menos').addEventListener('click', () => alterarQuantidade(item.id, -1));
+                        li.querySelector('.mais').addEventListener('click', () => alterarQuantidade(item.id, 1));
+                        li.querySelector('.input-quantidade').addEventListener('change', (e) => {
+                            const novaQuantidade = parseInt(e.target.value);
+                            if (novaQuantidade > 0) {
+                                alterarQuantidadeAbsoluta(item.id, novaQuantidade);
+                            } else {
+                                e.target.value = item.quantity;
+                            }
+                        });
+                        li.querySelector('.botao-remover').addEventListener('click', () => removerItem(item.id));
+                    });
+                }
+
+                atualizarResumo();
+                atualizarBotaoCheckout();
+            }
+
+            function alterarQuantidade(id, delta) {
+                const item = carrinho.find(p => p.id === id);
+                if (item) {
+                    item.quantity = Math.max(1, item.quantity + delta);
+                    salvarCarrinho();
+                    renderizarCarrinho();
+                }
+            }
+
+            function alterarQuantidadeAbsoluta(id, novaQuantidade) {
+                const item = carrinho.find(p => p.id === id);
+                if (item) {
+                    item.quantity = novaQuantidade;
+                    salvarCarrinho();
+                    renderizarCarrinho();
+                }
+            }
+
+            function removerItem(id) {
+                carrinho = carrinho.filter(p => p.id !== id);
+                salvarCarrinho();
+                renderizarCarrinho();
+            }
+
+            function calcularFrete(cepDestino) {
+                if (!cepDestino || cepDestino.length !== 9) {
+                    alert('Por favor, digite um CEP válido.');
+                    valorFreteElement.textContent = 'A calcular';
+                    valorPrazoElement.textContent = 'A calcular';
+                    freteCalculado = 0;
+                    freteFoiCalculado = false;
+                    prazoEntregaSimulado = 'A calcular';
+                    atualizarTotal();
+                    atualizarBotaoCheckout();
+                    return;
+                }
+
+                const primeirosDigitosDestino = cepDestino.substring(0, 2);
+                let custoBase = 0;
+                let prazoBaseDias = 0;
+                const tipoFrete = tipoFreteSelect.value;
+                const fatorExpresso = tipoFrete === 'expresso' ? 1.5 : 1;
+                const fatorPrazoExpresso = tipoFrete === 'expresso' ? 0.7 : 1; // Reduz o prazo para expresso
+
+                // Simulação de custo base e prazo base por "região"
+                if (primeirosDigitosDestino >= 0 && primeirosDigitosDestino <= 19) { // Região 1
+                    custoBase = 10.00;
+                    prazoBaseDias = 3;
+                } else if (primeirosDigitosDestino >= 20 && primeirosDigitosDestino <= 39) { // Região 2
+                    custoBase = 15.00;
+                    prazoBaseDias = 5;
+                } else if (primeirosDigitosDestino >= 40 && primeirosDigitosDestino <= 59) { // Região 3
+                    custoBase = 20.00;
+                    prazoBaseDias = 7;
+                } else if (primeirosDigitosDestino >= 60 && primeirosDigitosDestino <= 79) { // Região 4
+                    custoBase = 25.00;
+                    prazoBaseDias = 9;
+                } else { // Região 5
+                    custoBase = 30.00;
+                    prazoBaseDias = 12;
+                }
+
+                const custoFinalFrete = typeof custoBase === 'number' ? custoBase * fatorExpresso : custoBase;
+                const prazoFinalDias = Math.ceil(prazoBaseDias * fatorPrazoExpresso);
+                const dataEntrega = new Date();
+                dataEntrega.setDate(dataEntrega.getDate() + prazoFinalDias);
+                const dia = dataEntrega.getDate().toString().padStart(2, '0');
+                const mes = (dataEntrega.getMonth() + 1).toString().padStart(2, '0');
+                const ano = dataEntrega.getFullYear();
+                prazoEntregaSimulado = `${dia}/${mes}/${ano}`;
+
+                valorFreteElement.textContent = typeof custoFinalFrete === 'number' ? `R$ ${custoFinalFrete.toFixed(2)}` : custoFinalFrete;
+                valorPrazoElement.textContent = prazoEntregaSimulado;
+                freteCalculado = typeof custoFinalFrete === 'number' ? custoFinalFrete : 0;
+                freteFoiCalculado = true;
+                atualizarTotal();
+                atualizarBotaoCheckout();
+
+                localStorage.setItem('valorFreteCalculado', typeof custoFinalFrete === 'number' ? custoFinalFrete.toFixed(2) : '0.00');
+                localStorage.setItem('tipoFreteSelecionado', tipoFreteSelect.value);
+            }
+
+            function atualizarResumo() {
+                const subtotal = carrinho.reduce((total, item) => total + parseFloat(item.value) * item.quantity, 0);
+                valorSubtotalElement.textContent = `R$ ${subtotal.toFixed(2)}`;
+                atualizarTotal(subtotal);
+            }
+
+            function atualizarTotal(subtotal = parseFloat(valorSubtotalElement.textContent.replace('R$ ', ''))) {
+                const total = subtotal + freteCalculado;
+                valorTotalElement.textContent = `R$ ${total.toFixed(2)}`;
+            }
+
+            function atualizarBotaoCheckout() {
+                botaoCheckout.disabled = carrinho.length === 0 || !freteFoiCalculado || enderecoInput.value.trim() === '';
+            }
+
+            function applyTheme(theme) {
+                const isDark = theme === 'dark';
+                body.classList.toggle('dark-mode', isDark);
+            }
+
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(savedTheme);
+
+            window.addEventListener('storage', (event) => {
+                if (event.key === 'theme') {
+                    applyTheme(event.newValue);
+                }
+            });
+
+            renderizarCarrinho();
+
+            enderecoInput.value = localStorage.getItem('enderecoEntrega') || '';
+
+            enderecoInput.addEventListener('input', () => {
+                localStorage.setItem('enderecoEntrega', enderecoInput.value);
+                atualizarBotaoCheckout();
+            });
+
+            calcularFreteButton.addEventListener('click', () => {
+                calcularFrete(cepDestinoInput.value);
+            });
+
+            tipoFreteSelect.addEventListener('change', () => {
+                if (cepDestinoInput.value) {
+                    calcularFrete(cepDestinoInput.value);
+                } else {
+                    valorFreteElement.textContent = 'A calcular';
+                    valorPrazoElement.textContent = 'A calcular';
+                    freteCalculado = 0;
+                    freteFoiCalculado = false;
+                    prazoEntregaSimulado = 'A calcular';
+                    atualizarTotal();
+                    atualizarBotaoCheckout();
+                }
+            });
+
+            if (localStorage.getItem('cepDestino')) {
+                cepDestinoInput.value = localStorage.getItem('cepDestino');
+                calcularFrete(cepDestinoInput.value);
+            }
+
+            cepDestinoInput.addEventListener('input', () => {
+                localStorage.setItem('cepDestino', cepDestinoInput.value);
+            });
+
+            atualizarBotaoCheckout();
+        });
+    </script>
+    <footer>
+        <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+        <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em;"></p>
+    </footer>
+</div>
+<script src="js/version.js"></script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+/* style-carrinho.css */
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background-color: var(--bg-color-light); /* Usando variável de cor */
+    color: var(--text-color-light); /* Usando variável de cor */
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+    background-color: var(--bg-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.container {
+    max-width: 960px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: var(--container-bg-light); /* Usando variável de cor */
+    border-radius: 8px;
+    box-shadow: var(--shadow-light); /* Usando variável de cor */
+}
+
+body.dark-mode .container {
+    background-color: var(--container-bg-dark); /* Usando variável de cor */
+    box-shadow: var(--shadow-dark); /* Usando variável de cor */
+}
+
+.header-carrinho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--border-color-light); /* Usando variável de cor */
+    padding-bottom: 15px;
+}
+
+body.dark-mode .header-carrinho {
+    border-bottom-color: var(--border-color-dark); /* Usando variável de cor */
+}
+
+.header-carrinho h1 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .header-carrinho h1 {
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 15px;
+    background-color: var(--bg-color-light); /* Usando variável de cor */
+    color: var(--muted-text-light); /* Usando variável de cor */
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .back-button {
+    background-color: var(--container-bg-dark); /* Usando variável de cor */
+    color: var(--muted-text-dark); /* Usando variável de cor */
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+}
+
+.back-button:hover {
+    background-color: var(--hover-bg-light); /* Usando variável de cor */
+}
+
+body.dark-mode .back-button:hover {
+    background-color: var(--hover-bg-dark); /* Usando variável de cor */
+}
+
+.lista-carrinho {
+    margin-bottom: 30px;
+}
+
+.itens-carrinho {
+    list-style: none;
+    padding: 0;
+}
+
+.item-carrinho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .item-carrinho {
+    border-bottom-color: var(--border-color-dark); /* Usando variável de cor */
+}
+
+.item-carrinho:last-child {
+    border-bottom: none;
+}
+
+.item-carrinho.empty-cart {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--muted-text-light); /* Usando variável de cor */
+}
+
+body.dark-mode .item-carrinho.empty-cart {
+    color: var(--muted-text-dark); /* Usando variável de cor */
+}
+
+.item-carrinho.empty-cart i {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.item-carrinho.empty-cart a {
+    color: var(--accent-color-light); /* Usando variável de cor */
+    text-decoration: none;
+}
+
+body.dark-mode .item-carrinho.empty-cart a {
+    color: var(--accent-color-dark); /* Usando variável de cor */
+}
+
+.info-produto {
+    display: flex;
+    align-items: center;
+}
+
+.info-produto img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 15px;
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
+    background-color: var(--container-bg-light); /* Fallback */
+}
+
+body.dark-mode .info-produto img {
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+    background-color: var(--container-bg-dark); /* Fallback */
+}
+
+.detalhes-produto h3 {
+    margin: 0 0 5px;
+    font-size: 18px;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .detalhes-produto h3 {
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.preco-unitario {
+    color: var(--muted-text-light); /* Usando variável de cor */
+    font-size: 14px;
+}
+
+body.dark-mode .preco-unitario {
+    color: var(--muted-text-dark); /* Usando variável de cor */
+}
+
+.quantidade-controle {
+    display: flex;
+    align-items: center;
+}
+
+.botao-quantidade {
+    background: none;
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .botao-quantidade {
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.input-quantidade {
+    width: 40px;
+    text-align: center;
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
+    border-radius: 3px;
+    padding: 5px;
+    font-size: 14px;
+    background-color: var(--input-bg-light); /* Usando variável de cor */
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .input-quantidade {
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+    background-color: var(--input-bg-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.botao-remover {
+    background: none;
+    border: none;
+    color: var(--danger-color-light); /* Usando variável de cor */
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.botao-remover:hover {
+    color: var(--danger-hover-light); /* Usando variável de cor */
+}
+
+body.dark-mode .botao-remover {
+    color: var(--danger-color-dark); /* Usando variável de cor */
+}
+
+body.dark-mode .botao-remover:hover {
+    color: var(--danger-hover-dark); /* Usando variável de cor */
+}
+
+.preco-total-item {
+    font-weight: bold;
+    font-size: 16px;
+    margin-left: auto;
+    min-width: 100px;
+    text-align: right;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .preco-total-item {
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.resumo-carrinho {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border-color-light); /* Usando variável de cor */
+    text-align: right;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .resumo-carrinho {
+    border-top-color: var(--border-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.subtotal, .frete, .total {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .subtotal,
+body.dark-mode .frete,
+body.dark-mode .total {
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.total {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.checkout-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: var(--accent-color-light); /* Usando variável de cor */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.checkout-button:hover {
+    background-color: var(--accent-hover-light); /* Usando variável de cor */
+}
+
+.checkout-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    color: #666;
+}
+
+body.dark-mode .checkout-button {
+    background-color: var(--accent-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+body.dark-mode .checkout-button:hover {
+    background-color: var(--accent-hover-dark); /* Usando variável de cor */
+}
+
+body.dark-mode .checkout-button:disabled {
+    background-color: #718096;
+    color: var(--muted-text-dark);
+}
+
+.observacao-checkout {
+    color: var(--muted-text-light); /* Usando variável de cor */
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+}
+
+body.dark-mode .observacao-checkout {
+    color: var(--muted-text-dark); /* Usando variável de cor */
+}
+
+.endereco-entrega {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.endereco-entrega label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#endereco-input {
+    padding: 8px;
+    resize: vertical;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Estilos para a seção de cálculo de frete */
+.frete-calculo {
+    display: grid;
+    grid-template-columns: auto 1fr auto; /* Rótulo, input, botão */
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.frete-calculo label {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .frete-calculo label {
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.frete-calculo input[type="text"] {
+    padding: 8px;
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
+    border-radius: 5px;
+    font-size: 16px;
+    color: var(--text-color-light); /* Usando variável de cor */
+    background-color: var(--input-bg-light); /* Usando variável de cor */
+}
+
+body.dark-mode .frete-calculo input[type="text"] {
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+    background-color: var(--input-bg-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.calcular-frete-button {
+    padding: 8px 15px;
+    background-color: var(--accent-color-light); /* Usando variável de cor */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.calcular-frete-button:hover {
+    background-color: var(--accent-hover-light); /* Usando variável de cor */
+}
+
+body.dark-mode .calcular-frete-button {
+    background-color: var(--accent-color-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+body.dark-mode .calcular-frete-button:hover {
+    background-color: var(--accent-hover-dark); /* Usando variável de cor */
+}
+
+/* Estilos para a seção de tipo de frete */
+.tipo-frete {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tipo-frete span {
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .tipo-frete span {
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+.tipo-frete select {
+    padding: 8px;
+    border: 1px solid var(--border-color-light); /* Usando variável de cor */
+    border-radius: 5px;
+    font-size: 16px;
+    color: var(--text-color-light); /* Usando variável de cor */
+    background-color: var(--input-bg-light); /* Usando variável de cor */
+    flex-grow: 1; /* Para o select ocupar mais espaço */
+}
+
+body.dark-mode .tipo-frete select {
+    border-color: var(--border-color-dark); /* Usando variável de cor */
+    background-color: var(--input-bg-dark); /* Usando variável de cor */
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+/* Modificação no resumo do carrinho para alinhar o frete */
+.resumo-carrinho .frete {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: var(--text-color-light); /* Usando variável de cor */
+}
+
+body.dark-mode .resumo-carrinho .frete {
+    color: var(--text-color-dark); /* Usando variável de cor */
+}
+
+/* Media Queries para Responsividade da seção de frete */
+@media (max-width: 768px) {
+    .frete-calculo {
+        grid-template-columns: auto 1fr; /* Rótulo e input/botão em linhas diferentes */
+        gap: 8px;
+    }
+
+    .frete-calculo button {
+        grid-column: 1 / 3; /* O botão ocupa a linha inteira */
+    }
+
+    .tipo-frete {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .frete-calculo label,
+    .frete-calculo input[type="text"],
+    .calcular-frete-button {
+        font-size: 14px;
+    }
+
+    .tipo-frete span,
+    .tipo-frete select {
+        font-size: 14px;
+    }
+}
+
+/* Estilos para o rodapé */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+    background-color: var(--footer-bg-light); /* Usando variável de cor */
+    color: var(--muted-text-light); /* Usando variável de cor */
+    font-size: 0.9em;
+}
+
+body.dark-mode footer {
+    background-color: var(--footer-bg-dark); /* Usando variável de cor */
+    color: var(--muted-text-dark); /* Usando variável de cor */
+}
+
+.copyright {
+    margin-bottom: 5px;
+}

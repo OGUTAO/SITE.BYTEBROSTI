@@ -1,0 +1,397 @@
+/* Estilos para a página de Pagamento */
+.container-pagamento {
+    max-width: 90vw;
+    background-color: #fff;
+    border-radius: 1.5vw;
+    box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.15);
+    padding: 4vw;
+    margin: 4vw auto;
+    box-sizing: border-box;
+    text-align: center;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.dark-mode .container-pagamento {
+    background-color: #1e1e1e;
+    box-shadow: 0 0.5vw 1vw rgba(255, 255, 255, 0.1);
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 3vw;
+    font-size: 3vw;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode h1 {
+    color: #f0f0f0;
+}
+
+.opcoes-pagamento {
+    display: flex;
+    gap: 1.5vw;
+    margin-bottom: 3vw;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.opcao-botao {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 0.15vw solid #ccc;
+    padding: 1.5vw 3vw;
+    border-radius: 0.8vw;
+    cursor: pointer;
+    font-size: 1.2vw;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    flex-grow: 1;
+    min-width: auto;
+}
+
+.opcao-botao:hover {
+    background-color: #e0e0e0;
+}
+
+body.dark-mode .opcao-botao {
+    background-color: #333;
+    color: #f0f0f0;
+    border-color: #555;
+}
+
+body.dark-mode .opcao-botao:hover {
+    background-color: #555;
+}
+
+.formulario-pagamento {
+    text-align: left;
+    padding: 3vw;
+    border: 0.15vw solid #ddd;
+    border-radius: 0.8vw;
+    margin-top: 3vw;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .formulario-pagamento {
+    background-color: #2c2c2c;
+    border-color: #444;
+}
+
+.formulario-pagamento h2 {
+    color: #333;
+    margin-bottom: 2vw;
+    font-size: 2.5vw;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .formulario-pagamento h2 {
+    color: #f0f0f0;
+}
+
+.campo-formulario {
+    margin-bottom: 2vw;
+}
+
+.campo-formulario label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.8vw;
+    font-size: 1.3vw;
+    color: #555;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .campo-formulario label {
+    color: #ccc;
+}
+
+.campo-formulario input[type="text"] {
+    width: calc(100% - 3vw);
+    padding: 1.2vw;
+    border: 0.15vw solid #ccc;
+    border-radius: 0.5vw;
+    box-sizing: border-box;
+    font-size: 1.2vw;
+    color: #333;
+    background-color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .campo-formulario input[type="text"] {
+    background-color: #444;
+    color: #f0f0f0;
+    border-color: #666;
+}
+
+.linha-dois-campos {
+    display: flex;
+    gap: 1.5vw;
+    flex-direction: column;
+}
+
+.metade-campo {
+    width: 100%;
+}
+
+.header-pagamento {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-pagamento h1 {
+    margin-left: 20px;
+    margin-bottom: 0;
+}
+
+.back-button-fixed {
+    position: absolute;
+    top: 2vw;
+    left: 2vw;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.8vw 1.5vw;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 0.5vw;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 1em;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.back-button-fixed i {
+    margin-right: 0.8vw;
+}
+
+.back-button-fixed:hover {
+    background-color: #0056b3;
+}
+
+body.dark-mode .back-button-fixed {
+    background-color: #337ab7;
+    color: #f0f0f0;
+}
+
+body.dark-mode .back-button-fixed:hover {
+    background-color: #286090;
+}
+
+.container-pagamento {
+    margin-top: 8vw;
+}
+
+@media (min-width: 600px) {
+    .linha-dois-campos {
+        flex-direction: row;
+    }
+
+    .metade-campo {
+        width: calc(50% - 0.75vw);
+    }
+}
+
+.botao-pagar {
+    background-color: #007bff;
+    color: white;
+    padding: 1.5vw 3vw;
+    border: none;
+    border-radius: 0.8vw;
+    cursor: pointer;
+    font-size: 1.5vw;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    margin-top: 2vw;
+}
+
+.botao-pagar:hover {
+    background-color: #0056b3;
+}
+
+body.dark-mode .botao-pagar {
+    background-color: #337ab7;
+    color: #f0f0f0;
+}
+
+body.dark-mode .botao-pagar:hover {
+    background-color: #286090;
+}
+
+.info-pagamento {
+    text-align: center;
+    padding: 3vw;
+    border: 0.15vw solid #ddd;
+    border-radius: 0.8vw;
+    margin-top: 3vw;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+body.dark-mode .info-pagamento {
+    background-color: #2c2c2c;
+    border-color: #444;
+}
+
+.info-pagamento h2 {
+    color: #333;
+    margin-bottom: 2vw;
+    font-size: 2.5vw;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .info-pagamento h2 {
+    color: #f0f0f0;
+}
+
+.info-pagamento p {
+    font-size: 1.3vw;
+    color: #555;
+    margin-bottom: 2vw;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .info-pagamento p {
+    color: #ccc;
+}
+
+.aviso-seguranca {
+    font-size: 1vw;
+    color: #777;
+    margin-top: 1.5vw;
+    text-align: center;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode .aviso-seguranca {
+    color: #999;
+}
+
+.opcao-botao.selecionado {
+    background-color: #0056b3;
+    color: white;
+    border-color: #003d82;
+}
+
+body.dark-mode .opcao-botao.selecionado {
+    background-color: #286090;
+    color: #f0f0f0;
+    border-color: #1e497d;
+}
+
+@media (max-width: 599px) {
+    h1 {
+        font-size: 4vw;
+        margin-bottom: 4vw;
+    }
+
+    .opcoes-pagamento {
+        gap: 2vw;
+        margin-bottom: 4vw;
+    }
+
+    .opcao-botao {
+        padding: 2vw 4vw;
+        font-size: 1.4vw;
+        border-radius: 1vw;
+    }
+
+    .formulario-pagamento h2 {
+        font-size: 2.8vw;
+        margin-bottom: 2.5vw;
+    }
+
+    .campo-formulario label {
+        font-size: 1.5vw;
+        margin-bottom: 1vw;
+    }
+
+    .campo-formulario input[type="text"] {
+        padding: 1.5vw;
+        border-radius: 0.8vw;
+        font-size: 1.4vw;
+    }
+
+    .botao-pagar {
+        font-size: 1.6vw;
+        padding: 2vw 4vw;
+        border-radius: 1vw;
+        margin-top: 2.5vw;
+    }
+
+    .info-pagamento h2 {
+        font-size: 2.8vw;
+        margin-bottom: 2.5vw;
+    }
+
+    .info-pagamento p {
+        font-size: 1.4vw;
+        margin-bottom: 2.5vw;
+    }
+
+    .aviso-seguranca {
+        font-size: 1.2vw;
+        margin-top: 2vw;
+    }
+}
+
+@media (max-width: 399px) {
+    h1 {
+        font-size: 5vw;
+        margin-bottom: 5vw;
+    }
+
+    .opcoes-pagamento {
+        gap: 3vw;
+        margin-bottom: 5vw;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .opcao-botao {
+        width: 90%;
+        padding: 2.5vw 5vw;
+        font-size: 1.6vw;
+        border-radius: 1.2vw;
+    }
+
+    .formulario-pagamento h2 {
+        font-size: 3.2vw;
+        margin-bottom: 3vw;
+    }
+
+    .campo-formulario label {
+        font-size: 1.7vw;
+        margin-bottom: 1.2vw;
+    }
+
+    .campo-formulario input[type="text"] {
+        padding: 1.8vw;
+        border-radius: 1vw;
+        font-size: 1.6vw;
+    }
+
+    .botao-pagar {
+        font-size: 1.8vw;
+        padding: 2.5vw 5vw;
+        border-radius: 1.2vw;
+        margin-top: 3vw;
+    }
+
+    .info-pagamento h2 {
+        font-size: 3.2vw;
+        margin-bottom: 3vw;
+    }
+
+    .info-pagamento p {
+        font-size: 1.6vw;
+        margin-bottom: 3vw;
+    }
+
+    .aviso-seguranca {
+        font-size: 1.4vw;
+        margin-top: 2.5vw;
+    }
+}

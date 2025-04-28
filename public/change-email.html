@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alterar E-mail</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Alterar E-mail</h2>
+    <input type="text" id="current-email" placeholder="E-mail Atual">
+    <input type="text" id="new-email" placeholder="Novo E-mail">
+    <input type="text" id="confirm-new-email" placeholder="Confirmar Novo E-mail">
+    <p class="error" id="email-error"></p>
+    <button onclick="changeEmail()">Alterar</button>
+    <p><a href="login.html" class="voltar-login">Voltar ao Login</a></p>
+  </div>
+
+  <div class="registration-image">
+    <img src="img/bytebros.png" alt="Imagem de Registro">
+    <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+    <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
+  </div>
+
+    <script src="js/version.js"></script>
+
+  <script>
+    // Função para aplicar o tema com classe 'dark-mode'
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+      } else {
+        document.body.classList.remove('dark-mode');
+      }
+    }
+
+    // Aplica o tema ao carregar a página
+    applyTheme();
+  </script>
+  <script src="js/script.js"></script> 
+</body>
+</html>

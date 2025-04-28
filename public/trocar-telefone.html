@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Telefone - Byte Bros</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Alterar Telefone</h2>
+        <form id="change-phone-form">
+          <input type="tel" id="current-phone" name="current-phone" placeholder="Seu telefone atual" required>
+
+          <input type="tel" id="new-phone" name="new-phone" placeholder="Novo número de telefone" required>
+
+          <label for="confirm-new-phone">Confirmar Novo Telefone:</label>
+          <input type="tel" id="confirm-new-phone" name="confirm-new-phone" placeholder="Confirme o novo telefone" required>
+      
+          <div class="error-message" id="error-message"></div>
+      
+          <button type="submit">Salvar Novo Telefone</button>
+      </form>
+        <div class="button-group">
+          <div class="button-wrapper">
+              <a href="index.html" class="button voltar-login">Voltar ao Menu</a>
+          </div>
+      </div>
+    </div>
+    <div class="registration-image">
+      <img src="img/bytebros.png" alt="Imagem de Registro">
+      <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+      <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
+    </div>
+    
+    <script src="js/version.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('change-phone-form');
+            const errorMessage = document.getElementById('error-message');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const currentPhone = document.getElementById('current-phone').value;
+                const confirmNewPhone = document.getElementById('confirm-new-phone').value;
+                const newPhone = document.getElementById('new-phone').value;
+
+                errorMessage.textContent = ''; // Limpa mensagens de erro anteriores
+
+                if (newPhone !== confirmNewPhone) {
+                    errorMessage.textContent = 'Os novos telefones não coincidem.';
+                    return;
+                }
+
+                // Aqui você pode adicionar a lógica para enviar os dados para o servidor
+                // para atualizar o telefone do usuário.
+                console.log('Telefone atual:', currentPhone);
+                console.log('Confirmação:', confirmNewPhone);
+                console.log('Novo Telefone:', newPhone);
+                alert('Telefone atualizado com sucesso!');
+                window.location.href = 'index.html'; // Redireciona para a página inicial após a tentativa de atualização
+            });
+        });
+    </script>
+      <script>
+        // Função para aplicar o tema com classe 'dark-mode'
+        function applyTheme() {
+          const savedTheme = localStorage.getItem('theme');
+          if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+          } else {
+            document.body.classList.remove('dark-mode');
+          }
+        }
+    
+        // Aplica o tema ao carregar a página
+        applyTheme();
+      </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html> 
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nós - ByteBros.TI</title>
+    <link rel="stylesheet" href="css/style3.css">
+</head>
+<body>
+    <header>
+        <h1>Sobre Nós - ByteBros.TI</h1>
+    </header>
+    
+    <section class="container">
+        <div class="section">
+            <h2>Nossa Missão</h2>
+            <p>Na ByteBros, nossa missão é fornecer soluções completas e confiáveis para todas as suas necessidades de informática. Somos apaixonados por tecnologia e dedicados a garantir que seus equipamentos funcionem com o máximo desempenho, permitindo que você se concentre no que realmente importa.</p>
+        </div>
+
+        <div class="section">
+            <h2>Nossa História</h2>
+            <p>Fundada em 2024, a ByteBros nasceu da paixão por computadores e do desejo de oferecer um serviço de excelência no mercado de tecnologia. Ao longo dos anos, construímos uma reputação sólida, baseada na confiança, profissionalismo e compromisso com a satisfação do cliente.</p>
+        </div>
+
+        <div class="section">
+            <h2>Nossos Serviços</h2>
+            <ul>
+                <li><strong>Montagem de Computadores:</strong> Personalizamos seu PC para o máximo desempenho, seja para jogos, trabalho ou uso geral.</li>
+                <li><strong>Limpeza e Manutenção:</strong> Garantimos que seu equipamento funcione de forma eficiente e livre de problemas.</li>
+                <li><strong>Troca de Peças:</strong> Substituímos componentes danificados ou desatualizados com peças de alta qualidade.</li>
+                <li><strong>Diagnóstico e Reparo:</strong> Identificamos e solucionamos problemas de hardware e software com rapidez e precisão.</li>
+                <li><strong>Assistência Técnica:</strong> Oferecemos suporte técnico especializado para resolver qualquer dúvida ou problema.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Nossa Equipe</h2>
+            <p>Nossa equipe é formada por técnicos altamente qualificados e experientes, apaixonados por tecnologia e comprometidos em fornecer o melhor serviço possível. Estamos sempre atualizados com as últimas tendências e tecnologias do mercado, garantindo que você receba um atendimento de ponta.</p>
+        </div>
+
+        <div class="section">
+            <h2>Nossos Valores</h2>
+            <ul>
+                <li><strong>Qualidade:</strong> Buscamos a excelência em tudo o que fazemos, desde a escolha das peças até a execução dos serviços.</li>
+                <li><strong>Confiança:</strong> Construímos relacionamentos duradouros com nossos clientes, baseados na transparência e honestidade.</li>
+                <li><strong>Profissionalismo:</strong> Agimos com ética e responsabilidade, garantindo a sua satisfação em cada interação.</li>
+                <li><strong>Inovação:</strong> Buscamos constantemente novas soluções e tecnologias para oferecer o melhor serviço possível.</li>
+                <li><strong>Compromisso:</strong> Estamos comprometidos em superar suas expectativas e garantir que seus equipamentos funcionem perfeitamente.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Nosso Compromisso com Você</h2>
+            <p>Aqui nós acreditamos que a tecnologia deve ser acessível e descomplicada. Por isso, nos esforçamos para oferecer um serviço personalizado e transparente, explicando cada etapa do processo e garantindo que você esteja sempre informado.</p>
+        </div>
+
+        <div class="section contact">
+            <h2>Entre em Contato</h2>
+            <p><strong>Email:</strong> bytebrosti@gmail.com</p>
+            <p><strong>Telefone:</strong> (61) 99914-4748</p>
+            <p><strong>Local:</strong> Brasília-DF (Loja Virtual)</p>
+            <p><strong>Horário de Funcionamento:</strong> Seg-Sex 09h - 17h</p>
+        </div>
+    </section>
+
+    <div class="botao-voltar">
+        <a href="index.html" class="botao">Voltar para a Página Inicial</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 ByteBros.TI - Todos os direitos reservados.</p>
+        <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #fcfbfb;"></p>
+    </footer>
+
+    <script src="js/version.js"></script>
+
+    <!-- Script para gerenciar o tema -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark-mode");
+            }
+
+            const toggleBtn = document.getElementById("toggle-theme");
+            toggleBtn.addEventListener("click", () => {
+                document.body.classList.toggle("dark-mode");
+
+                if (document.body.classList.contains("dark-mode")) {
+                    localStorage.setItem("theme", "dark");
+                } else {
+                    localStorage.setItem("theme", "light");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

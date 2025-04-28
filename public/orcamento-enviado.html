@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamento Enviado - Byte Bros</title>
+    <link rel="stylesheet" href="css/style5.css">
+</head>
+<body>
+    <main>
+        <section class="orcamento-enviado">
+            <h2>Solicitação Enviada com Sucesso!</h2>
+            <p>Sua solicitação de orçamento foi enviada com sucesso. Em breve, retornaremos com seu orçamento completo.</p>
+            <p>Para qualquer dúvida, entre em contato com o suporte.</p>
+            <a href="atendimento.html" class="suporte">Suporte</a>
+        </section>
+    </main>
+
+    <footer>
+        <button onclick="window.location.href='index.html'">Voltar à Tela Inicial</button>
+        <p>&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+        <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
+    </footer>
+    </div>
+    <script src="js/version.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark-mode");
+            }
+        });
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>

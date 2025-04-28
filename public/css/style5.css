@@ -1,0 +1,341 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transição suave para o tema */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.dark-mode {
+    background-color: #121212;
+    color: #f4f4f4;
+}
+
+header {
+    background: linear-gradient(to right, #232526, #414345);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.servico-detalhes {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.dark-mode .servico-detalhes {
+    background-color: #1e1e1e;
+    color: #f4f4f4;
+    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+}
+
+.servico-detalhes h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #232526;
+}
+
+.dark-mode .servico-detalhes h2 {
+    color: #ffa500;
+}
+
+.servico-detalhes img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.servico-detalhes p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.6; /* Melhora a legibilidade do texto */
+}
+
+.dark-mode .servico-detalhes p {
+    color: #ccc;
+}
+
+.servico-detalhes a {
+    display: inline-block;
+    background-color: #ffa500;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.servico-detalhes a:hover {
+    background-color: #ff8800;
+}
+
+.botao-voltar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+}
+
+.botao {
+    display: inline-flex;
+    align-items: center;
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.botao:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+.botao::before {
+    content: '←';
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+.orcamento-enviado {
+    max-width: 600px;
+    margin: auto; /* Centraliza horizontalmente */
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex-grow: 1; /* Permite que a seção cresça e empurre o footer para baixo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza verticalmente o conteúdo dentro da seção */
+}
+
+.dark-mode .orcamento-enviado {
+    background-color: #1e1e1e;
+    color: #f4f4f4;
+}
+
+.orcamento-enviado h2 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #232526;
+}
+
+.dark-mode .orcamento-enviado h2 {
+    color: #ffa500;
+}
+
+.orcamento-enviado p {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.6; /* Melhora a legibilidade do texto */
+}
+
+.dark-mode .orcamento-enviado p {
+    color: #ccc;
+}
+
+.suporte-botao {
+    display: inline-block;
+    background-color: #ffa500;
+    color: white;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 20px; /* Adiciona um pouco de espaço acima do botão */
+}
+
+footer {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto; /* Empurra o footer para a parte inferior */
+    width: 100%; /* Garante a largura total do footer */
+    box-sizing: border-box; /* Garante que padding não afete a largura total */
+}
+
+.dark-mode footer {
+    background-color: #0d0d0d;
+    color: #f4f4f4;
+}
+
+footer button {
+    background-color: #ffa500;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+footer button:hover {
+    background-color: #ff8800;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .servico-detalhes {
+        padding: 20px;
+        margin: 20px auto;
+    }
+
+    .servico-detalhes h2 {
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+
+    .servico-detalhes p {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
+
+    .servico-detalhes a {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+
+    .botao-voltar {
+        top: 10px;
+        left: 10px;
+    }
+
+    .botao {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    .botao::before {
+        font-size: 1em;
+        margin-right: 5px;
+    }
+
+    .orcamento-enviado {
+        padding: 20px;
+        margin: auto; /* Mantém a centralização */
+    }
+
+    .orcamento-enviado h2 {
+        font-size: 2em;
+        margin-bottom: 15px;
+    }
+
+    .orcamento-enviado p {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
+
+    .suporte-botao {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+
+    footer {
+        padding: 15px 0;
+        margin-top: auto; /* Garante que o footer continue embaixo */
+    }
+
+    footer button {
+        padding: 8px 15px;
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .servico-detalhes {
+        padding: 15px;
+        margin: 15px auto;
+    }
+
+    .servico-detalhes h2 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+
+    .servico-detalhes p {
+        font-size: 0.9em;
+        margin-bottom: 15px;
+    }
+
+    .servico-detalhes a {
+        padding: 8px 18px;
+        font-size: 0.9em;
+    }
+
+    .botao-voltar {
+        top: 5px;
+        left: 5px;
+    }
+
+    .botao {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
+    .botao::before {
+        font-size: 0.9em;
+        margin-right: 3px;
+    }
+
+    .orcamento-enviado {
+        padding: 15px;
+        margin: 30px auto;
+    }
+
+    .orcamento-enviado h2 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+
+    .orcamento-enviado p {
+        font-size: 0.9em;
+        margin-bottom: 15px;
+    }
+
+    .suporte-botao {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+
+    footer {
+        padding: 10px 0;
+        margin-top: auto; /* Garante que o footer continue embaixo */
+    }
+
+    footer button {
+        padding: 6px 12px;
+        font-size: 0.8em;
+        margin-bottom: 5px;
+    }
+}
