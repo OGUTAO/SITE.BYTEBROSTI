@@ -285,8 +285,16 @@ body.dark-theme #loginSection button:hover {
     padding: 10px 15px;
     cursor: pointer;
     border: 1px solid #ccc;
-    background-color: #6d95bb;
+    background-color: #6d95bb; /* Cor padrão das abas */
+    color: #fff; /* Cor do texto padrão das abas */
     border-radius: 5px 5px 0 0;
+}
+
+/* Estilo para a aba ativa */
+.tab-button.active {
+    background-color: #ffb223; /* Cor de fundo da aba ativa (exemplo: azul mais escuro) */
+    color: #fff; /* Cor do texto da aba ativa (branco para contraste) */
+    /* Você pode adicionar outros estilos como borda, sombra, etc. */
 }
 
 .tab-content.active {
