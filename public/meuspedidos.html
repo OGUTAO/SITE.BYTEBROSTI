@@ -153,28 +153,43 @@
 
         function exibirItensHistorico(interacoes, listaElement) {
             listaElement.innerHTML = "";
-            const historicoUnificado = interacoes
-                .filter(item => item.status === 'resolvido' || item.status === 'fechado')
-                .sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
+            const historicoUnificado = interacoes.filter(item => {
+                const statusFinalizadoSuporteContato = item.status === 'resolvido' || item.status === 'fechado';
+                const statusFinalizadoOrcamento = item.status === 'aprovado' || item.status === 'rejeitado';
+
+                const isSuporteContato = item.tipo_interacao && (item.tipo_interacao === 'suporte' || item.tipo_interacao === 'contato');
+                const isOrcamento = item.tipo_interacao && item.tipo_interacao === 'orcamento';
+
+                return (isSuporteContato && statusFinalizadoSuporteContato) ||
+                       (isOrcamento && statusFinalizadoOrcamento);
+            }).sort((a, b) => {
+                const dateA = new Date(a.criado_em || 0);
+                const dateB = new Date(b.criado_em || 0);
+                return dateB - dateA;
+            });
 
             if (historicoUnificado.length > 0) {
                 historicoUnificado.forEach(item => {
                     const listItem = document.createElement("li");
-                    const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR');
+                    const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR'); // Agora 'criado_em' será uma string ISO 8601
                     let detalhes = '';
 
                     switch (item.tipo_interacao) {
                         case 'suporte':
-                            detalhes = `<strong>Suporte</strong> - Data: ${dataFormatada}<br>`;
+                        case 'contato':
+                            detalhes = `<strong>${item.tipo_interacao === 'suporte' ? 'Suporte' : 'Contato'}</strong> - Data: ${dataFormatada}<br>`;
                             detalhes += `Assunto: ${item.mensagem.substring(0, Math.min(item.mensagem.length, 50))}...<br>Status: ${item.status}`;
                             break;
-                        case 'contato':
-                            detalhes = `<strong>Contato</strong> - Data: ${dataFormatada}<br>`;
-                            detalhes += `Assunto: ${item.mensagem.substring(0, Math.min(item.mensagem.length, 50))}...<br>Status: ${item.status}`;
+                        case 'orcamento':
+                            detalhes = `<strong>Orçamento</strong> - Data: ${dataFormatada}<br>`;
+                            detalhes += `Descrição: ${item.mensagem.substring(0, Math.min(item.mensagem.length, 50))}...<br>Status: ${item.status}`;
+                            detalhes += `<br>Serviço: ${item.servico_nome || 'N/A'}`;
+                            detalhes += `<br>Telefone: ${item.telefone || 'N/A'}`;
                             break;
                         default:
+                            console.warn("Item de histórico com tipo_interacao desconhecido ou ausente:", item);
                             detalhes = `<strong>Interação Desconhecida</strong> - Data: ${dataFormatada}<br>`;
-                            detalhes += `Tipo: ${item.tipo_interacao}<br>Mensagem: ${item.mensagem.substring(0, Math.min(item.mensagem.length, 50))}...<br>Status: ${item.status}`;
+                            detalhes += `Mensagem: ${item.mensagem ? item.mensagem.substring(0, Math.min(item.mensagem.length, 50)) + '...' : 'N/A'}<br>Status: ${item.status || 'N/A'}`;
                             break;
                     }
                     listItem.innerHTML = detalhes;
