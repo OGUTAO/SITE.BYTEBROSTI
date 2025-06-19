@@ -20,7 +20,7 @@
             <div class="setting">
                 <label for="theme-select">Tema:</label>
                 <select id="theme-select">
-                    <option value="light">Claro</option> 
+                    <option value="light">Claro</option>
                     <option value="dark">Escuro</option>
                 </select>
             </div>
@@ -33,9 +33,6 @@
             </div>
             <div class="setting" id="favoritos-setting-sidebar" style="display: none;">
                 <button id="favoritos-button-sidebar">Favoritos</button>
-            </div>
-            <div class="setting" id="avaliacao-setting-sidebar" style="display: none;">
-                <button id="avaliacao-button-sidebar">Avaliações</button>
             </div>
             <div class="setting" id="change-email-setting-sidebar" style="display: none;">
                 <button id="change-email-button-sidebar">Alterar E-mail</button>
@@ -61,12 +58,11 @@
             <div class="logo">
                 <a href="index.html"><h1>BYTE BROS.TI</h1></a>
                 <p>Manutenção Digital</p>
-            </div> 
+            </div>
             <nav>
                 <a href="lojapecascliente.html">Loja</a>
                 <a href="servicos.html">Serviços</a>
                 <a href="atendimento.html">Suporte</a>
-                <a href="faleconosco.html">Contato</a>
             </nav>
             <div class="buttons" id="header-auth-buttons">
                 <button onclick="window.location.href='register.html'">Cadastrar</button>
@@ -140,7 +136,7 @@
             </div>
         </div>
         <div id="chatbot-messages" class="chatbot-messages">
-            <div class="bot-message">Olá! Como posso ajudar você hoje?</div>
+            <div class="bot-message">Olá! Sou o Chatbot da Byte Bros. Como posso te ajudar hoje? Descreva seu problema ou dúvida.</div>
         </div>
         <div class="chatbot-input">
             <input type="text" id="user-input" placeholder="Digite sua mensagem...">
@@ -153,6 +149,121 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const settingsSidebar = document.querySelector('.settings-sidebar');
+            const API_URL = 'http://localhost:8080/api';
+            const chatMessagesElement = document.getElementById('chatbot-messages');
+            const userInputElement = document.getElementById('user-input');
+
+            let conversationHistory = [
+                { role: "user", parts: ["Olá, sou um cliente procurando ajuda com meu PC."] },
+                { role: "model", parts: ["Olá! Sou o Chatbot da Byte Bros. Como posso te ajudar hoje? Descreva seu problema ou dúvida."] }
+            ];
+
+            function displayMessage(sender, message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = sender === 'user' ? 'user-message' : 'bot-message';
+                messageDiv.textContent = message;
+                chatMessagesElement.appendChild(messageDiv);
+                chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+            }
+
+            window.sendMessage = async function() {
+                const userMessage = userInputElement.value.trim();
+                if (!userMessage) return;
+
+                displayMessage('user', userMessage);
+                userInputElement.value = '';
+
+                conversationHistory.push({ role: "user", parts: [userMessage] });
+
+                try {
+                    const response = await fetch(`${API_URL}/chatbot`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: userMessage, history: conversationHistory })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.erro || 'Erro ao comunicar com o chatbot.');
+                    }
+
+                    const data = await response.json();
+                    const botResponse = data.response;
+                    displayMessage('bot', botResponse);
+
+                    
+                    conversationHistory.push({ role: "model", parts: [botResponse] });
+
+                    if (botResponse.includes("gostaria de criar um ticket de suporte") || botResponse.includes("posso registrar um pedido de suporte")) {
+                        displayMessage('bot', "Se você deseja que eu envie um pedido de suporte formal, digite 'CRIAR TICKET'.");
+                    }
+
+                } catch (error) {
+                    console.error("Erro no chatbot:", error);
+                    displayMessage('bot', `Desculpe, tive um problema ao processar sua solicitação: ${error.message}. Tente novamente mais tarde.`);
+                }
+            };
+
+            userInputElement.addEventListener('keypress', async (event) => {
+                if (event.key === 'Enter') {
+                    if (userInputElement.value.trim().toLowerCase() === 'criar ticket') {
+                        event.preventDefault();
+                        const loggedInUserEmail = localStorage.getItem('loggedInUserEmail');
+                        const userName = localStorage.getItem('userName');
+                        const userToken = localStorage.getItem('userToken');
+
+                        if (!loggedInUserEmail || !userToken) {
+                            displayMessage('bot', "Para criar um ticket, você precisa estar logado. Por favor, faça login ou cadastre-se.");
+                            userInputElement.value = '';
+                            return;
+                        }
+
+                        const fullConversation = conversationHistory.map(entry => {
+                            const role = entry.role === 'user' ? 'Você' : 'Chatbot';
+                            return `${role}: ${entry.parts.join(' ')}`;
+                        }).join('\n');
+
+                        const ticketMessage = `Ticket de Suporte Gerado pelo Chatbot:\n\n${fullConversation}\n\nResumo do problema: ${conversationHistory[conversationHistory.length - 1].parts[0]}`;
+
+
+                        try {
+                            const response = await fetch(`${API_URL}/chatbot/suporte`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${userToken}`
+                                },
+                                body: JSON.stringify({
+                                    nome: userName,
+                                    email: loggedInUserEmail,
+                                    mensagem: ticketMessage
+                                })
+                            });
+
+                            if (!response.ok) {
+                                const errorData = await response.json();
+                                throw new Error(errorData.erro || "Erro ao criar o ticket de suporte.");
+                            }
+
+                            displayMessage('bot', "Seu ticket de suporte foi criado com sucesso! Entraremos em contato em breve.");
+                            userInputElement.value = '';
+                            conversationHistory = [ 
+                                { role: "user", parts: ["Olá, sou um cliente procurando ajuda com meu PC."] },
+                                { role: "model", parts: ["Olá! Sou o Chatbot da Byte Bros. Como posso te ajudar hoje? Descreva seu problema ou dúvida."] }
+                            ];
+                            displayMessage('bot', "Posso ajudar em algo mais?");
+
+                        } catch (ticketError) {
+                            console.error("Erro ao enviar ticket de suporte via chatbot:", ticketError);
+                            displayMessage('bot', `Desculpe, houve um erro ao criar seu ticket: ${ticketError.message}. Por favor, tente novamente ou entre em contato diretamente.`);
+                            userInputElement.value = '';
+                        }
+                    } else {
+                        sendMessage();
+                    }
+                }
+            });
+
             const closeSidebarButton = document.querySelector('.close-sidebar-button');
             const themeSelect = document.getElementById('theme-select');
             const fontSizeInput = document.getElementById('font-size-input');
@@ -166,8 +277,8 @@
             const changePasswordSettingSidebar = document.getElementById('change-password-setting-sidebar');
             const changeEmailButtonSidebar = document.getElementById('change-email-button-sidebar');
             const changePasswordButtonSidebar = document.getElementById('change-password-button-sidebar');
-            const changePhoneSettingSidebar = document.getElementById('change-phone-setting-sidebar'); 
-            const changePhoneButtonSidebar = document.getElementById('change-phone-button-sidebar'); 
+            const changePhoneSettingSidebar = document.getElementById('change-phone-setting-sidebar');
+            const changePhoneButtonSidebar = document.getElementById('change-phone-button-sidebar');
             const chatbotContainer = document.getElementById('chatbot-container');
             const chatbotToggle = document.getElementById('chatbot-toggle');
             const chatbotCloseButton = document.getElementById('chatbot-close');
@@ -214,13 +325,13 @@
 
             if (favoritosButtonSidebar) {
                 favoritosButtonSidebar.addEventListener('click', () => {
-                    window.location.href = 'favoritos.html'; 
+                    window.location.href = 'favoritos.html';
                 });
             }
 
             if (avaliacaoButtonSidebar) {
                 avaliacaoButtonSidebar.addEventListener('click', () => {
-                    window.location.href = 'avaliacao.html'; 
+                    window.location.href = 'avaliacao.html';
                 });
             }
 
@@ -250,12 +361,12 @@
 
             if (changePhoneButtonSidebar) {
                 changePhoneButtonSidebar.addEventListener('click', () => {
-                    window.location.href = 'trocar-telefone.html'; 
+                    window.location.href = 'trocar-telefone.html';
                 });
             }
             if (meusPedidosButtonSidebar) {
                 meusPedidosButtonSidebar.addEventListener('click', () => {
-                    window.location.href = 'meuspedidos.html'; 
+                    window.location.href = 'meuspedidos.html';
                 });
             }
 
@@ -288,7 +399,7 @@
                 const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
                 const userName = localStorage.getItem('userName');
 
-                
+
                 if (headerAuthButtons && headerProfileIcon) {
                     headerAuthButtons.style.display = isLoggedIn ? 'none' : 'flex';
                     headerProfileIcon.style.display = isLoggedIn ? 'flex' : 'none';
@@ -297,10 +408,10 @@
                     sidebarProfileIcon.style.display = isLoggedIn ? 'flex' : 'none';
                 }
                 if (favoritosSettingSidebar) {
-                    favoritosSettingSidebar.style.display = isLoggedIn ? 'block' : 'none'; 
+                    favoritosSettingSidebar.style.display = isLoggedIn ? 'block' : 'none';
                 }
                 if (avaliacaoSettingSidebar) {
-                    avaliacaoSettingSidebar.style.display = isLoggedIn ? 'block' : 'none'; 
+                    avaliacaoSettingSidebar.style.display = isLoggedIn ? 'block' : 'none';
                 }
                 if (logoutSetting) {
                     logoutSetting.style.display = isLoggedIn ? 'block' : 'none';
@@ -340,27 +451,6 @@
                 });
             }
         });
-
-        function sendMessage() {
-            const userInput = document.getElementById('user-input');
-            const chatMessages = document.getElementById('chatbot-messages');
-            const message = userInput.value.trim();
-
-            if (message) {
-                const userDiv = document.createElement('div');
-                userDiv.className = 'user-message';
-                userDiv.textContent = message;
-                chatMessages.appendChild(userDiv);
-
-                const botDiv = document.createElement('div');
-                botDiv.className = 'bot-message';
-                botDiv.textContent = 'Obrigado pela sua mensagem! Em breve responderemos.';
-                chatMessages.appendChild(botDiv);
-
-                userInput.value = '';
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-        }
     </script>
     <script src="js/carousel.js"></script>
 </body>

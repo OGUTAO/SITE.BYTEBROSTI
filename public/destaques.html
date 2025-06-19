@@ -19,7 +19,6 @@
             <a href="index.html">Menu</a>
             <a href="lojapecascliente.html">Loja</a>
             <a href="servicos.html">Serviços</a>
-            <a href="faleconosco.html">Contato</a>
             <a href="sobrenos.html">Sobre Nós</a>
         </nav>
     </header>
@@ -28,18 +27,21 @@
         <section id="mais-procurados" class="secao-destaque">
             <h2><i class="fas fa-fire"></i> Produtos Mais Procurados</h2>
             <div class="lista-produtos" id="mais-procurados-lista">
+                <p>Carregando produtos...</p>
             </div>
         </section>
 
         <section id="novos-produtos" class="secao-destaque">
             <h2><i class="fas fa-plus-circle"></i> Novos Produtos</h2>
             <div class="lista-produtos" id="novos-produtos-lista">
+                <p>Carregando produtos...</p>
             </div>
         </section>
 
         <section id="ofertas-da-semana" class="secao-destaque">
             <h2><i class="fas fa-tags"></i> Ofertas da Semana</h2>
             <div class="lista-produtos" id="ofertas-da-semana-lista">
+                <p>Carregando produtos...</p>
             </div>
         </section>
     </div>
@@ -52,16 +54,23 @@
         <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #fdfbfb;"></p>
     </footer>
 
-    <script>
+    <script src="js/version.js"></script>
+    <script src="js/api.js" type="module"></script>
+    <script type="module">
+        import { productService } from './js/api.js';
+
         document.getElementById('system-version').textContent = 'Versão 1.0';
 
-        // Função genérica para criar a estrutura de um produto
         function criarProdutoHTML(produto) {
             const produtoDiv = document.createElement('div');
             produtoDiv.classList.add('produto');
 
+            const imageUrl = produto.image && typeof produto.image === 'object' && produto.image.String ? produto.image.String : produto.image || 'img/default_product.jpg';
+            const productDetailsText = produto.details && typeof produto.details === 'object' && produto.details.String ? produto.details.String : produto.details || 'Sem detalhes.';
+
+
             const imagem = document.createElement('img');
-            imagem.src = produto.image;
+            imagem.src = imageUrl; 
             imagem.alt = produto.name;
 
             const infoProduto = document.createElement('div');
@@ -70,11 +79,18 @@
             const nomeProduto = document.createElement('h3');
             nomeProduto.textContent = produto.name;
 
+            const detalhesProdutoP = document.createElement('p');
+            detalhesProdutoP.classList.add('produto-detalhes'); 
+            detalhesProdutoP.textContent = productDetailsText;
+
             const preco = document.createElement('p');
             preco.classList.add('preco');
-            preco.textContent = produto.precoAtual ? `R$ ${parseFloat(produto.precoAtual).toFixed(2).replace('.', ',')}` : `R$ ${parseFloat(produto.value).toFixed(2).replace('.', ',')}`;
+            preco.textContent = !isNaN(parseFloat(produto.value))
+                ? `R$ ${parseFloat(produto.value).toFixed(2).replace('.', ',')}`
+                : 'Preço indisponível';
 
             infoProduto.appendChild(nomeProduto);
+            infoProduto.appendChild(detalhesProdutoP); 
             infoProduto.appendChild(preco);
 
             produtoDiv.appendChild(imagem);
@@ -83,7 +99,6 @@
             const botaoDetalhes = document.createElement('button');
             botaoDetalhes.classList.add('botao-comprar');
             botaoDetalhes.textContent = 'Ver Detalhes';
-            // Adicione aqui a lógica para redirecionar para a página de detalhes (se necessário)
             const linkDetalhes = document.createElement('a');
             linkDetalhes.href = `lojapecascliente.html?produtoId=${produto.id}`;
             linkDetalhes.appendChild(botaoDetalhes);
@@ -94,11 +109,11 @@
                 selo.classList.add(produto.selo.classe);
                 selo.textContent = produto.selo.texto;
                 produtoDiv.appendChild(selo);
-            } else if (produto.precoAntigo) {
+            } else if (produto.precoAntigo && produto.precoAtual) {
                 const precoAntigo = document.createElement('p');
                 precoAntigo.classList.add('preco', 'preco-antigo');
                 precoAntigo.textContent = `R$ ${parseFloat(produto.precoAntigo).toFixed(2).replace('.', ',')}`;
-                infoProduto.insertBefore(precoAntigo, preco); // Insere antes do preço atual
+                infoProduto.insertBefore(precoAntigo, preco);
 
                 const seloOferta = document.createElement('span');
                 seloOferta.classList.add('selo-oferta');
@@ -109,61 +124,94 @@
             return produtoDiv;
         }
 
-        // Carregar os IDs dos produtos destacados
-        const popularProductIds = JSON.parse(localStorage.getItem('popularProducts')) || [];
-        const newProductIdsAdmin = JSON.parse(localStorage.getItem('newProductsAdmin')) || [];
-        const offerProductData = JSON.parse(localStorage.getItem('offersAdmin')) || [];
+        document.addEventListener('DOMContentLoaded', async () => {
+            const maisProcuradosLista = document.getElementById('mais-procurados-lista');
+            const novosProdutosLista = document.getElementById('novos-produtos-lista');
+            const ofertasDaSemanaLista = document.getElementById('ofertas-da-semana-lista');
 
-        // Carregar a lista completa de produtos
-        const allProducts = JSON.parse(localStorage.getItem('products')) || [];
+            maisProcuradosLista.innerHTML = '<p>Carregando produtos...</p>';
+            novosProdutosLista.innerHTML = '<p>Carregando produtos...</p>';
+            ofertasDaSemanaLista.innerHTML = '<p>Carregando produtos...</p>';
 
-        const maisProcuradosLista = document.getElementById('mais-procurados-lista');
-        const novosProdutosLista = document.getElementById('novos-produtos-lista');
-        const ofertasDaSemanaLista = document.getElementById('ofertas-da-semana-lista');
+            try {
+                const popularProductIds = JSON.parse(localStorage.getItem('popularProducts')) || [];
+                const newProductIdsAdmin = JSON.parse(localStorage.getItem('newProductsAdmin')) || [];
+                const offerProductData = JSON.parse(localStorage.getItem('offersAdmin')) || [];
 
-        // Função para encontrar um produto pelo ID
-        function findProductById(id) {
-            return allProducts.find(produto => produto.id === id);
-        }
+                const allProducts = await productService.getProducts();
+                console.log("Todos os produtos da API:", allProducts);
 
-        // Carregar e exibir produtos mais procurados
-        popularProductIds.forEach(id => {
-            const produto = findProductById(id);
-            if (produto) {
-                maisProcuradosLista.appendChild(criarProdutoHTML(produto));
+                if (!allProducts || allProducts.length === 0) {
+                    maisProcuradosLista.innerHTML = '<p>Nenhum produto disponível.</p>';
+                    novosProdutosLista.innerHTML = '<p>Nenhum produto disponível.</p>';
+                    ofertasDaSemanaLista.innerHTML = '<p>Nenhum produto disponível.</p>';
+                    return;
+                }
+
+                function findProductByIdInList(id, productsList) {
+                    return productsList.find(p => String(p.id) === String(id));
+                }
+
+                maisProcuradosLista.innerHTML = '';
+                novosProdutosLista.innerHTML = '';
+                ofertasDaSemanaLista.innerHTML = '';
+
+                if (popularProductIds.length > 0) {
+                    popularProductIds.forEach(id => {
+                        const produto = findProductByIdInList(id, allProducts);
+                        if (produto) {
+                            maisProcuradosLista.appendChild(criarProdutoHTML(produto));
+                        }
+                    });
+                } else {
+                    maisProcuradosLista.innerHTML = '<p>Nenhum produto mais procurado selecionado.</p>';
+                }
+
+                if (newProductIdsAdmin.length > 0) {
+                    newProductIdsAdmin.forEach(id => {
+                        const produto = findProductByIdInList(id, allProducts);
+                        if (produto) {
+                            const produtoComSelo = { ...produto, selo: { texto: 'Novo', classe: 'selo-novo' } };
+                            novosProdutosLista.appendChild(criarProdutoHTML(produtoComSelo));
+                        }
+                    });
+                } else {
+                    novosProdutosLista.innerHTML = '<p>Nenhum novo produto selecionado.</p>';
+                }
+
+                if (offerProductData.length > 0) {
+                    offerProductData.forEach(offer => {
+                        const produto = findProductByIdInList(offer.id, allProducts);
+                        if (produto) {
+                            const produtoComOferta = {
+                                ...produto,
+                                precoAntigo: offer.precoAntigo,
+                                value: offer.precoAtual || produto.value
+                            };
+                            ofertasDaSemanaLista.appendChild(criarProdutoHTML(produtoComOferta));
+                        }
+                    });
+                } else {
+                    ofertasDaSemanaLista.innerHTML = '<p>Nenhuma oferta da semana selecionada.</p>';
+                }
+
+            } catch (error) {
+                console.error("Erro ao carregar produtos destacados:", error);
+                maisProcuradosLista.innerHTML = '<p>Erro ao carregar produtos destacados.</p>';
+                novosProdutosLista.innerHTML = '<p>Erro ao carregar produtos destacados.</p>';
+                ofertasDaSemanaLista.innerHTML = '<p>Erro ao carregar produtos destacados.</p>';
             }
         });
 
-        // Carregar e exibir novos produtos
-        newProductIdsAdmin.forEach(id => {
-            const produto = findProductById(id);
-            if (produto) {
-                const produtoComSelo = { ...produto, selo: { texto: 'Novo', classe: 'selo-novo' } };
-                novosProdutosLista.appendChild(criarProdutoHTML(produtoComSelo));
-            }
-        });
-
-        // Carregar e exibir ofertas da semana
-        offerProductData.forEach(offer => {
-            const produto = findProductById(offer.id);
-            if (produto) {
-                const produtoComOferta = { ...produto, precoAntigo: offer.precoAntigo, precoAtual: offer.precoAtual };
-                ofertasDaSemanaLista.appendChild(criarProdutoHTML(produtoComOferta));
-            }
-        });
-    </script>
-    <script>
         const savedTheme = localStorage.getItem('theme');
         const body = document.body;
         const toggleButton = document.getElementById('toggle-theme');
 
-        // Aplica o tema salvo ao carregar
         if (savedTheme === 'dark') {
             body.classList.add('dark-theme');
-            toggleButton.textContent = 'Mudar para Tema Claro';
+            if (toggleButton) toggleButton.textContent = 'Mudar para Tema Claro';
         }
 
-        // Alterna o tema
         if (toggleButton) {
             toggleButton.addEventListener('click', () => {
                 body.classList.toggle('dark-theme');
@@ -173,6 +221,5 @@
             });
         }
     </script>
-    <script src="js/scripts.js"></script>
 </body>
 </html>

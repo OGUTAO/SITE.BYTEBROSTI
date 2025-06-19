@@ -1,39 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
     const atendimentoForm = document.querySelector('.atendimento form');
+    const API_URL = 'http://localhost:8080/api';
 
-    atendimentoForm.addEventListener('submit', function(event) {
+    atendimentoForm.addEventListener('submit', async function(event) {
         event.preventDefault();
 
         const nome = document.getElementById('nome').value;
         const email = document.getElementById('email').value;
         const mensagem = document.getElementById('mensagem').value;
-        const tipo = 'Suporte'; // Adicionando o tipo
-        const problema = 'Pedido de Suporte (Formulário)'; // Problema padrão
-        const detalhes = mensagem; // Usando a mensagem como detalhes
-        const dataEnvio = new Date().toLocaleDateString();
+        const tipoInteracao = 'suporte'; 
+        const userToken = localStorage.getItem('userToken'); 
+        const loggedInUserEmail = localStorage.getItem('loggedInUserEmail');
 
-        const novoPedidoSuporte = { nome, email, problema, detalhes, dataEnvio, tipo }; // Adicionando 'tipo' ao objeto
+        const payloadEmail = loggedInUserEmail && loggedInUserEmail === email ? loggedInUserEmail : email;
 
-        const clienteEmailLogado = localStorage.getItem('loggedInUserEmail');
+        const novoPedidoSuporte = {
+            nome: nome,
+            email: payloadEmail, 
+            mensagem: mensagem,
+            tipo_interacao: tipoInteracao
+            
+        };
 
-        if (clienteEmailLogado) {
-            const chaveHistoricoCliente = `historico_${clienteEmailLogado.replace(/[^a-zA-Z0-9]/g, '')}`;
-            const historicoExistente = JSON.parse(localStorage.getItem(chaveHistoricoCliente)) || [];
+        try {
+            const headers = {
+                'Content-Type': 'application/json',
+            };
 
-            historicoExistente.push(novoPedidoSuporte);
-            localStorage.setItem(chaveHistoricoCliente, JSON.stringify(historicoExistente));
+            if (userToken) {
+                headers['Authorization'] = `Bearer ${userToken}`;
+            }
 
-            // Salva o pedido de suporte na lista geral para o admin
-            let pedidosSuporteAdmin = JSON.parse(localStorage.getItem('pedidosSuporte')) || [];
-            pedidosSuporteAdmin.push(novoPedidoSuporte);
-            localStorage.setItem('pedidosSuporte', JSON.stringify(pedidosSuporteAdmin));
+            const response = await fetch(`${API_URL}/suporte`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(novoPedidoSuporte)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.erro || 'Erro ao enviar pedido de suporte para o servidor.');
+            }
+
+            const responseData = await response.json();
+            console.log('Pedido de suporte enviado para o backend:', responseData);
 
             alert('Pedido de suporte enviado com sucesso!');
-            atendimentoForm.reset(); // Limpa o formulário
-        } else {
-            alert('Você precisa estar logado para enviar uma mensagem de suporte.');
-            // Opcional: Redirecionar para a página de login
-            // window.location.href = 'login.html';
+            atendimentoForm.reset();
+        } catch (error) {
+            console.error("Erro ao enviar pedido de suporte:", error);
+            alert(`Ocorreu um erro ao enviar seu pedido de suporte: ${error.message}. Tente novamente.`);
         }
     });
 });

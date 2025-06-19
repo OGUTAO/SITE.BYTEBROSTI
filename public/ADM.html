@@ -42,7 +42,6 @@
             <button id="tab-admins" class="tab-button" style="display: none;">Gerenciar Admins</button>
             <button id="tab-budgets" class="tab-button">Orçamentos</button>
             <button id="tab-support-requests" class="tab-button">Pedidos de Suporte</button>
-            <button id="tab-contact-us" class="tab-button">Fale Conosco</button>
             <button id="tab-popular-products" class="tab-button">Mais Procurados</button>
             <button id="tab-new-products" class="tab-button">Novos Produtos</button>
             <button id="tab-offers" class="tab-button">Ofertas da Semana</button>
@@ -92,15 +91,23 @@
                     <input type="text" id="news-title" required>
                 </div>
                 <div class="form-group">
-                    <label for="news-description">Descrição:</label>
+                    <label for="news-subtitle">Subtítulo:</label>
+                    <input type="text" id="news-subtitle">
+                </div>
+                <div class="form-group">
+                    <label for="news-description">Descrição (Conteúdo Principal):</label>
                     <textarea id="news-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="news-author">Autor:</label>
+                    <input type="text" id="news-author">
                 </div>
                 <button type="submit" class="button submit-button">Adicionar Notícia</button>
             </form>
 
             <h3>Notícias Cadastradas</h3>
             <ul id="news-list" class="news-list">
-            </ul>
+                </ul>
         </div>
 
         <div id="admins-content" class="tab-content">
@@ -141,6 +148,7 @@
         <div id="contact-us-content" class="tab-content">
             <h2>Mensagens Fale Conosco</h2>
         </div>
+
         <div id="popular-products-content" class="tab-content">
             <h2>Gerenciar Produtos Mais Procurados</h2>
             <p>Selecione os produtos que você deseja exibir como mais procurados:</p>

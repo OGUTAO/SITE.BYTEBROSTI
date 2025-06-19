@@ -6,7 +6,6 @@
   <title>Itens Favoritos - Byte Bros</title>
   <link rel="stylesheet" href="css/style12.css">
   <link rel="stylesheet" href="css/style4.css">
-
 </head>
 <body>
 
@@ -20,41 +19,85 @@
     <p id="mensagemVazia" class="msg-vazia" style="display: none;">Você ainda não favoritou nenhum item.</p>
   </div>
 
-  <script>
-    const usuarioLogado = true;
-  
+  <script src="js/version.js"></script>
+  <script src="js/api.js" type="module"></script>
+  <script type="module">
+    import { productService } from './js/api.js';
+
+    const usuarioLogado = true; // Lembre-se de que esta variável deve refletir o status de login real do usuário.
+
     if (!usuarioLogado) {
       document.body.innerHTML = '<h2 style="text-align:center;margin-top:2rem;">Você precisa estar logado para ver seus favoritos.</h2>';
     } else {
-      const favoritosContainer = document.getElementById('favoritos'); // ID correto
+      const favoritosContainer = document.getElementById('favoritos');
       const mensagemVazia = document.getElementById('mensagemVazia');
-  
-      const favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
-      const todosProdutos = JSON.parse(localStorage.getItem('products')) || [];
-  
-      const produtosFavoritos = todosProdutos.filter(prod => favoritos.includes(prod.name));
-  
-      if (produtosFavoritos.length === 0) {
-        mensagemVazia.style.display = 'block';
-      } else {
-        produtosFavoritos.forEach(produto => {
-          const card = document.createElement('div');
-          card.classList.add('card');
-  
-          const precoFormatado = !isNaN(produto.value)
-            ? parseFloat(produto.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-            : 'Preço indisponível';
-  
-          card.innerHTML = `
-            <img src="${produto.image || 'img/default_product.jpg'}" alt="${produto.name}">
-            <h3>${produto.name}</h3>
-            <p>${produto.details || ''}</p>
-            <p class="preco">${precoFormatado}</p>
-          `;
-  
-          favoritosContainer.appendChild(card);
-        });
+
+      function getFavoritos() {
+          return JSON.parse(localStorage.getItem('favoritos')) || [];
       }
+
+      async function carregarFavoritos() {
+          favoritosContainer.innerHTML = '<p class="msg-vazia">Carregando seus favoritos...</p>';
+          mensagemVazia.style.display = 'none';
+
+          const favoritosSalvos = getFavoritos();
+          console.log("Favoritos salvos no localStorage (nomes):", favoritosSalvos);
+
+          if (favoritosSalvos.length === 0) {
+              mensagemVazia.style.display = 'block';
+              favoritosContainer.innerHTML = '';
+              return;
+          }
+
+          try {
+              const todosProdutos = await productService.getProducts();
+              console.log("Todos os produtos da API:", todosProdutos);
+
+              if (!todosProdutos || todosProdutos.length === 0) {
+                  favoritosContainer.innerHTML = '<p class="msg-vazia">Erro: Não foi possível carregar a lista de produtos da loja.</p>';
+                  mensagemVazia.style.display = 'none';
+                  return;
+              }
+
+              // Filtrar os produtos que estão na lista de favoritos por nome
+              const produtosFavoritos = todosProdutos.filter(prod => favoritosSalvos.includes(prod.name));
+              console.log("Produtos favoritos encontrados (detalhes):", produtosFavoritos);
+
+              if (produtosFavoritos.length === 0) {
+                  mensagemVazia.style.display = 'block';
+                  favoritosContainer.innerHTML = '';
+              } else {
+                  favoritosContainer.innerHTML = ''; // Limpa antes de adicionar os cards
+                  produtosFavoritos.forEach(produto => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+
+                    // Acessar as propriedades .String dos objetos sql.NullString
+                    const imageUrl = produto.image && typeof produto.image === 'object' && produto.image.String ? produto.image.String : produto.image || 'img/default_product.jpg';
+                    const productDetailsText = produto.details && typeof produto.details === 'object' && produto.details.String ? produto.details.String : produto.details || 'Sem detalhes.';
+
+
+                    const precoFormatado = !isNaN(parseFloat(produto.value))
+                      ? parseFloat(produto.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                      : 'Preço indisponível';
+
+                    card.innerHTML = `
+                      <img src="${imageUrl}" alt="${produto.name}">
+                      <h3>${produto.name}</h3>
+                      <p>${productDetailsText}</p> <p class="preco">${precoFormatado}</p>
+                    `;
+
+                    favoritosContainer.appendChild(card);
+                  });
+              }
+          } catch (error) {
+              console.error("Erro ao carregar itens favoritos:", error);
+              favoritosContainer.innerHTML = `<p class="msg-vazia">Erro ao carregar favoritos: ${error.message}.</p>`;
+              mensagemVazia.style.display = 'none';
+          }
+      }
+
+      carregarFavoritos(); // Chama a função para carregar favoritos
     }
   </script>
   <footer>
@@ -70,19 +113,19 @@
     const body = document.body;
     const toggleButton = document.getElementById('toggle-theme');
 
-    // Aplica o tema salvo ao carregar
     if (savedTheme === 'dark') {
         body.classList.add('dark-theme');
         toggleButton.textContent = 'Mudar para Tema Claro';
     }
 
-    // Alterna o tema
-    toggleButton.addEventListener('click', () => {
-        body.classList.toggle('dark-theme');
-        const isDark = body.classList.contains('dark-theme');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        toggleButton.textContent = isDark ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro';
-    });
+    if (toggleButton) {
+        toggleButton.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            const isDark = body.classList.contains('dark-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            toggleButton.textContent = isDark ? 'Mudar para Tema Claro' : 'Mudar para Tema Escuro';
+        });
+    }
 </script>
 </body>
 </html>

@@ -13,191 +13,181 @@
         <div id="pedidos-ativos">
             <h3>Pedidos Ativos</h3>
             <ul id="lista-pedidos-ativos">
-                <li>Nenhum pedido ativo no momento.</li>
+                <li>Carregando pedidos ativos...</li>
             </ul>
         </div>
 
         <div id="historico-pedidos">
-            <h3>Histórico de Pedidos</h3>
+            <h3>Histórico de Pedidos e Interações</h3>
             <ul id="lista-historico-pedidos">
-                <li>Nenhum item no histórico.</li>
+                <li>Carregando histórico...</li>
             </ul>
         </div>
     </div>
 
 <script>
-    console.log("MEUS PEDIDOS (Início): Email Logado:", localStorage.getItem('loggedInUserEmail'));
-document.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-        document.body.classList.add("dark-theme");
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-theme");
+        }
 
-    const listaPedidosAtivos = document.getElementById("lista-pedidos-ativos");
-    const listaHistoricoPedidos = document.getElementById("lista-historico-pedidos");
+        const listaPedidosAtivos = document.getElementById("lista-pedidos-ativos");
+        const listaHistoricoPedidos = document.getElementById("lista-historico-pedidos");
+        const API_URL = 'http://localhost:8080/api';
 
-    // Tenta obter o email do cliente logado do localStorage
-    const clienteEmailLogado = localStorage.getItem('loggedInUserEmail');
-    console.log("MEUS PEDIDOS: Email Logado:", clienteEmailLogado); // DEBUG
+        async function carregarMeusDados() {
+            const clienteEmailLogado = localStorage.getItem('loggedInUserEmail');
+            const userToken = localStorage.getItem('userToken');
 
-    if (clienteEmailLogado) {
-        const chavePedidosCliente = `pedidos_${clienteEmailLogado.replace(/[^a-zA-Z0-9]/g, '')}`;
-        const chaveHistoricoCliente = `historico_${clienteEmailLogado.replace(/[^a-zA-Z0-9]/g, '')}`;
+            if (!clienteEmailLogado || !userToken) {
+                listaPedidosAtivos.innerHTML = "<li>Você precisa estar logado para ver seus pedidos.</li>";
+                listaHistoricoPedidos.innerHTML = "<li>Você precisa estar logado para ver seu histórico.</li>";
+                console.warn("Usuário não logado, não é possível carregar pedidos/interações.");
+                return;
+            }
 
-        // Busca os dados do localStorage
-        const todosPedidosLoja = JSON.parse(localStorage.getItem(chavePedidosCliente)) || [];
-        const todasSolicitacoes = JSON.parse(localStorage.getItem(chaveHistoricoCliente)) || [];
+            listaPedidosAtivos.innerHTML = "<li>Carregando pedidos da loja...</li>";
+            try {
+                console.log("Tentando buscar pedidos da loja para:", clienteEmailLogado);
+                const responsePedidos = await fetch(`${API_URL}/meus-pedidos`, {
+                    headers: { 'Authorization': `Bearer ${userToken}` }
+                });
 
-        console.log("MEUS PEDIDOS: Chave Pedidos:", chavePedidosCliente); // DEBUG
-        console.log("MEUS PEDIDOS: Todos Pedidos Loja (raw):", localStorage.getItem(chavePedidosCliente)); // DEBUG
-        console.log("MEUS PEDIDOS: Todos Pedidos Loja (parsed):", todosPedidosLoja); // DEBUG
-        console.log("MEUS PEDIDOS: Chave Histórico:", chaveHistoricoCliente); // DEBUG
-        console.log("MEUS PEDIDOS: Todas Solicitações (raw):", localStorage.getItem(chaveHistoricoCliente)); // DEBUG
-        console.log("MEUS PEDIDOS: Todas Solicitações (parsed):", todasSolicitacoes); // DEBUG
+                if (!responsePedidos.ok) {
+                    const errorData = await responsePedidos.json().catch(() => ({ erro: "Resposta não JSON ou vazia" }));
+                    throw new Error(`Erro ${responsePedidos.status}: ${errorData.erro || 'Falha desconhecida.'}`);
+                }
+                let pedidosLoja = await responsePedidos.json();
+                console.log("Pedidos da loja recebidos:", pedidosLoja);
 
+                if (!Array.isArray(pedidosLoja)) {
+                    pedidosLoja = [];
+                    console.warn("API de pedidos retornou algo que não é um array, tratando como vazio.");
+                }
+                exibirPedidosLoja(pedidosLoja, listaPedidosAtivos);
+            } catch (error) {
+                console.error("Erro ao carregar pedidos da loja:", error);
+                listaPedidosAtivos.innerHTML = `<li>Erro ao carregar pedidos: ${error.message}.</li>`;
+            }
 
-        // --- Filtragem ---
-        // Filtra os pedidos ativos da loja (não entregues/concluídos)
-        const pedidosAtivosCliente = todosPedidosLoja.filter(pedido =>
-            pedido.status !== 'Entregue' && pedido.status !== 'Concluído'
-        );
+            listaHistoricoPedidos.innerHTML = "<li>Carregando histórico de interações...</li>";
+            try {
+                console.log("Tentando buscar histórico de interações para:", clienteEmailLogado);
+                const responseInteracoes = await fetch(`${API_URL}/minhas-interacoes`, {
+                    headers: { 'Authorization': `Bearer ${userToken}` }
+                });
 
-        // Filtra o histórico de pedidos da loja (concluídos/pagos)
-        const historicoPedidosLoja = todosPedidosLoja.filter(pedido =>
-            pedido.status === 'Entregue' || pedido.status === 'Concluído' || pedido.status === 'Pago'
-        );
+                if (!responseInteracoes.ok) {
+                    const errorData = await responseInteracoes.json().catch(() => ({ erro: "Resposta não JSON ou vazia" }));
+                    throw new Error(`Erro ${responseInteracoes.status}: ${errorData.erro || 'Falha desconhecida.'}`);
+                }
+                let interacoes = await responseInteracoes.json();
+                console.log("Interações recebidas:", interacoes);
 
-        // Combine o histórico de pedidos da loja com as outras solicitações (orçamentos, etc.) e ordene por data
-        const historicoUnificado = [...historicoPedidosLoja, ...todasSolicitacoes].sort((a, b) => {
-            // Usa a data do pedido da loja (dataPedido) ou a data genérica (dataEnvio)
-            const dateA = new Date(a.dataPedido || a.dataEnvio);
-            const dateB = new Date(b.dataPedido || b.dataEnvio);
-            return dateB - dateA; // Ordena do mais recente para o mais antigo
-        });
+                if (!Array.isArray(interacoes)) {
+                    interacoes = [];
+                    console.warn("API de interações retornou algo que não é um array, tratando como vazio.");
+                }
+                exibirItensHistorico(interacoes, listaHistoricoPedidos);
+            } catch (error) {
+                console.error("Erro ao carregar interações:", error);
+                listaHistoricoPedidos.innerHTML = `<li>Erro ao carregar histórico de interações: ${error.message}.</li>`;
+            }
+        }
 
-        console.log("MEUS PEDIDOS: Pedidos Ativos Filtrados:", pedidosAtivosCliente); // DEBUG
-        console.log("MEUS PEDIDOS: Histórico Pedidos Loja Filtrado:", historicoPedidosLoja); // DEBUG
-        console.log("MEUS PEDIDOS: Histórico Unificado:", historicoUnificado); // DEBUG
-
-        // --- Funções de Exibição ---
-
-        // Função para exibir Pedidos Ativos da Loja
         function exibirPedidosLoja(pedidos, listaElement) {
-            listaElement.innerHTML = ""; // Limpa a lista
-            if (pedidos.length > 0) {
-                console.log('Pedidos da loja ATIVOS a serem exibidos:', pedidos);
-                pedidos.forEach(pedido => {
+            listaElement.innerHTML = "";
+            const pedidosAtivosCliente = pedidos.filter(pedido =>
+                pedido.status !== 'Entregue' && pedido.status !== 'Concluído' && pedido.status !== 'Pago'
+            );
+
+            if (pedidosAtivosCliente.length > 0) {
+                pedidosAtivosCliente.forEach(pedido => {
                     const listItem = document.createElement("li");
+                    const dataFormatada = new Date(pedido.data_pedido).toLocaleDateString('pt-BR');
+                    const valorTotalFormatado = pedido.valor_total ? parseFloat(pedido.valor_total).toFixed(2).replace('.', ',') : 'N/A';
+                    const valorFreteFormatado = pedido.valor_frete ? parseFloat(pedido.valor_frete).toFixed(2).replace('.', ',') : 'N/A';
+
+                    const itensPedido = Array.isArray(pedido.itens) ?
+                        pedido.itens.map(item => `${item.nome_produto} (${item.quantidade})`).join(", ") :
+                        'Itens não disponíveis';
+
                     listItem.innerHTML = `
-                        <strong>Pedido #${pedido.id}</strong> - Data: ${pedido.dataPedido}<br>
-                        Itens: ${pedido.itens.map(item => `${item.nome} (${item.quantidade})`).join(", ")}<br>
+                        <strong>Pedido #${pedido.id}</strong> - Data: ${dataFormatada}<br>
+                        Itens: ${itensPedido}<br>
                         Status: ${pedido.status}<br>
-                        Total: R$ ${pedido.valor_total ? pedido.valor_total.toFixed(2) : 'N/A'}<br>
-                        Endereço de Entrega: ${pedido.enderecoEntrega || 'N/A'}<br>
-                        Tipo de Frete: ${pedido.tipoFrete || 'N/A'} (R$ ${pedido.valorFrete ? pedido.valorFrete.toFixed(2) : 'N/A'})<br>
-                        Previsão de Entrega: ${pedido.prazoEntrega || 'Não disponível'}<br>
+                        Total: R$ ${valorTotalFormatado}<br>
+                        Endereço de Entrega: ${pedido.endereco_entrega || 'N/A'}<br>
+                        Tipo de Frete: ${pedido.tipo_frete || 'N/A'} (R$ ${valorFreteFormatado})<br>
+                        Previsão de Entrega: ${pedido.prazo_entrega || 'Não disponível'}<br>
                         <button class="ver-detalhes" data-pedido-id="${pedido.id}">Ver Detalhes</button>
                     `;
                     listaElement.appendChild(listItem);
 
-                    // Adiciona o listener para o botão de detalhes
                     const botaoDetalhes = listItem.querySelector(".ver-detalhes");
                     if (botaoDetalhes) {
                         botaoDetalhes.addEventListener("click", function() {
-                            const pedidoId = this.dataset.pedidoId;
-                            // Encontra o pedido na lista original de pedidos ativos
-                            const pedidoSelecionado = pedidos.find(p => p.id === parseInt(pedidoId));
+                            const pedidoId = parseInt(this.dataset.pedidoId);
+                            const pedidoSelecionado = pedidos.find(p => p.id === pedidoId);
                             if (pedidoSelecionado) {
-                                let detalhesPedido = `Detalhes do Pedido #${pedidoSelecionado.id}:\nData do Pedido: ${pedidoSelecionado.dataPedido}\nItens:\n`;
-                                pedidoSelecionado.itens.forEach(it => {
-                                    // Verifica se valor_unitario existe antes de chamar toFixed
-                                    const valorUnitarioStr = it.valor_unitario ? it.valor_unitario.toFixed(2) : 'N/A';
-                                    detalhesPedido += `- ${it.nome} (${it.quantidade}) - R$ ${valorUnitarioStr} cada\n`;
-                                });
-                                detalhesPedido += `Status: ${pedidoSelecionado.status}\nTotal: R$ ${pedidoSelecionado.valor_total ? pedidoSelecionado.valor_total.toFixed(2) : 'N/A'}\nEndereço de Entrega: ${pedidoSelecionado.enderecoEntrega || 'N/A'}\nTipo de Frete: ${pedidoSelecionado.tipoFrete || 'N/A'} (R$ ${pedidoSelecionado.valorFrete ? pedidoSelecionado.valorFrete.toFixed(2) : 'N/A'})\nPrevisão de Entrega: ${pedidoSelecionado.prazoEntrega || 'Não disponível'}`;
+                                let detalhesPedido = `Detalhes do Pedido #${pedidoSelecionado.id}:\nData do Pedido: ${new Date(pedidoSelecionado.data_pedido).toLocaleDateString('pt-BR')}\nItens:\n`;
+                                if (Array.isArray(pedidoSelecionado.itens)) {
+                                    pedidoSelecionado.itens.forEach(it => {
+                                        const valorUnitarioStr = it.valor_unitario ? parseFloat(it.valor_unitario).toFixed(2).replace('.', ',') : 'N/A';
+                                        detalhesPedido += `- ${it.nome_produto} (${it.quantidade}) - R$ ${valorUnitarioStr} cada\n`;
+                                    });
+                                } else {
+                                    detalhesPedido += 'Itens não disponíveis.\n';
+                                }
+                                detalhesPedido += `Status: ${pedidoSelecionado.status}\nTotal: R$ ${parseFloat(pedidoSelecionado.valor_total).toFixed(2).replace('.', ',')}\nEndereço de Entrega: ${pedidoSelecionado.endereco_entrega || 'N/A'}\nTipo de Frete: ${pedidoSelecionado.tipo_frete || 'N/A'} (R$ ${parseFloat(pedidoSelecionado.valor_frete).toFixed(2).replace('.', ',')})\nPrevisão de Entrega: ${pedidoSelecionado.prazo_entrega || 'Não disponível'}`;
                                 alert(detalhesPedido);
                             }
                         });
                     }
                 });
             } else {
-                listaElement.innerHTML = "<li>Nenhum pedido ativo no momento.</li>"; // Mensagem se não houver pedidos ativos
+                listaElement.innerHTML = "<li>Nenhum pedido ativo no momento.</li>";
             }
         }
 
-        // Função MODIFICADA para exibir Itens do Histórico (Pedidos Concluídos + Outros)
-        function exibirItensHistorico(itens, listaElement) {
-            listaElement.innerHTML = ""; // Limpa a lista
-            if (itens.length > 0) {
-                console.log('Itens do HISTÓRICO a serem exibidos:', itens);
-                itens.forEach(item => {
+        function exibirItensHistorico(interacoes, listaElement) {
+            listaElement.innerHTML = "";
+            const historicoUnificado = interacoes
+                .filter(item => item.status === 'resolvido' || item.status === 'fechado')
+                .sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
+
+            if (historicoUnificado.length > 0) {
+                historicoUnificado.forEach(item => {
                     const listItem = document.createElement("li");
+                    const dataFormatada = new Date(item.criado_em).toLocaleDateString('pt-BR');
                     let detalhes = '';
 
-                    // Verifica se é um Pedido da Loja (pela presença de dataPedido ou valor_total)
-                    if (item.dataPedido || typeof item.valor_total !== 'undefined') {
-                        detalhes = `
-                            <strong>Pedido #${item.id}</strong> - Data: ${item.dataPedido}<br>
-                            Itens: ${item.itens.map(it => `${it.nome} (${it.quantidade})`).join(", ")}<br>
-                            Status: ${item.status}<br>
-                            Total: R$ ${item.valor_total ? item.valor_total.toFixed(2) : 'N/A'}<br>
-                            Endereço de Entrega: ${item.enderecoEntrega || 'N/A'}<br>
-                            Tipo de Frete: ${item.tipoFrete || 'N/A'} (R$ ${item.valorFrete ? item.valorFrete.toFixed(2) : 'N/A'})
-                            `;
-                        // Poderia adicionar um botão de detalhes aqui se quisesse, buscando em 'itens'
-
-                    } else if (item.tipo === 'Orcamento') { // Trata Orçamento
-                        detalhes = `<strong>Orçamento</strong> - Data: ${item.dataEnvio || 'N/A'}<br>`;
-                        detalhes += `Serviço Solicitado: ${item.servico || 'N/A'}<br>`;
-                        detalhes += `Descrição: ${item.descricao || 'N/A'}<br>`;
-                        detalhes += `Status: Pendente`; // Status padrão para orçamento
-                        if (item.nome) {
-                            detalhes += `<br>Nome: ${item.nome || 'N/A'}`;
-                        }
-                        if (item.email) {
-                            detalhes += `<br>Email: ${item.email || 'N/A'}`;
-                        }
-                        if (item.telefone) {
-                            detalhes += `<br>Telefone: ${item.telefone || 'N/A'}`;
-                        }
-                    } else if (item.tipo === 'Suporte') { // Trata Suporte
-                        detalhes = `<strong>Suporte</strong> - Data: ${item.dataEnvio || 'N/A'}<br>`;
-                        detalhes += `Assunto: ${item.problema || 'N/A'}<br>Mensagem: ${item.detalhes || 'N/A'}<br>Status: Enviado`; // Status fixo para suporte
-                        if (item.nome) {
-                            detalhes += `<br>Contato: Nome: ${item.nome || 'N/A'}, Email: ${item.email || 'N/A'}`;
-                        }
-                    } else if (item.tipo === 'Contato') { // Trata Contato
-                        detalhes = `<strong>Contato</strong> - Data: ${item.dataEnvio || 'N/A'}<br>`;
-                        detalhes += `Assunto: ${item.assunto || 'N/A'}<br>Mensagem: ${item.mensagem || 'N/A'}<br>Status: Enviado`; // Status fixo para contato
-                        if (item.nome) {
-                            detalhes += `<br>Contato: Nome: ${item.nome || 'N/A'}, Email: ${item.email || 'N/A'}`;
-                        }
-                    } else {
-                        // Caso não reconheça o tipo, exibe como JSON para depuração
-                        detalhes = `Item Histórico Desconhecido: <pre>${JSON.stringify(item, null, 2)}</pre>`;
+                    switch (item.tipo_interacao) {
+                        case 'suporte':
+                            detalhes = `<strong>Suporte</strong> - Data: ${dataFormatada}<br>`;
+                            detalhes += `Assunto: ${item.mensagem.substring(0, Math.min(item.mensagem.length, 50))}...<br>Status: ${item.status}`;
+                            break;
+                        case 'contato':
+                            detalhes = `<strong>Contato</strong> - Data: ${dataFormatada}<br>`;
+                            detalhes += `Assunto: ${item.mensagem.substring(0, Math.min(item.mensagem.length, 50))}...<br>Status: ${item.status}`;
+                            break;
+                        default:
+                            detalhes = `<strong>Interação Desconhecida</strong> - Data: ${dataFormatada}<br>`;
+                            detalhes += `Tipo: ${item.tipo_interacao}<br>Mensagem: ${item.mensagem.substring(0, Math.min(item.mensagem.length, 50))}...<br>Status: ${item.status}`;
+                            break;
                     }
-
                     listItem.innerHTML = detalhes;
                     listaElement.appendChild(listItem);
                 });
-
             } else {
-                listaElement.innerHTML = "<li>Nenhum item no histórico.</li>"; // Mensagem se o histórico estiver vazio
+                listaElement.innerHTML = "<li>Nenhum item no histórico.</li>";
             }
         }
 
-        // --- Chamada das Funções de Exibição ---
-        exibirPedidosLoja(pedidosAtivosCliente, listaPedidosAtivos);
-        exibirItensHistorico(historicoUnificado, listaHistoricoPedidos); // Chama a função corrigida para o histórico
+        carregarMeusDados();
 
-    } else {
-        // Mensagem se o usuário não estiver logado
-        listaPedidosAtivos.innerHTML = "<li>Você precisa estar logado para ver seus pedidos.</li>";
-        listaHistoricoPedidos.innerHTML = "<li>Você precisa estar logado para ver seu histórico.</li>";
-        // Opcional: Redirecionar para a página de login
-        // window.location.href = 'login.html';
-    }
-});
+    });
 </script>
 
     <footer>
@@ -208,10 +198,9 @@ document.addEventListener("DOMContentLoaded", () => {
     </footer>
     <script src="js/version.js"></script>
     <script>
-        const themeToggleButton = document.getElementById('toggle-theme'); // Renomeado para evitar conflito de nome
-        const bodyElement = document.body; // Renomeado para evitar conflito de nome
+        const themeToggleButton = document.getElementById('toggle-theme');
+        const bodyElement = document.body;
 
-        // Função para aplicar o tema baseado no localStorage
         function applyTheme() {
             const currentTheme = localStorage.getItem('theme');
             if (currentTheme === 'dark') {
@@ -223,15 +212,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // Aplica o tema ao carregar a página
         applyTheme();
 
-        // Alterna o tema ao clicar no botão
         themeToggleButton.addEventListener('click', () => {
             bodyElement.classList.toggle('dark-theme');
             const isDark = bodyElement.classList.contains('dark-theme');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            applyTheme(); // Re-aplica para atualizar o texto do botão
+            applyTheme();
         });
     </script>
 

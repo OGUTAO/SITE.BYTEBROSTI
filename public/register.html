@@ -52,26 +52,46 @@
                 return;
             }
 
-            const users = JSON.parse(localStorage.getItem('users')) || {};
+            const API_URL = 'http://localhost:8080/api';
 
-            if (users[email]) {
-                errorElement.textContent = 'Este email já está cadastrado.';
-                return;
-            }
-
-            users[email] = {
-                name: name,
-                phone: phone,
-                password: password
+            const userData = {
+                nome: name,
+                email: email,
+                telefone: phone,
+                senha: password
             };
 
-            localStorage.setItem('users', JSON.stringify(users));
+            fetch(`${API_URL}/auth/registrar`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.erro || 'Erro desconhecido no cadastro.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Usuário cadastrado com sucesso:', data);
+                localStorage.setItem('userLoggedIn', 'true');
+                localStorage.setItem('loggedInUserEmail', data.email);
+                localStorage.setItem('userName', data.nome);
+                localStorage.setItem('userToken', data.token);
 
-            alert('Cadastro realizado com sucesso! Você será redirecionado para a página de login.');
-            window.location.href = 'login.html';
+                alert('Cadastro realizado com sucesso! Você será redirecionado para a página inicial.');
+                window.location.href = 'index.html';
+            })
+            .catch(error => {
+                console.error('Erro no cadastro:', error);
+                errorElement.textContent = `Erro: ${error.message}`;
+            });
         }
 
-        // Outras funções (validateLogin, checkLoginStatusOnLoad, logout, applyTheme) permanecem inalteradas
         function applyTheme() {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {

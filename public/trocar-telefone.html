@@ -10,14 +10,13 @@
     <div class="container">
         <h2>Alterar Telefone</h2>
         <form id="change-phone-form">
-          <input type="tel" id="current-phone" name="current-phone" placeholder="Seu telefone atual" required>
+          <input type="tel" id="current-phone" name="current-phone" placeholder="Seu telefone atual (opcional)">
 
           <input type="tel" id="new-phone" name="new-phone" placeholder="Novo número de telefone" required>
 
-          <label for="confirm-new-phone">Confirmar Novo Telefone:</label>
           <input type="tel" id="confirm-new-phone" name="confirm-new-phone" placeholder="Confirme o novo telefone" required>
-      
-          <div class="error-message" id="error-message"></div>
+
+          <input type="password" id="current-password" name="current-password" placeholder="Sua Senha Atual" required> <div class="error-message" id="error-message"></div>
       
           <button type="submit">Salvar Novo Telefone</button>
       </form>
@@ -30,41 +29,75 @@
     <div class="registration-image">
       <img src="img/bytebros.png" alt="Imagem de Registro">
       <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
-      <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em; color: #777;"></p>
+      <p id="system-version" style="text-align: center; margin-bottom: 5px; color: #777;"></p>
     </div>
     
     <script src="js/version.js"></script>
     <script>
+        const API_URL = 'http://localhost:8080/api'; 
+
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('change-phone-form');
             const errorMessage = document.getElementById('error-message');
 
-            form.addEventListener('submit', function(event) {
+            form.addEventListener('submit', async function(event) {
                 event.preventDefault();
 
-                const currentPhone = document.getElementById('current-phone').value;
-                const confirmNewPhone = document.getElementById('confirm-new-phone').value;
-                const newPhone = document.getElementById('new-phone').value;
+                const currentPhone = document.getElementById('current-phone').value.trim();
+                const newPhone = document.getElementById('new-phone').value.trim();
+                const confirmNewPhone = document.getElementById('confirm-new-phone').value.trim();
+                const currentPassword = document.getElementById('current-password').value.trim(); // NOVO: Valor da senha
 
-                errorMessage.textContent = ''; // Limpa mensagens de erro anteriores
+                errorMessage.textContent = ''; 
 
+                if (!newPhone || !confirmNewPhone || !currentPassword) {
+                    errorMessage.textContent = 'Por favor, preencha o novo telefone, a confirmação e sua senha.';
+                    return;
+                }
                 if (newPhone !== confirmNewPhone) {
                     errorMessage.textContent = 'Os novos telefones não coincidem.';
                     return;
                 }
 
-                // Aqui você pode adicionar a lógica para enviar os dados para o servidor
-                // para atualizar o telefone do usuário.
-                console.log('Telefone atual:', currentPhone);
-                console.log('Confirmação:', confirmNewPhone);
-                console.log('Novo Telefone:', newPhone);
-                alert('Telefone atualizado com sucesso!');
-                window.location.href = 'index.html'; // Redireciona para a página inicial após a tentativa de atualização
+                const userToken = localStorage.getItem('userToken');
+                if (!userToken) {
+                    errorMessage.textContent = 'Você precisa estar logado para alterar seu telefone.';
+                    return;
+                }
+
+                const payload = {
+                    telefone_atual: currentPhone,
+                    novo_telefone: newPhone,
+                    confirmar_telefone: confirmNewPhone,
+                    senha: currentPassword 
+                };
+
+                try {
+                    const response = await fetch(`${API_URL}/usuarios/telefone`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${userToken}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.erro || 'Erro ao alterar o telefone.');
+                    }
+
+                    const responseData = await response.json();
+                    alert(responseData.mensagem);
+
+                    window.location.href = 'index.html'; 
+                } catch (error) {
+                    console.error("Erro ao alterar telefone:", error);
+                    errorMessage.textContent = `Erro: ${error.message}`;
+                }
             });
         });
-    </script>
-      <script>
-        // Função para aplicar o tema com classe 'dark-mode'
+
         function applyTheme() {
           const savedTheme = localStorage.getItem('theme');
           if (savedTheme === 'dark') {
@@ -73,9 +106,7 @@
             document.body.classList.remove('dark-mode');
           }
         }
-    
-        // Aplica o tema ao carregar a página
         applyTheme();
-      </script>
+    </script>
 </body>
 </html>

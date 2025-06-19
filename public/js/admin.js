@@ -1,16 +1,16 @@
+console.log("admin.js carregado - Versão: " + new Date().toLocaleTimeString());
 let isAdminLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
 let loggedInAdmin = localStorage.getItem('loggedInAdmin') ? JSON.parse(localStorage.getItem('loggedInAdmin')) : null;
 let adminAccounts = loadAdminAccounts();
 let isSuperAdmin = loggedInAdmin ? loggedInAdmin.isSuper : false;
-let products = loadProductsFromLocalStorage();
-let news = loadNewsFromLocalStorage();
+let products = [];
+let news = [];
 let popularProductsList = loadPopularProductsFromLocalStorage();
 let newProductsListAdmin = loadNewProductsAdminFromLocalStorage();
 let offersListAdmin = loadOffersAdminFromLocalStorage();
 
-// Seleção de elementos do DOM
-const loginSection = document.getElementById('login-section');
-const adminContent = document.getElementById('admin-content');
+const loginSection = document.getElementById('loginSection');
+const adminContent = document.getElementById('adminContent');
 const loginButton = document.getElementById('login-button');
 const logoutButtonAdmin = document.getElementById('logout-admin-button');
 const addAdminBtn = document.getElementById('add-admin-btn');
@@ -28,7 +28,7 @@ const addProductContent = document.getElementById('add-product-content');
 const addNewsContent = document.getElementById('add-news-content');
 const budgetsContent = document.getElementById('budgets-content');
 const supportRequestsContent = document.getElementById('support-requests-content');
-const contactUsContent = document.getElementById('contact-us-content');
+const contactUsContent = document.getElementById('contact-us-content'); 
 const addProductForm = document.getElementById('add-product-form');
 const addNewsForm = document.getElementById('add-news-form');
 const themeToggleButton = document.getElementById('theme-toggle-button');
@@ -38,29 +38,16 @@ const offersContent = document.getElementById('offers-content');
 const tabPopularProducts = document.getElementById('tab-popular-products');
 const tabNewProducts = document.getElementById('tab-new-products');
 const tabOffers = document.getElementById('tab-offers');
-const formBuscaCliente = document.getElementById('form-busca-cliente');
 const tabClients = document.getElementById('tab-clients');
-const clientContent = document.getElementById('clients-content')
+const clientContent = document.getElementById('clients-content');
 const productSearchInput = document.getElementById('product-search');
 
-// Funções para manipulação de dados no localStorage
-function loadProductsFromLocalStorage() {
-    const storedProducts = localStorage.getItem('products');
-    return storedProducts ? JSON.parse(storedProducts) : [];
-}
+const API_URL = 'http://localhost:8080/api';
 
-function saveProductsToLocalStorage(productsToSave) {
-    localStorage.setItem('products', JSON.stringify(productsToSave));
-}
-
-function loadNewsFromLocalStorage() {
-    const storedNews = localStorage.getItem('news');
-    return storedNews ? JSON.parse(storedNews) : [];
-}
-
-function saveNewsToLocalStorage(newsToSave) {
-    localStorage.setItem('news', JSON.stringify(newsToSave));
-}
+function loadProductsFromLocalStorage() { return []; }
+function saveProductsToLocalStorage(productsToSave) { }
+function loadNewsFromLocalStorage() { return []; }
+function saveNewsToLocalStorage(newsToSave) { }
 
 function loadAdminAccounts() {
     const storedAccounts = localStorage.getItem('adminAccounts');
@@ -97,347 +84,959 @@ function saveOffersAdminToLocalStorage(offers) {
     localStorage.setItem('offersAdmin', JSON.stringify(offers));
 }
 
-// Funções para controle da interface
-function showAdminPanel() {
+async function showAdminPanel() {
     const tabAdmins = document.getElementById('tab-admins');
     const adminsContent = document.getElementById('admins-content');
     const loggedInAdminNameElement = document.getElementById('logged-in-admin-name');
+    const adminToken = localStorage.getItem('adminToken');
 
-    if (loginSection) loginSection.style.display = 'none';
-    if (adminContent) adminContent.style.display = 'block';
+    const loginSectionElement = document.getElementById('loginSection');
+    const adminContentElement = document.getElementById('adminContent');
 
-    if (loggedInAdminNameElement) {
-        const loggedInName = localStorage.getItem('loggedInAdminName');
-        if (loggedInName) {
-            loggedInAdminNameElement.textContent = loggedInName;
-        } else {
-            loggedInAdminNameElement.textContent = '';
+    if (!adminToken) {
+        if (loginSectionElement) loginSectionElement.style.display = 'flex';
+        if (adminContentElement) adminContentElement.style.display = 'none';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/perfil`, {
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        if (!response.ok) {
+            logoutAdmin();
+            return;
         }
-    }
+        const adminProfile = await response.json();
+        isSuperAdmin = adminProfile.is_admin;
+        if (loggedInAdminNameElement) loggedInAdminNameElement.textContent = adminProfile.email;
 
-    if (tabAdmins) {
-        tabAdmins.style.display = isSuperAdmin ? 'inline-block' : 'none';
-    }
+        if (loginSectionElement) loginSectionElement.style.display = 'none';
+        if (adminContentElement) adminContentElement.style.display = 'block';
 
-    if (isSuperAdmin) {
-        renderAdminList();
-        if (adminsContent) adminsContent.style.display = 'block';
-    } else if (adminsContent) {
-        adminsContent.innerHTML = '<p>Acesso restrito.</p>';
-        adminsContent.style.display = 'block';
-    }
+        if (tabAdmins) {
+            tabAdmins.style.display = isSuperAdmin ? 'inline-block' : 'none';
+        }
 
-    setupTabs();
-    renderAdminProducts(products);
-    renderNewsList();
-    renderOrcamentos();
-    renderPedidosSuporte();
-    renderMensagensFaleConosco();
+        await fetchAndRenderProducts();
+        await fetchAndRenderNews();
+        renderPopularProductsAdmin();
+        renderNewProductsAdminList();
+        renderOffersAdminList();
+
+        setupTabs();
+        
+    } catch (error) {
+        console.error('Erro ao verificar status do admin:', error);
+        logoutAdmin();
+    }
 }
 
-
-function logoutAdmin() {
-    localStorage.removeItem('isAdminLoggedIn');
+async function logoutAdmin() {
+    localStorage.removeItem('adminToken');
     localStorage.removeItem('loggedInAdminEmail');
     localStorage.removeItem('isAdminSuper');
     window.location.href = 'ADM.html';
 }
 
-function loginAdmin() {
-    const emailInput = document.getElementById('admin-email').value;
-    const passwordInput = document.getElementById('admin-password').value;
-    const loginError = document.getElementById('login-error');
+async function loginAdmin() {
+    const email = document.getElementById('admin-email').value;
+    const password = document.getElementById('admin-password').value;
+    const loginErrorElement = document.getElementById('login-error');
 
-    console.log('Email digitado:', emailInput);
-    console.log('Senha digitada:', passwordInput);
-    console.log('Lista de admins:', adminAccounts);
-
-    if (emailInput === '1@gmail.com' && passwordInput === '1') {
-        isAdminLoggedIn = true;
-        isSuperAdmin = true;
-        localStorage.setItem('isAdminLoggedIn', 'true');
-        localStorage.setItem('loggedInAdminEmail', emailInput);
-        localStorage.setItem('isAdminSuper', 'true');
-        localStorage.setItem('loggedInAdminName', 'Super Admin'); // Salva o nome para o Super Admin
-        loginError.style.display = 'none';
-        document.getElementById('loginSection').style.display = 'none';
-        document.getElementById('adminContent').style.display = 'block';
-        showAdminPanel();
-    } else {
-        const admin = adminAccounts.find(acc => acc.email === emailInput && acc.password === passwordInput);
-        if (admin) {
-            isAdminLoggedIn = true;
-            isSuperAdmin = false;
-            localStorage.setItem('isAdminLoggedIn', 'true');
-            localStorage.setItem('loggedInAdminEmail', emailInput);
-            localStorage.setItem('isAdminSuper', 'false');
-            localStorage.setItem('loggedInAdminName', admin.name); // Salva o nome do admin logado
-            loginError.style.display = 'none';
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('adminContent').style.display = 'block';
-            showAdminPanel();
-        } else {
-            console.log('Credenciais inválidas!');
-            loginError.style.display = 'block';
-        }
-    }
-}
-
-function switchTab(tabName) {
-    const tabs = [tabProducts, tabAddProduct, tabAddNews, tabAdmins, tabBudgets, tabSupportRequests, tabContactUs, tabPopularProducts, tabNewProducts, tabOffers, tabClients];
-    const contents = [productsContent, addProductContent, addNewsContent, adminsContent, budgetsContent, supportRequestsContent, contactUsContent, popularProductsContent, newProductsContent, offersContent, clientContent];
-    const tabAdminsButton = document.getElementById('tab-admins');
-    const adminsContentDiv = document.getElementById('admins-content');
-    const clientsContentDiv = document.getElementById('clients-content'); // Obtém a div de clientes
-    const footerButtons = document.querySelector('.footer');
-
-    tabs.forEach(tab => {
-        if (tab) tab.classList.remove('active');
-    });
-
-    contents.forEach(content => {
-        if (content) content.classList.remove('active');
-    });
-
-    // Esconde a seção de clientes por padrão
-    if (clientsContentDiv) {
-        clientsContentDiv.style.display = 'none';
-    }
-
-    if (footerButtons) {
-        footerButtons.style.display = 'none';
-    }
-
-    if (tabName === 'products' && tabProducts && productsContent) {
-        tabProducts.classList.add('active');
-        productsContent.classList.add('active');
-        products = loadProductsFromLocalStorage();
-        setTimeout(() => {
-            const productList = document.getElementById('product-list');
-            if (productList) {
-                renderAdminProducts(products);
-            } else {
-                console.error('Elemento productList não encontrado APÓS o timeout ao trocar para a aba Produtos.');
-            }
-        }, 50);
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'add-product' && tabAddProduct && addProductContent) {
-        tabAddProduct.classList.add('active');
-        addProductContent.classList.add('active');
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'add-news' && tabAddNews && addNewsContent) {
-        tabAddNews.classList.add('active');
-        addNewsContent.classList.add('active');
-        renderNewsList();
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'admins' && tabAdmins && adminsContent) {
-        tabAdmins.classList.add('active');
-        adminsContent.classList.add('active');
-        if (isSuperAdmin) renderAdminList();
-        if (adminsContentDiv) adminsContentDiv.style.display = 'block';
-    } else if (tabName === 'budgets' && tabBudgets && budgetsContent) {
-        tabBudgets.classList.add('active');
-        budgetsContent.classList.add('active');
-        renderOrcamentos();
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'support-requests' && tabSupportRequests && supportRequestsContent) {
-        tabSupportRequests.classList.add('active');
-        supportRequestsContent.classList.add('active');
-        renderPedidosSuporte();
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'contact-us' && tabContactUs && contactUsContent) {
-        tabContactUs.classList.add('active');
-        contactUsContent.classList.add('active');
-        renderMensagensFaleConosco();
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'popular-products' && tabPopularProducts && popularProductsContent) {
-        tabPopularProducts.classList.add('active');
-        popularProductsContent.classList.add('active');
-        renderPopularProductsAdmin();
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'new-products' && tabNewProducts && newProductsContent) {
-        tabNewProducts.classList.add('active');
-        newProductsContent.classList.add('active');
-        renderNewProductsAdminList();
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'offers' && tabOffers && offersContent) {
-        tabOffers.classList.add('active');
-        offersContent.classList.add('active');
-        renderOffersAdminList();
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    } else if (tabName === 'clients' && tabClients && clientContent && clientsContentDiv) {
-        tabClients.classList.add('active');
-        clientContent.classList.add('active');
-        clientsContentDiv.style.display = 'block'; // Mostra a div de clientes
-        if (adminsContentDiv) adminsContentDiv.style.display = 'none';
-    }
-
-    if (tabAdminsButton) {
-        tabAdminsButton.style.display = isSuperAdmin ? 'inline-block' : 'none';
-    }
-}
-
-// Garante que a seção de admins esteja escondida inicialmente
-window.addEventListener('load', () => {
-    loadAdminAccounts();
-
-    // *** GARANTE QUE productList SEJA DEFINIDO IMEDIATAMENTE ***
-    const productList = document.getElementById('product-list');
-    console.log('Elemento productList (no load):', productList);
-
-    const loginSectionElement = document.getElementById('loginSection');
-    const adminContentElement = document.getElementById('adminContent');
-
-    // Verifica se o admin já está logado
-    if (isAdminLoggedIn) {
-        showAdminPanel();
-        if (loginSectionElement) {
-            loginSectionElement.style.display = 'none';
-        }
-        if (adminContentElement) {
-            adminContentElement.style.display = 'block';
-        }
-        renderPopularProductsAdmin();
-        renderNewProductsAdminList();
-        renderOffersAdminList();
-
-    } else {
-        if (loginSectionElement) {
-            loginSectionElement.style.display = 'flex';
-        }
-        if (adminContentElement) {
-            adminContentElement.style.display = 'none';
-        }
-    }
-
-    const loginButtonElement = document.getElementById('login-button');
-    if (loginButtonElement) {
-        loginButtonElement.addEventListener('click', loginAdmin);
-    }
-
-    const logoutButtonAdminElement = document.getElementById('logout-admin-button');
-    if (logoutButtonAdminElement) {
-        logoutButtonAdminElement.addEventListener('click', logoutAdmin);
-    }
-
-    if (formBuscaCliente) {
-        formBuscaCliente.addEventListener('submit', handleBuscarCliente);
-    }
-
-    setupTabs();
-    // A CHAMADA A renderAdminProducts JÁ ESTÁ DENTRO DE showAdminPanel()
-});
-
-function setupTabs() {
-    if (tabProducts) tabProducts.addEventListener('click', () => switchTab('products'));
-    if (tabAddProduct) tabAddProduct.addEventListener('click', () => switchTab('add-product'));
-    if (tabAddNews) tabAddNews.addEventListener('click', () => switchTab('add-news'));
-    if (tabAdmins) tabAdmins.addEventListener('click', () => switchTab('admins'));
-    if (tabBudgets) tabBudgets.addEventListener('click', () => switchTab('budgets'));
-    if (tabSupportRequests) tabSupportRequests.addEventListener('click', () => switchTab('support-requests'));
-    if (tabContactUs) tabContactUs.addEventListener('click', () => switchTab('contact-us'));
-    if (tabPopularProducts) tabPopularProducts.addEventListener('click', () => switchTab('popular-products'));
-    if (tabNewProducts) tabNewProducts.addEventListener('click', () => switchTab('new-products'));
-    if (tabOffers) tabOffers.addEventListener('click', () => switchTab('offers'));
-    if (tabClients) tabClients.addEventListener('click', () => switchTab('clients'));
-
-    switchTab('products');
-}
-
-const formBuscarCliente = document.getElementById('form-busca-cliente');
-const resultadosBuscaDiv = document.getElementById('resultados-busca');
-const detalhesClienteDiv = document.getElementById('detalhes-cliente');
-const listaPedidosClienteAdm = document.getElementById('lista-pedidos-cliente-adm');
-const listaHistoricoClienteAdm = document.getElementById('lista-historico-cliente-adm');
-
-if (formBuscarCliente) {
-    formBuscarCliente.addEventListener('submit', handleBuscarCliente);
-}
-
-// Event listener para o campo de busca de produtos (filtragem em tempo real)
-if (productSearchInput) {
-    productSearchInput.addEventListener('input', () => {
-        const searchTerm = productSearchInput.value.trim().toLowerCase();
-        const filteredProducts = products.filter(product => {
-            const productNameLower = (product.name || '').toLowerCase();
-            const productDetailsLower = (product.details || '').toLowerCase();
-            return productNameLower.includes(searchTerm) || productDetailsLower.includes(searchTerm);
+    try {
+        const response = await fetch(`${API_URL}/admin/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, senha: password }),
         });
-        renderAdminProducts(filteredProducts);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Credenciais inválidas.');
+        }
+
+        const data = await response.json();
+        localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('loggedInAdminEmail', data.email);
+        localStorage.setItem('isAdminSuper', data.is_admin);
+
+        isAdminLoggedIn = true;
+        loggedInAdmin = { email: data.email, isSuper: data.is_admin };
+        isSuperAdmin = data.is_admin;
+
+        await showAdminPanel();
+        loginErrorElement.style.display = 'none';
+        // Redireciona para a aba de orçamentos após o login, por exemplo
+        switchTab('budgets'); // Ou 'support-requests'
+    } catch (error) {
+        console.error("Erro no login do admin:", error);
+        loginErrorElement.textContent = error.message;
+        loginErrorElement.style.display = 'block';
+    }
+}
+
+async function fetchAndRenderProducts() {
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) {
+        console.error("Token de admin ausente para buscar produtos.");
+        return;
+    }
+    try {
+        const response = await fetch(`${API_URL}/produtos`, {
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        if (!response.ok) throw new Error('Erro ao carregar produtos da API.');
+        products = await response.json();
+        renderAdminProducts(products);
+    } catch (error) {
+        console.error('Erro ao buscar produtos:', error);
+        document.getElementById('product-list').innerHTML = '<li class="no-products-message">Erro ao carregar produtos.</li>';
+    }
+}
+
+async function fetchAndRenderNews() {
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) {
+        console.error("Token de admin ausente para buscar notícias.");
+        return;
+    }
+    try {
+        const response = await fetch(`${API_URL}/noticias`, {
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        if (!response.ok) throw new Error('Erro ao carregar notícias da API.');
+        news = await response.json();
+        renderNewsList();
+    } catch (error) {
+        console.error('Erro ao buscar notícias:', error);
+        document.getElementById('news-list').innerHTML = '<li class="no-news-message">Erro ao carregar notícias.</li>';
+    }
+}
+
+async function addProductHandler(event) {
+    event.preventDefault();
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) { alert('Você não está autenticado como administrador.'); return; }
+
+    const nameInput = document.getElementById('new-product-name');
+    const detailsInput = document.getElementById('new-product-details');
+    const valueInput = document.getElementById('new-product-value');
+    const quantityInput = document.getElementById('new-product-quantity');
+    const imageInput = document.getElementById('new-product-image');
+
+    const name = nameInput.value.trim();
+    const details = detailsInput.value.trim();
+    const value = parseFloat(valueInput.value);
+    const quantity = parseInt(quantityInput.value);
+    const image = imageInput.value.trim();
+
+    if (!name) { alert('Por favor, informe o nome do produto.'); nameInput.focus(); return; }
+    if (isNaN(value) || value < 0) { alert('Por favor, digite um valor válido.'); valueInput.focus(); return; }
+    if (isNaN(quantity) || quantity < 0) { alert('Por favor, digite uma quantidade válida.'); quantityInput.focus(); return; }
+
+    const newProduct = {
+        name: name,
+        details: details,
+        value: value,
+        quantity: quantity,
+        image: image,
+        oferta: false
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/produtos`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+            body: JSON.stringify(newProduct)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Erro ao adicionar produto.');
+        }
+        await fetchAndRenderProducts();
+        addProductForm.reset();
+        alert('Produto adicionado com sucesso!');
+        switchTab('products');
+    } catch (error) {
+        console.error("Erro ao adicionar produto:", error);
+        alert(`Erro ao adicionar produto: ${error.message}`);
+    }
+}
+
+async function handleSaveProductEdit(event) {
+    const button = event.currentTarget;
+    const productItem = button.closest('.product-item');
+    const index = parseInt(button.dataset.index);
+    const productToUpdate = products[index];
+
+    const newName = productItem.querySelector(`#edit-name-${index}`).value.trim();
+    const newDetails = productItem.querySelector(`#edit-details-${index}`).value.trim();
+    const newValue = parseFloat(productItem.querySelector(`#edit-value-${index}`).value);
+    const newQuantity = parseInt(productItem.querySelector(`#edit-quantity-${index}`).value);
+    const newImage = productItem.querySelector(`#edit-image-${index}`).value.trim();
+    const adminToken = localStorage.getItem('adminToken');
+
+    if (!adminToken) { alert('Você não está autenticado.'); return; }
+
+    if (!newName || isNaN(newValue) || isNaN(newQuantity) || newValue < 0 || newQuantity < 0) {
+        alert('Por favor, preencha nome, valores e quantidade válidos.');
+        return;
+    }
+
+    const updatedProduct = {
+        id: productToUpdate.id,
+        name: newName,
+        details: newDetails,
+        value: newValue,
+        quantity: newQuantity,
+        image: newImage,
+        oferta: productToUpdate.oferta
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/produtos/${updatedProduct.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+            body: JSON.stringify(updatedProduct)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Erro ao atualizar produto.');
+        }
+        await fetchAndRenderProducts();
+        alert('Produto atualizado com sucesso!');
+    } catch (error) {
+        console.error("Erro ao atualizar produto:", error);
+        alert(`Erro ao atualizar produto: ${error.message}`);
+    }
+}
+
+async function handleDeleteProduct(event) {
+    const button = event.currentTarget;
+    const index = parseInt(button.dataset.index);
+    const productToDelete = products[index];
+    const adminToken = localStorage.getItem('adminToken');
+
+    if (!adminToken) { alert('Você não está autenticado.'); return; }
+
+    if (confirm(`Tem certeza que deseja excluir o produto "${productToDelete.name || 'sem nome'}"?`)) {
+        try {
+            const response = await fetch(`${API_URL}/produtos/${productToDelete.id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.erro || 'Erro ao excluir produto.');
+            }
+            await fetchAndRenderProducts();
+            alert('Produto excluído com sucesso!');
+        } catch (error) {
+            console.error("Erro ao deletar produto:", error);
+            alert(`Erro ao deletar produto: ${error.message}`);
+        }
+    }
+}
+
+async function addNewsHandler(event) {
+    event.preventDefault();
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) { alert('Você não está autenticado como administrador.'); return; }
+
+    const titleInput = document.getElementById('news-title');
+    const subtitleInput = document.getElementById('news-subtitle');
+    const descriptionInput = document.getElementById('news-description');
+    const authorInput = document.getElementById('news-author');
+
+    const newNews = {
+        titulo: titleInput.value.trim(),
+        subtitulo: subtitleInput.value.trim(),
+        conteudo: descriptionInput.value.trim(),
+        autor: authorInput.value.trim() || (localStorage.getItem('loggedInAdminEmail') || 'Admin')
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/admin/noticias`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+            body: JSON.stringify(newNews)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            let errorMessage = `Status: ${response.status} ${response.statusText}`;
+            try {
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.erro || errorMessage;
+            } catch (e) {
+                errorMessage = `Resposta do servidor: ${errorText}. ${errorMessage}`;
+            }
+            console.error("Erro ao adicionar notícia (detalhes):", errorText);
+            throw new Error(errorMessage);
+        }
+        await fetchAndRenderNews();
+        addNewsForm.reset();
+        alert('Notícia adicionada com sucesso!');
+        switchTab('add-news');
+    } catch (error) {
+        console.error("Erro ao adicionar notícia:", error);
+        alert(`Erro ao adicionar notícia: ${error.message}`);
+    }
+}
+
+async function handleSaveEditNews(event) {
+    const button = event.currentTarget;
+    const newsItem = button.closest('.news-item');
+    const index = parseInt(button.dataset.index);
+    const newsToUpdate = news[index];
+
+    const newTitle = newsItem.querySelector(`#edit-title-${index}`).value.trim();
+    const newSubtitle = newsItem.querySelector(`#edit-subtitle-${index}`).value.trim();
+    const newDescription = newsItem.querySelector(`#edit-description-${index}`).value.trim();
+    const newAuthor = newsItem.querySelector(`#edit-author-${index}`).value.trim();
+
+    const adminToken = localStorage.getItem('adminToken');
+
+    if (!adminToken) { alert('Você não está autenticado.'); return; }
+
+    if (newTitle && newDescription) {
+        const updatedNews = {
+            id: newsToUpdate.id,
+            titulo: newTitle,
+            subtitulo: newSubtitle,
+            conteudo: newDescription,
+            autor: newAuthor
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/admin/noticias/${updatedNews.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${adminToken}`
+                },
+                body: JSON.stringify(updatedNews)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.erro || 'Erro ao atualizar notícia.');
+            }
+            await fetchAndRenderNews();
+            alert('Notícia atualizada com sucesso!');
+        } catch (error) {
+            console.error("Erro ao atualizar notícia:", error);
+            alert(`Erro ao atualizar notícia: ${error.message}`);
+        }
+    } else {
+        alert('Por favor, preencha o título e a descrição da notícia.');
+    }
+}
+
+async function handleDeleteNewsItem(event) {
+    const button = event.currentTarget;
+    const index = parseInt(button.dataset.index);
+    const newsToDelete = news[index];
+    const adminToken = localStorage.getItem('adminToken');
+
+    if (!adminToken) { alert('Você não está autenticado.'); return; }
+
+    if (confirm(`Tem certeza que deseja excluir a notícia "${newsToDelete.titulo}"?`)) {
+        try {
+            const response = await fetch(`${API_URL}/admin/noticias/${newsToDelete.id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.erro || 'Erro ao excluir notícia.');
+            }
+            await fetchAndRenderNews();
+            alert('Notícia excluída com sucesso!');
+        } catch (error) {
+            console.error("Erro ao deletar notícia:", error);
+            alert(`Erro ao deletar notícia: ${error.message}`);
+        }
+    }
+}
+
+function renderAdminProducts(productsToRender) {
+    const productList = document.getElementById('product-list');
+
+    if (!productList) {
+        console.error('Elemento productList não encontrado dentro de renderAdminProducts!');
+        return;
+    }
+
+    productList.innerHTML = '';
+    if (!productsToRender || productsToRender.length === 0) {
+        productList.innerHTML = '<li class="no-products-message">Nenhuma peça cadastrada ainda.</li>';
+        return;
+    }
+
+    productsToRender.forEach((product, index) => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('product-item');
+        listItem.dataset.productId = product.id;
+
+        const valueAsNumber = parseFloat(product.value);
+        const formattedValue = !isNaN(valueAsNumber)
+            ? valueAsNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+            : 'Valor inválido';
+
+        listItem.innerHTML = `
+            <div class="product-info">
+                <div class="product-name"><strong>${product.name}</strong></div>
+                <div class="product-details">${product.details.String || 'Sem detalhes'}</div>
+            </div>
+            <div class="product-actions">
+                <div class="stats">
+                    <span class="product-value">Valor: ${formattedValue}</span>
+                    <span class="product-quantity">Quantidade: ${product.quantity || 0}</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="button edit-button" data-index="${index}" title="Editar Produto">Editar</button>
+                    <button class="button delete-button danger" data-index="${index}" title="Excluir Produto">Excluir</button>
+                </div>
+            </div>
+            <div class="edit-controls" style="display: none;">
+                <div class="edit-control-group">
+                    <label for="edit-name-${index}">Nome:</label>
+                    <input type="text" id="edit-name-${index}" value="${product.name}">
+                </div>
+                <div class="edit-control-group">
+                    <label for="edit-details-${index}">Detalhes:</label>
+                    <textarea id="edit-details-${index}">${product.details || ''}</textarea>
+                </div>
+                <div class="edit-control-group">
+                    <label for="edit-value-${index}">Novo Valor (Ex: 1800.00):</label>
+                    <input type="number" step="0.01" min="0" id="edit-value-${index}" value="${product.value}">
+                </div>
+                <div class="edit-control-group">
+                    <label for="edit-quantity-${index}">Nova Qtd:</label>
+                    <input type="number" id="edit-quantity-${index}" value="${product.quantity || 0}" min="0">
+                </div>
+                <div class="edit-control-group">
+                    <label for="edit-image-${index}">URL da Imagem:</label>
+                    <input type="text" id="edit-image-${index}" value="${product.image.String || ''}">
+                </div>
+                <div class="edit-action-buttons">
+                    <button class="button save" data-index="${index}">Salvar</button>
+                    <button class="button cancel" data-index="${index}">Cancelar</button>
+                </div>
+            </div>
+        `;
+        productList.appendChild(listItem);
+    });
+
+    document.querySelectorAll('.edit-button').forEach(button => {
+        button.addEventListener('click', (event) => {
+            const productItem = event.currentTarget.closest('.product-item');
+            const index = parseInt(event.currentTarget.dataset.index);
+            const productToEdit = products[index];
+
+            productItem.querySelector(`#edit-name-${index}`).value = productToEdit.name;
+            productItem.querySelector(`#edit-details-${index}`).value = productToEdit.details.String || '';
+            productItem.querySelector(`#edit-value-${index}`).value = productToEdit.value;
+            productItem.querySelector(`#edit-quantity-${index}`).value = productToEdit.quantity;
+            productItem.querySelector(`#edit-image-${index}`).value = productToEdit.image || '';
+
+            productItem.querySelector('.product-info').style.display = 'none';
+            productItem.querySelector('.product-actions').style.display = 'none';
+            productItem.querySelector('.edit-controls').style.display = 'flex';
+        });
+    });
+
+    document.querySelectorAll('.save').forEach(button => {
+        button.addEventListener('click', handleSaveProductEdit);
+    });
+
+    document.querySelectorAll('.cancel').forEach(button => {
+        button.addEventListener('click', handleCancelProductEdit);
+    });
+
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', handleDeleteProduct);
     });
 }
+
+function attachProductEventListeners() {
+    document.querySelectorAll('.edit-button').forEach(button => {
+        button.addEventListener('click', handleEditProduct);
+    });
+
+    document.querySelectorAll('.save').forEach(button => {
+        button.addEventListener('click', handleSaveProductEdit);
+    });
+
+    document.querySelectorAll('.cancel').forEach(button => {
+        button.addEventListener('click', handleCancelProductEdit);
+    });
+
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', handleDeleteProduct);
+    });
+}
+
+function handleEditProduct(event) {
+    const button = event.currentTarget;
+    const productItem = button.closest('.product-item');
+    const productInfo = productItem.querySelector('.product-info');
+    const productActions = productItem.querySelector('.product-actions');
+    const editControls = productItem.querySelector('.edit-controls');
+
+    productInfo.style.display = 'none';
+    productActions.style.display = 'none';
+
+    editControls.style.display = 'flex';
+}
+
+function handleCancelProductEdit(event) {
+    const button = event.currentTarget;
+    const productItem = button.closest('.product-item');
+    const actions = productItem.querySelector('.product-actions');
+    const editControls = productItem.querySelector('.edit-controls');
+
+    actions.style.display = 'flex';
+    editControls.style.display = 'none';
+}
+
+function renderNewsList() {
+    const newsListElement = document.getElementById('news-list');
+    if (!newsListElement) return;
+
+    newsListElement.innerHTML = '';
+
+    if (!news || news.length === 0) {
+        newsListElement.innerHTML = '<li class="no-news-message">Nenhuma notícia cadastrada.</li>';
+        return;
+    }
+
+    news.forEach((item, index) => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('news-item');
+        listItem.innerHTML = `
+            <div class="news-info">
+                <h3>${item.titulo}</h3>
+                <p class="news-date">${new Date(item.data).toLocaleDateString('pt-BR')}</p>
+                <p class="news-description">${item.conteudo}</p>
+                <p class="news-author">Autor: ${item.autor}</p>
+            </div>
+            <div class="news-actions">
+                <button class="button edit-news" data-index="${index}">Editar</button>
+                <button class="button delete-news danger" data-index="${index}">Excluir</button>
+            </div>
+            <div class="edit-news-controls" style="display: none;">
+                <label for="edit-title-${index}">Título:</label>
+                <input type="text" id="edit-title-${index}" value="${item.titulo}">
+                <label for="edit-subtitle-${index}">Subtítulo:</label> <input type="text" id="edit-subtitle-${index}" value="${item.subtitulo || ''}"> <label for="edit-description-${index}">Conteúdo:</label>
+                <textarea id="edit-description-${index}">${item.conteudo}</textarea>
+                <label for="edit-author-${index}">Autor:</label> <input type="text" id="edit-author-${index}" value="${item.autor || ''}"> <div class="edit-action-buttons">
+                    <button class="button save-edit-news" data-index="${index}">Salvar</button>
+                    <button class="button cancel-edit-news" data-index="${index}">Cancelar</button>
+                </div>
+            </div>
+        `;
+        newsListElement.appendChild(listItem);
+    });
+
+    document.querySelectorAll('.edit-news').forEach(button => {
+        button.addEventListener('click', handleEditNewsItem);
+    });
+
+    document.querySelectorAll('.save-edit-news').forEach(button => {
+        button.addEventListener('click', handleSaveEditNews);
+    });
+
+    document.querySelectorAll('.delete-news').forEach(button => {
+        button.addEventListener('click', handleDeleteNewsItem);
+    });
+
+    document.querySelectorAll('.cancel-edit-news').forEach(button => {
+        button.addEventListener('click', handleCancelEditNews);
+    });
+}
+
+function handleEditNewsItem(event) {
+    const button = event.currentTarget;
+    const newsItem = button.closest('.news-item');
+    const index = parseInt(button.dataset.index);
+    const newsInfo = newsItem.querySelector('.news-info');
+    const newsActions = newsItem.querySelector('.news-actions');
+    const editControls = newsItem.querySelector('.edit-news-controls');
+    const editTitleInput = editControls.querySelector(`#edit-title-${index}`);
+    const editSubtitleInput = editControls.querySelector(`#edit-subtitle-${index}`);
+    const editDescriptionTextarea = editControls.querySelector(`#edit-description-${index}`);
+    const editAuthorInput = editControls.querySelector(`#edit-author-${index}`);
+
+
+    editTitleInput.value = news[index].titulo;
+    editSubtitleInput.value = news[index].subtitulo || '';
+    editDescriptionTextarea.value = news[index].conteudo;
+    editAuthorInput.value = news[index].autor || '';
+
+    newsInfo.style.display = 'none';
+    newsActions.style.display = 'none';
+
+    editControls.style.display = 'flex';
+}
+
+function handleCancelEditNews(event) {
+    const button = event.currentTarget;
+    const newsItem = button.closest('.news-item');
+    const newsInfo = newsItem.querySelector('.news-info');
+    const newsActions = newsItem.querySelector('.news-actions');
+    const editControls = newsItem.querySelector('.edit-news-controls');
+
+    if (newsInfo) newsInfo.style.display = 'block';
+    if (newsActions) newsActions.style.display = 'flex';
+    if (editControls) editControls.style.display = 'none';
+}
+
+async function renderOrcamentos() {
+    const budgetsContent = document.getElementById('budgets-content');
+    if (!budgetsContent) return;
+    budgetsContent.innerHTML = '<h2>Orçamentos Recebidos</h2>';
+
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) {
+        console.error("Token de admin ausente para carregar orçamentos.");
+        budgetsContent.innerHTML += '<p>Não autenticado. Por favor, faça login como administrador.</p>';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/admin/orcamentos`, {
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ erro: "Resposta não JSON ou vazia" }));
+            throw new Error(`Erro: ${response.status} ${response.statusText} - ${errorData.erro || 'Detalhes desconhecidos.'}`);
+        }
+        const orcamentos = await response.json();
+        console.log("Orçamentos recebidos:", orcamentos);
+
+        if (orcamentos.length === 0) {
+            budgetsContent.innerHTML += '<p>Nenhum orçamento recebido.</p>';
+            return;
+        }
+
+        const listaHTML = document.createElement('ul');
+        orcamentos.forEach((orcamento) => {
+            const itemLista = document.createElement('li');
+            itemLista.innerHTML = `
+                <strong>ID:</strong> ${orcamento.id}<br>
+                <strong>Nome:</strong> ${orcamento.nome_cliente}<br>
+                <strong>Email:</strong> ${orcamento.email_cliente}<br>
+                <strong>Telefone:</strong> ${orcamento.telefone || 'N/A'}<br> <strong>Serviço:</strong> ${orcamento.servico_nome || 'Não especificado'}<br>
+                <strong>Descrição:</strong> ${orcamento.descricao}<br>
+                <strong>Data de Envio:</strong> ${new Date(orcamento.criado_em).toLocaleString('pt-BR')}<br>
+                <label>
+                    Status:
+                    <select data-id="${orcamento.id}" onchange="atualizarStatusOrcamento(this)">
+                        <option value="pendente" ${orcamento.status === 'pendente' ? 'selected' : ''}>Pendente</option>
+                        <option value="em_analise" ${orcamento.status === 'em_analise' ? 'selected' : ''}>Em Análise</option>
+                        <option value="aprovado" ${orcamento.status === 'aprovado' ? 'selected' : ''}>Aprovado</option>
+                        <option value="rejeitado" ${orcamento.status === 'rejeitado' ? 'selected' : ''}>Rejeitado</option>
+                    </select>
+                </label>
+                <button class="button delete-button danger" onclick="excluirOrcamento(${orcamento.id})">Excluir</button>
+                <hr>
+            `;
+            listaHTML.appendChild(itemLista);
+        });
+        budgetsContent.appendChild(listaHTML);
+    } catch (error) {
+        console.error("Erro ao carregar orçamentos:", error);
+        budgetsContent.innerHTML += `<p>Erro ao carregar orçamentos: ${error.message}</p>`;
+    }
+}
+
+window.atualizarStatusOrcamento = async function(selectElement) {
+    const orcamentoId = selectElement.dataset.id;
+    const novoStatus = selectElement.value;
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) { alert('Não autenticado.'); return; }
+
+    try {
+        const response = await fetch(`${API_URL}/admin/orcamentos/${orcamentoId}/status`, { 
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+            body: JSON.stringify({ status: novoStatus })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Erro ao atualizar status do orçamento.');
+        }
+        alert('Status do orçamento atualizado com sucesso!');
+        renderOrcamentos();
+    } catch (error) {
+        console.error("Erro ao atualizar status do orçamento:", error);
+        alert(`Erro ao atualizar status: ${error.message}`);
+    }
+};
+window.excluirOrcamento = async function(orcamentoId) {
+    if (!confirm('Tem certeza que deseja excluir este orçamento?')) { return; }
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) { alert('Não autenticado.'); return; }
+
+    try {
+        const response = await fetch(`${API_URL}/suporte/${orcamentoId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Erro ao excluir orçamento.');
+        }
+        alert('Orçamento excluído com sucesso!');
+        renderOrcamentos();
+    } catch (error) {
+        console.error("Erro ao excluir orçamento:", error);
+        alert(`Erro ao excluir orçamento: ${error.message}`);
+    }
+};
+
+async function renderPedidosSuporte() {
+    const supportRequestsContent = document.getElementById('support-requests-content');
+    if (!supportRequestsContent) return;
+    supportRequestsContent.innerHTML = '<h2>Pedidos de Suporte</h2>';
+
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) {
+        console.error("Token de admin ausente para carregar pedidos de suporte.");
+        supportRequestsContent.innerHTML += '<p>Não autenticado. Por favor, faça login como administrador.</p>';
+        return;
+    }
+
+    try {
+        console.log("DEBUG: Tentando buscar pedidos de suporte (tipo=suporte)...");
+        const responseSuporte = await fetch(`${API_URL}/suporte`, { // Apenas suporte aqui
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        console.log("DEBUG: Resposta da API (suporte): Status", responseSuporte.status);
+        if (!responseSuporte.ok) {
+            let errorTextSuporte = await responseSuporte.text();
+            try {
+                const errorJsonSuporte = JSON.parse(errorTextSuporte);
+                errorTextSuporte = errorJsonSuporte.erro || errorTextSuporte;
+            } catch (e) { /* not JSON */ }
+            throw new Error(`Erro ${responseSuporte.status} ao carregar pedidos de suporte: ${errorTextSuporte}`);
+        }
+        const pedidosSuporte = await responseSuporte.json();
+        console.log("DEBUG: Pedidos de Suporte recebidos:", pedidosSuporte);
+
+        const todosPedidos = [...pedidosSuporte]; // Apenas pedidos de suporte aqui
+        todosPedidos.sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em));
+
+        if (todosPedidos.length === 0) {
+            supportRequestsContent.innerHTML += '<p>Nenhum pedido de suporte recebido.</p>';
+            return;
+        }
+
+        const listaPedidos = document.createElement('ul');
+        todosPedidos.forEach((item) => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <strong>ID:</strong> ${item.id}<br>
+                <strong>Nome:</strong> ${item.nome}<br>
+                <strong>Email:</strong> ${item.email}<br>
+                <strong>Mensagem:</strong> ${item.mensagem}<br>
+                <strong>Tipo de Interação:</strong> Suporte<br>
+                <strong>Cliente Email (Logado):</strong> ${item.cliente_email || 'N/A'}<br>
+                <strong>Enviado em:</strong> ${new Date(item.criado_em).toLocaleString('pt-BR')}<br>
+                <label>
+                    Status:
+                    <select data-id="${item.id}" onchange="atualizarStatusSuporte(this)">
+                        <option value="aberto" ${item.status === 'aberto' ? 'selected' : ''}>Aberto</option>
+                        <option value="em_andamento" ${item.status === 'em_andamento' ? 'selected' : ''}>Em Andamento</option>
+                        <option value="resolvido" ${item.status === 'resolvido' ? 'selected' : ''}>Resolvido</option>
+                    </select>
+                </label>
+                <button class="button delete-button danger" onclick="excluirPedidoSuporte(${item.id})">Excluir</button>
+                <hr>
+            `;
+            listaPedidos.appendChild(listItem);
+        });
+        supportRequestsContent.appendChild(listaPedidos);
+    } catch (error) {
+        console.error("Erro ao carregar pedidos de suporte:", error);
+        supportRequestsContent.innerHTML = `<p>Erro ao carregar pedidos de suporte: ${error.message}</p>`;
+    }
+}
+
+window.atualizarStatusSuporte = async function(selectElement) {
+    const pedidoId = selectElement.dataset.id;
+    const novoStatus = selectElement.value;
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) { alert('Não autenticado.'); return; }
+
+    try {
+        const response = await fetch(`${API_URL}/suporte/${pedidoId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+            body: JSON.stringify({ status: novoStatus })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Erro ao atualizar status do pedido de suporte.');
+        }
+        alert('Status do pedido de suporte atualizado com sucesso!');
+        renderPedidosSuporte(); 
+    } catch (error) {
+        console.error("Erro ao atualizar status do suporte:", error);
+        alert(`Erro ao atualizar status: ${error.message}`);
+    }
+};
+
+window.excluirPedidoSuporte = async function(pedidoId) {
+    if (!confirm('Deseja excluir este pedido de suporte?')) { return; }
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) { alert('Não autenticado.'); return; }
+
+    try {
+        const response = await fetch(`${API_URL}/suporte/${pedidoId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Erro ao excluir pedido de suporte.');
+        }
+        alert('Pedido de suporte excluído com sucesso!');
+        renderPedidosSuporte();
+    } catch (error) {
+        console.error("Erro ao excluir pedido de suporte:", error);
+        alert(`Erro ao excluir pedido de suporte: ${error.message}`);
+    }
+};
+
+async function renderMensagensFaleConosco() {
+    const contactUsContent = document.getElementById('contact-us-content');
+    if (!contactUsContent) return;
+    contactUsContent.innerHTML = '<h2>Mensagens Fale Conosco</h2>'; 
+
+    contactUsContent.innerHTML += '<p>As mensagens do "Fale Conosco" agora são exibidas na aba "Pedidos de Suporte".</p>';
+}
+
+window.atualizarStatusMensagem = async function(selectElement) { /* ... Lógica similar a atualizarStatusSuporte ... */ };
+window.excluirMensagem = async function(mensagemId) { /* ... Lógica similar a excluirPedidoSuporte ... */ };
+
 
 async function handleBuscarCliente(event) {
     event.preventDefault();
 
-    const buscaValor = document.getElementById('busca-email-telefone').value.trim().toLowerCase();
-    console.log('Valor da busca (trim() e lowercase):', buscaValor);
+    const buscaValor = document.getElementById('busca-email-telefone').value.trim();
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) { alert('Não autenticado.'); return; }
 
     if (!buscaValor) {
-        if (resultadosBuscaDiv) {
-            resultadosBuscaDiv.innerHTML = '<p class="mensagem">Por favor, digite um email ou telefone para buscar.</p>';
-        }
+        if (resultadosBuscaDiv) resultadosBuscaDiv.innerHTML = '<p class="mensagem">Por favor, digite um email ou telefone para buscar.</p>';
         return;
     }
 
-    const chaveUsuarios = 'users';
-    const usuariosSalvos = localStorage.getItem(chaveUsuarios);
+    if (detalhesClienteDiv) detalhesClienteDiv.innerHTML = '';
+    if (listaPedidosClienteAdm) listaPedidosClienteAdm.innerHTML = '';
+    if (listaHistoricoClienteAdm) listaHistoricoClienteAdm.innerHTML = '';
+    if (resultadosBuscaDiv) resultadosBuscaDiv.innerHTML = '<p class="mensagem">Buscando...</p>'; // Mensagem de busca
+
     let clienteEncontrado = null;
 
-    if (usuariosSalvos) {
-        try {
-            const usuariosObjeto = JSON.parse(usuariosSalvos);
-            console.log('Dados de usuários parseados:', usuariosObjeto);
+    try {
+        // 1. Tenta buscar como USUÁRIO NORMAL (Cliente)
+        const responseUsuarios = await fetch(`${API_URL}/admin/usuarios?busca=${encodeURIComponent(buscaValor)}`, {
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
 
-            for (const email in usuariosObjeto) {
-                const emailLower = email.trim().toLowerCase();
-                const telefoneLower = (usuariosObjeto[email].phone || '').trim().toLowerCase();
+        if (responseUsuarios.ok) {
+            const allUsuarios = await responseUsuarios.json();
+            const foundUsuario = allUsuarios.find(u =>
+                (u.email && u.email.toLowerCase() === buscaValor.toLowerCase()) ||
+                (u.telefone && u.telefone.toLowerCase() === buscaValor.toLowerCase())
+            );
 
-                if (emailLower === buscaValor || telefoneLower === buscaValor) {
+            if (foundUsuario) {
+                clienteEncontrado = {
+                    id: foundUsuario.id,
+                    email: foundUsuario.email,
+                    name: foundUsuario.nome_completo, // Use nome_completo conforme o model Usuario
+                    telefone: foundUsuario.telefone || 'N/A',
+                    tipo: 'usuario'
+                };
+                console.log('Cliente (usuário) encontrado via API:', clienteEncontrado);
+            }
+        } else {
+             // Loga o erro, mas continua tentando funcionários
+            console.warn(`Erro ao buscar usuários (Status: ${responseUsuarios.status}):`, await responseUsuarios.text());
+        }
+
+        // 2. Se não encontrou como usuário, tenta buscar como FUNCIONÁRIO
+        if (!clienteEncontrado) {
+            const responseFuncionarios = await fetch(`${API_URL}/admin/funcionarios`, { // Endpoint para listar todos os funcionários
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            });
+
+            if (responseFuncionarios.ok) {
+                const allFuncionarios = await responseFuncionarios.json();
+                const foundFuncionario = allFuncionarios.find(f =>
+                    (f.email && f.email.toLowerCase() === buscaValor.toLowerCase()) // Funcionário não tem telefone no model atual, mas pode adicionar se necessário
+                );
+
+                if (foundFuncionario) {
                     clienteEncontrado = {
-                        email: email,
-                        telefone: usuariosObjeto[email].phone,
-                        name: usuariosObjeto[email].name,
-                        suportes: carregarSuportesDoCliente(email),
-                        faleConoscos: carregarFaleConoscosDoCliente(email),
-                        orcamentosCliente: carregarOrcamentosDoCliente(email),
-                        pedidosAtivos: carregarPedidosAtivosDoCliente(email),
-                        historicoPedidosLoja: carregarHistoricoPedidosLojaDoCliente(email) // Renomeado para clareza
+                        id: foundFuncionario.id,
+                        email: foundFuncionario.email,
+                        name: foundFuncionario.nome || 'N/A',
+                        telefone: 'N/A', // Funcionário pode não ter telefone
+                        tipo: 'funcionario'
                     };
-                    break;
+                    console.log('Funcionário encontrado via API:', clienteEncontrado);
                 }
+            } else {
+                 console.warn(`Erro ao buscar funcionários (Status: ${responseFuncionarios.status}):`, await responseFuncionarios.text());
             }
-            console.log('Cliente encontrado:', clienteEncontrado);
+        }
 
-        } catch (error) {
-            console.error('Erro ao parsear JSON de usuários:', error);
-            if (resultadosBuscaDiv) {
-                resultadosBuscaDiv.innerHTML = '<p class="mensagem">Erro ao carregar dados de usuários.</p>';
-            }
-            return;
+        if (clienteEncontrado) {
+            resultadosBuscaDiv.innerHTML = ''; // Limpa a mensagem de busca
+            await exibirInformacoesClienteAPI(clienteEncontrado, adminToken);
+        } else {
+            resultadosBuscaDiv.innerHTML = '<p class="mensagem">Nenhum cliente ou funcionário encontrado com este email ou telefone.</p>';
         }
-    } else {
-        if (resultadosBuscaDiv) {
-            resultadosBuscaDiv.innerHTML = '<p class="mensagem">Nenhum usuário cadastrado.</p>';
-        }
-        return;
-    }
 
-    if (clienteEncontrado) {
-        console.log('Cliente encontrado para exibir:', clienteEncontrado);
-        exibirInformacoesCliente(clienteEncontrado);
-    } else {
-        if (resultadosBuscaDiv) {
-            resultadosBuscaDiv.innerHTML = '<p class="mensagem">Nenhum cliente encontrado com este email ou telefone.</p>';
-            if (detalhesClienteDiv) detalhesClienteDiv.innerHTML = '';
-            if (listaPedidosClienteAdm) listaPedidosClienteAdm.innerHTML = '';
-            if (listaHistoricoClienteAdm) listaHistoricoClienteAdm.innerHTML = '';
-        }
+    } catch (error) {
+        console.error('Erro ao buscar cliente ou seus dados:', error);
+        resultadosBuscaDiv.innerHTML = `<p class="mensagem">Erro ao buscar cliente: ${error.message}</p>`;
     }
 }
 
-function exibirInformacoesCliente(cliente) {
-    console.log('Função exibirInformacoesCliente foi chamada com:', cliente);
+async function exibirInformacoesClienteAPI(cliente, adminToken) {
+    console.log('Função exibirInformacoesClienteAPI foi chamada com:', cliente);
 
     if (!detalhesClienteDiv || !listaPedidosClienteAdm || !listaHistoricoClienteAdm) {
         console.error('Elementos do DOM para detalhes do cliente não encontrados.');
@@ -445,123 +1044,134 @@ function exibirInformacoesCliente(cliente) {
     }
 
     detalhesClienteDiv.innerHTML = `
-        <h3>Detalhes do Cliente</h3>
+        <h3>Detalhes do ${cliente.tipo === 'funcionario' ? 'Funcionário' : 'Cliente'}</h3>
         <p><strong>Nome:</strong> ${cliente.name || 'Não informado'}</p>
         <p><strong>Email:</strong> ${cliente.email || 'Não informado'}</p>
         <p><strong>Telefone:</strong> ${cliente.telefone || 'Não informado'}</p>
+        <p><strong>Tipo:</strong> ${cliente.tipo === 'funcionario' ? 'Funcionário' : 'Usuário Regular'}</p>
     `;
 
-    // Limpa as listas
     listaPedidosClienteAdm.innerHTML = '';
     listaHistoricoClienteAdm.innerHTML = '';
 
-    // Exibe Pedidos Ativos (da loja)
-    const pedidosAtivosTitulo = document.createElement('h4');
-    pedidosAtivosTitulo.textContent = 'Pedidos Ativos';
-    listaPedidosClienteAdm.appendChild(pedidosAtivosTitulo);
+    if (cliente.tipo === 'usuario') {
+        // Carregar Pedidos de Loja (apenas para usuários)
+        try {
+            listaPedidosClienteAdm.innerHTML = '<h4>Pedidos Ativos (Loja)</h4><p>Carregando...</p>';
+            const pedidosResponse = await fetch(`${API_URL}/admin/pedidos?cliente_email=${cliente.email}`, {
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            });
+            if (!pedidosResponse.ok) {
+                const errorData = await pedidosResponse.json().catch(() => ({ erro: "Resposta não JSON ou vazia" }));
+                throw new Error(`Erro ao carregar pedidos de loja do cliente: ${pedidosResponse.status} ${pedidosResponse.statusText} - ${errorData.erro || 'Detalhes desconhecidos.'}`);
+            }
+            let pedidosLoja = await pedidosResponse.json();
+            // GARANTE QUE É UM ARRAY:
+            if (!Array.isArray(pedidosLoja)) {
+                pedidosLoja = [];
+                console.warn("API de pedidos de loja retornou algo que não é um array para o admin. Tratando como vazio.");
+            }
 
-    if (cliente.pedidosAtivos && cliente.pedidosAtivos.length > 0) {
-        const listaAtivos = document.createElement('ul');
-        cliente.pedidosAtivos.forEach(pedido => {
-            const itemPedido = document.createElement('li');
-            itemPedido.textContent = `ID: ${pedido.id || 'N/A'}, Data: ${pedido.dataPedido || 'N/A'}, Status: ${pedido.status || 'N/A'}`; // Use dataPedido
-            listaAtivos.appendChild(itemPedido);
-        });
-        listaPedidosClienteAdm.appendChild(listaAtivos);
+            const pedidosAtivos = pedidosLoja.filter(p => p.status !== 'Entregue' && p.status !== 'Concluído' && p.status !== 'Pago');
+            const historicoPedidos = pedidosLoja.filter(p => p.status === 'Entregue' || p.status === 'Concluído' || p.status === 'Pago');
+
+            listaPedidosClienteAdm.innerHTML = '<h4>Pedidos Ativos (Loja)</h4>';
+            if (pedidosAtivos.length > 0) {
+                const ulAtivos = document.createElement('ul');
+                pedidosAtivos.forEach(pedido => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${pedido.id}, Data: ${new Date(pedido.data_pedido).toLocaleDateString('pt-BR')}, Status: ${pedido.status}, Total: R$ ${parseFloat(pedido.valor_total).toFixed(2).replace('.', ',')}`;
+                    ulAtivos.appendChild(li);
+                });
+                listaPedidosClienteAdm.appendChild(ulAtivos);
+            } else {
+                listaPedidosClienteAdm.innerHTML += '<p>Nenhum pedido ativo encontrado para este cliente.</p>';
+            }
+
+            listaHistoricoClienteAdm.innerHTML = '<h4>Histórico de Pedidos (Loja)</h4>';
+            if (historicoPedidos.length > 0) {
+                const ulHistorico = document.createElement('ul');
+                historicoPedidos.forEach(pedido => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${pedido.id}, Data: ${new Date(pedido.data_pedido).toLocaleDateString('pt-BR')}, Status: ${pedido.status}, Total: R$ ${parseFloat(pedido.valor_total).toFixed(2).replace('.', ',')}`;
+                    ulHistorico.appendChild(li);
+                });
+                listaHistoricoClienteAdm.appendChild(ulHistorico);
+            } else {
+                listaHistoricoClienteAdm.innerHTML += '<p>Nenhum histórico de pedidos de loja encontrado.</p>';
+            }
+
+        } catch (error) {
+            console.error("Erro ao carregar pedidos do cliente:", error);
+            listaPedidosClienteAdm.innerHTML = `<p>Erro ao carregar pedidos: ${error.message}</p>`; // Use = para sobrescrever
+            listaHistoricoClienteAdm.innerHTML += `<p>Erro ao carregar histórico de pedidos: ${error.message}</p>`;
+        }
+
+        // Carregar Outras Interações (Suporte e Orçamento)
+        try {
+            listaHistoricoClienteAdm.innerHTML += '<h4>Outras Interações (Suporte e Orçamento)</h4><p>Carregando...</p>';
+            
+            // Buscar interações de Suporte
+            const responseSuporte = await fetch(`${API_URL}/suporte?cliente_email=${cliente.email}`, {
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            });
+            let interacoesSuporte = responseSuporte.ok ? await responseSuporte.json() : [];
+            // GARANTE QUE É UM ARRAY:
+            if (!Array.isArray(interacoesSuporte)) {
+                interacoesSuporte = [];
+                console.warn("API de suporte retornou algo que não é um array para o admin. Tratando como vazio.");
+            }
+            if (!responseSuporte.ok) console.warn('Erro ao buscar suporte do cliente (admin):', await responseSuporte.text());
+
+
+            // Buscar interações de Orçamento
+            const responseOrcamento = await fetch(`${API_URL}/admin/orcamentos?email=${cliente.email}`, {
+                headers: { 'Authorization': `Bearer ${adminToken}` }
+            });
+            let interacoesOrcamento = responseOrcamento.ok ? await responseOrcamento.json() : [];
+            // GARANTE QUE É UM ARRAY:
+            if (!Array.isArray(interacoesOrcamento)) {
+                interacoesOrcamento = [];
+                console.warn("API de orçamentos retornou algo que não é um array para o admin. Tratando como vazio.");
+            }
+            if (!responseOrcamento.ok) console.warn('Erro ao buscar orçamentos do cliente (admin):', await responseOrcamento.text());
+
+
+            const todasInteracoes = [...interacoesSuporte, ...interacoesOrcamento]; // Combine todos os tipos
+            todasInteracoes.sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em)); // Ordena
+
+            listaHistoricoClienteAdm.innerHTML += '<h4>Outras Interações (Suporte e Orçamento)</h4>';
+            if (todasInteracoes.length > 0) {
+                const ulInteracoes = document.createElement('ul');
+                todasInteracoes.forEach(interacao => {
+                    const li = document.createElement('li');
+                    let tipoExibicao = '';
+                    if (interacao.hasOwnProperty('tipo_interacao')) { // Propriedade de Suporte (tipo_interacao = 'suporte' ou 'contato')
+                        tipoExibicao = interacao.tipo_interacao === 'suporte' ? 'Suporte' : 'Contato';
+                    } else if (interacao.hasOwnProperty('servico_nome') || interacao.hasOwnProperty('telefone')) { // Propriedade de Orçamento
+                        tipoExibicao = 'Orçamento';
+                    } else {
+                        tipoExibicao = 'Desconhecido';
+                    }
+
+                    li.textContent = `Tipo: ${tipoExibicao}, Data: ${new Date(interacao.criado_em).toLocaleDateString('pt-BR')}, Status: ${interacao.status}, Mensagem: ${interacao.mensagem ? interacao.mensagem.substring(0, Math.min(interacao.mensagem.length, 50)) + '...' : 'N/A'}`;
+                    ulInteracoes.appendChild(li);
+                });
+                listaHistoricoClienteAdm.appendChild(ulInteracoes);
+            } else {
+                listaHistoricoClienteAdm.innerHTML += '<p>Nenhuma outra interação encontrada para este cliente.</p>';
+            }
+
+        } catch (error) {
+            console.error("Erro ao carregar interacoes do cliente:", error);
+            listaHistoricoClienteAdm.innerHTML += `<p>Erro ao carregar outras interacoes: ${error.message}</p>`;
+        }
     } else {
-        const mensagemNenhumPedido = document.createElement('p');
-        mensagemNenhumPedido.textContent = 'Nenhum pedido ativo encontrado para este cliente.';
-        listaPedidosClienteAdm.appendChild(mensagemNenhumPedido);
-    }
-
-    // Exibe Histórico de Pedidos (da loja) e Outras Interações
-    const historicoTitulo = document.createElement('h4');
-    historicoTitulo.textContent = 'Histórico de Pedidos e Interações';
-    listaHistoricoClienteAdm.appendChild(historicoTitulo);
-
-    const listaHistorico = document.createElement('ul');
-    let hasHistorico = false;
-
-    // Adiciona histórico de pedidos da loja
-    if (cliente.historicoPedidosLoja && cliente.historicoPedidosLoja.length > 0) {
-        cliente.historicoPedidosLoja.forEach(pedido => {
-            const itemHistoricoPedido = document.createElement('li');
-            itemHistoricoPedido.textContent = `Tipo: Pedido Loja, ID: ${pedido.id || 'N/A'}, Data: ${pedido.dataPedido || 'N/A'}, Status: ${pedido.status || 'N/A'}`; // Use dataPedido
-            listaHistorico.appendChild(itemHistoricoPedido);
-        });
-        hasHistorico = true;
-    }
-
-    // Adiciona pedidos de suporte ao histórico
-    if (cliente.suportes && cliente.suportes.length > 0) {
-        cliente.suportes.forEach(suporte => {
-            const itemSuporte = document.createElement('li');
-            itemSuporte.textContent = `Tipo: Suporte, ID: ${suporte.id || 'N/A'}, Problema: ${suporte.problema || 'N/A'}, Enviado em: ${suporte.dataEnvio || 'N/A'}`;
-            listaHistorico.appendChild(itemSuporte);
-        });
-        hasHistorico = true;
-    }
-
-    // Adiciona mensagens Fale Conosco ao histórico
-    if (cliente.faleConoscos && cliente.faleConoscos.length > 0) {
-        cliente.faleConoscos.forEach(mensagem => {
-            const itemMensagem = document.createElement('li');
-            itemMensagem.textContent = `Tipo: Fale Conosco, Assunto: ${mensagem.assunto || 'N/A'}, Enviado em: ${mensagem.dataEnvio || 'N/A'}`;
-            listaHistorico.appendChild(itemMensagem);
-        });
-        hasHistorico = true;
-    }
-
-    // Adiciona orçamentos ao histórico
-    if (cliente.orcamentosCliente && cliente.orcamentosCliente.length > 0) {
-        cliente.orcamentosCliente.forEach(orcamento => {
-            const itemOrcamento = document.createElement('li');
-            itemOrcamento.textContent = `Tipo: Orçamento, Serviço: ${orcamento.servico || 'N/A'}, Enviado em: ${orcamento.dataEnvio || 'N/A'}`;
-            listaHistorico.appendChild(itemOrcamento);
-        });
-        hasHistorico = true;
-    }
-
-    if (hasHistorico) {
-        listaHistoricoClienteAdm.appendChild(listaHistorico);
-    } else {
-        const mensagemNenhumHistorico = document.createElement('p');
-        mensagemNenhumHistorico.textContent = 'Nenhum histórico de pedidos ou interações encontrado para este cliente.';
-        listaHistoricoClienteAdm.appendChild(mensagemNenhumHistorico);
+        listaPedidosClienteAdm.innerHTML = '<p>Pedidos de loja não aplicáveis para este tipo de usuário.</p>';
+        listaHistoricoClienteAdm.innerHTML = '<p>Interações não aplicáveis para este tipo de usuário.</p>';
     }
 }
 
-// Funções auxiliares para carregar os dados relacionados
-function carregarSuportesDoCliente(emailCliente) {
-    const todosSuportes = localStorage.getItem('pedidosSuporte');
-    return todosSuportes ? JSON.parse(todosSuportes).filter(suporte => suporte.email && suporte.email.trim().toLowerCase() === emailCliente.trim().toLowerCase()) : [];
-}
-
-function carregarFaleConoscosDoCliente(emailCliente) {
-    const todasMensagens = localStorage.getItem('mensagensFaleConosco');
-    return todasMensagens ? JSON.parse(todasMensagens).filter(mensagem => mensagem.email && mensagem.email.trim().toLowerCase() === emailCliente.trim().toLowerCase()) : [];
-}
-
-function carregarOrcamentosDoCliente(emailCliente) {
-    const todosOrcamentos = localStorage.getItem('orcamentos');
-    return todosOrcamentos ? JSON.parse(todosOrcamentos).filter(orcamento => orcamento.email && orcamento.email.trim().toLowerCase() === emailCliente.trim().toLowerCase()) : [];
-}
-
-// Implemente estas funções para carregar os dados de pedidos ativos e histórico DA LOJA
-function carregarPedidosAtivosDoCliente(emailCliente) {
-    const chavePedidosCliente = `pedidos_${emailCliente.replace(/[^a-zA-Z0-9]/g, '')}`;
-    const todosPedidos = localStorage.getItem(chavePedidosCliente);
-    return todosPedidos ? JSON.parse(todosPedidos).filter(pedido => pedido.status !== 'Entregue' && pedido.status !== 'Concluído') : [];
-}
-
-function carregarHistoricoPedidosLojaDoCliente(emailCliente) {
-    const chavePedidosCliente = `pedidos_${emailCliente.replace(/[^a-zA-Z0-9]/g, '')}`;
-    const todosPedidos = localStorage.getItem(chavePedidosCliente);
-    return todosPedidos ? JSON.parse(todosPedidos).filter(pedido => pedido.status === 'Entregue' || pedido.status === 'Concluído' || pedido.status === 'Pago') : [];
-}
-
-
-// Funções para renderizar dados na página
 function renderAdminList() {
     if (!adminList) return;
 
@@ -622,7 +1232,7 @@ function addAdminAccount() {
     const password = passwordInput.value;
 
     if (name && email && password) {
-        const newAdmin = { name: name, email: email, password: password, isSuper: false }; // Defina isSuper como false por padrão
+        const newAdmin = { name: name, email: email, password: password, isSuper: false };
         adminAccounts.push(newAdmin);
         saveAdminAccounts(adminAccounts);
         renderAdminList();
@@ -661,658 +1271,254 @@ function handleRemoveAdmin(event) {
     }
 }
 
-function renderAdminProducts(productsToRender) {
-    console.log('Função renderAdminProducts chamada com:', productsToRender);
+function setupTabs() {
+    console.log("admin.js: setupTabs executado.");
+    const allTabButtons = [
+        tabProducts, tabAddProduct, tabAddNews, tabAdmins, tabBudgets,
+        tabSupportRequests, tabPopularProducts, tabNewProducts,
+        tabOffers, tabClients
+    ];
 
-    const productList = document.getElementById('product-list'); // Garante que productList esteja definida LOCALMENTE
+    const allTabContents = [
+        productsContent, addProductContent, addNewsContent, adminsContent, budgetsContent,
+        supportRequestsContent, popularProductsContent, newProductsContent,
+        offersContent, clientContent
+    ];
 
-    if (!productList) {
-        console.error('Elemento productList não encontrado dentro de renderAdminProducts!');
-        return;
+    allTabButtons.forEach(button => {
+        if (button) {
+            const oldListener = button._eventListener;
+            if (oldListener) {
+                button.removeEventListener('click', oldListener);
+            }
+            const newListener = () => switchTab(button.id.replace('tab-', ''));
+            button.addEventListener('click', newListener);
+            button._eventListener = newListener;
+        }
+    });
+}
+
+function switchTab(tabName) {
+    console.log(`admin.js: switchTab para: ${tabName}`); 
+    const allTabButtons = [
+        tabProducts, tabAddProduct, tabAddNews, tabAdmins, tabBudgets,
+        tabSupportRequests, tabPopularProducts, tabNewProducts,
+        tabOffers, tabClients
+    ];
+
+    const allTabContents = [
+        productsContent, addProductContent, addNewsContent, adminsContent, budgetsContent,
+        supportRequestsContent, popularProductsContent, newProductsContent,
+        offersContent, clientContent
+    ];
+    const tabAdminsButton = document.getElementById('tab-admins');
+    const clientsContentDiv = document.getElementById('clients-content');
+    const footerButtons = document.querySelector('.footer');
+
+    allTabButtons.forEach(tab => {
+        if (tab) tab.classList.remove('active');
+    });
+
+    allTabContents.forEach(content => {
+        if (content) content.style.display = 'none';
+    });
+
+    if (clientsContentDiv) {
+        clientsContentDiv.style.display = 'none';
     }
 
-    productList.innerHTML = '';
-    if (!productsToRender || productsToRender.length === 0) {
-        productList.innerHTML = '<li class="no-products-message">Nenhuma peça cadastrada ainda.</li>';
-        return;
+    if (footerButtons) {
+        footerButtons.style.display = 'none';
     }
 
-    productsToRender.forEach((product, index) => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('product-item');
-        listItem.dataset.productId = product.id || index;
+    let targetButton;
+    let targetContent;
 
-        const valueAsNumber = parseFloat(product.value);
-        const formattedValue = !isNaN(valueAsNumber)
-            ? valueAsNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-            : 'Valor inválido';
-
-        listItem.innerHTML = `
-            <div class="product-info">
-                <div class="product-name">${product.name || 'Nome Indefinido'}</div>
-                <div class="product-details">${product.details || 'Sem detalhes'}</div>
-            </div>
-            <div class="product-actions">
-                <div class="stats">
-                    <span class="product-value">Valor: ${formattedValue}</span>
-                    <span class="product-quantity">Quantidade: ${product.quantity || 0}</span>
-                </div>
-                <div class="action-buttons">
-                    <button class="button edit-button" data-index="${index}" title="Editar Produto">Editar</button>
-                    <button class="button delete-button danger" data-index="${index}" title="Excluir Produto">Excluir</button>
-                </div>
-            </div>
-            <div class="edit-controls">
-                <div class="edit-control-group">
-                    <label for="value-${index}">Novo Valor (Ex: 1800.00):</label>
-                    <input type="number" step="0.01" min="0" id="value-${index}" value="${product.value || ''}">
-                </div>
-                <div class="edit-control-group">
-                    <label for="quantity-${index}">Nova Qtd:</label>
-                    <input type="number" id="quantity-${index}" value="${product.quantity || 0}" min="0">
-                </div>
-                <div class="edit-action-buttons">
-                    <button class="button save" data-index="${index}">Salvar</button>
-                    <button class="button cancel" data-index="${index}">Cancelar</button>
-                </div>
-            </div>
-        `;
-        productList.appendChild(listItem); // Adiciona o item à lista
-    });
-
-    attachProductEventListeners(); // Vincula os eventos aos botões
-}
-
-function renderNewsList() {
-    const newsListElement = document.getElementById('news-list');
-    if (!newsListElement) return;
-
-    newsListElement.innerHTML = ''; // Limpa a lista
-
-    if (!news || news.length === 0) {
-        newsListElement.innerHTML = '<li class="no-news-message">Nenhuma notícia cadastrada.</li>';
-        return;
-    }
-
-    news.forEach((item, index) => {
-        const listItem = document.createElement('li');
-        listItem.classList.add('news-item');
-        listItem.innerHTML = `
-            <div class="news-info">
-                <h3>${item.title}</h3>
-                <p class="news-date">${item.date}</p>
-                <p class="news-description">${item.description}</p>
-            </div>
-            <div class="news-actions">
-                <button class="button edit-news" data-index="${index}">Editar</button>
-                <button class="button delete-news danger" data-index="${index}">Excluir</button>
-            </div>
-            <div class="edit-news-controls" style="display: none;">
-                <label for="edit-title-${index}">Título:</label>
-                <input type="text" id="edit-title-${index}" value="${item.title}">
-                <label for="edit-description-${index}">Descrição:</label>
-                <textarea id="edit-description-${index}">${item.description}</textarea>
-                <div class="edit-action-buttons">
-                    <button class="button save-edit-news" data-index="${index}">Salvar</button>
-                    <button class="button cancel-edit-news" data-index="${index}">Cancelar</button>
-                </div>
-            </div>
-        `;
-        newsListElement.appendChild(listItem);
-    });
-
-    // Adicione os event listeners PARA OS BOTÕES DE EDITAR E SALVAR AQUI
-    document.querySelectorAll('.edit-news').forEach(button => {
-        button.addEventListener('click', handleEditNewsItem);
-    });
-
-    document.querySelectorAll('.save-edit-news').forEach(button => {
-        button.addEventListener('click', handleSaveEditNews);
-    });
-
-    document.querySelectorAll('.delete-news').forEach(button => {
-        button.addEventListener('click', handleDeleteNewsItem);
-    });
-
-    document.querySelectorAll('.cancel-edit-news').forEach(button => {
-        button.addEventListener('click', handleCancelEditNews);
-    });
-}
-
-function attachProductEventListeners() {
-    document.querySelectorAll('.edit-button').forEach(button => {
-        button.addEventListener('click', handleEditProduct);
-    });
-
-    document.querySelectorAll('.save').forEach(button => {
-        button.addEventListener('click', handleSaveProductEdit);
-    });
-
-    document.querySelectorAll('.cancel').forEach(button => {
-        button.addEventListener('click', handleCancelProductEdit);
-    });
-
-    document.querySelectorAll('.delete-button').forEach(button => {
-        button.addEventListener('click', handleDeleteProduct);
-    });
-}
-
-function handleEditProduct(event) {
-    const button = event.currentTarget;
-    const productItem = button.closest('.product-item');
-    const index = parseInt(button.dataset.index);
-    const productInfo = productItem.querySelector('.product-info');
-    const productActions = productItem.querySelector('.product-actions');
-    const editControls = productItem.querySelector('.edit-controls');
-
-    // Oculta a informação e os botões de ação
-    productInfo.style.display = 'none';
-    productActions.style.display = 'none';
-
-    // Exibe os controles de edição
-    editControls.style.display = 'flex';
-}
-
-function handleDeleteProduct(event) {
-    const button = event.currentTarget;
-    const index = parseInt(button.dataset.index);
-    const productToDelete = products[index]; // 'products' é o seu array global de produtos
-
-    if (confirm(`Tem certeza que deseja excluir o produto "${productToDelete.name || 'sem nome'}"?`)) {
-        products.splice(index, 1);
-        saveProductsToLocalStorage(products);
-        renderAdminProducts(products); // Atualiza a lista na tela
-        alert('Produto excluído com sucesso!');
-    }
-}
-
-function handleCancelProductEdit(event) {
-    const button = event.currentTarget;
-    const productItem = button.closest('.product-item');
-    const actions = productItem.querySelector('.product-actions');
-    const editControls = productItem.querySelector('.edit-controls');
-
-    actions.style.display = 'flex';
-    editControls.style.display = 'none';
-}
-
-function handleCancelEditNews(event) {
-    const button = event.currentTarget;
-    const newsItem = button.closest('.news-item');
-    const newsInfo = newsItem.querySelector('.news-info');
-    const newsActions = newsItem.querySelector('.news-actions');
-    const editControls = newsItem.querySelector('.edit-news-controls');
-
-    console.log('newsItem:', newsItem);
-    console.log('newsInfo:', newsInfo);
-    console.log('newsActions:', newsActions);
-    console.log('editControls:', editControls);
-
-    if (newsInfo) newsInfo.style.display = 'block';
-    if (newsActions) newsActions.style.display = 'flex';
-    if (editControls) editControls.style.display = 'none';
-}
-
-function handleSaveProductEdit(event) {
-    const button = event.currentTarget;
-    const productItem = button.closest('.product-item');
-    const index = parseInt(button.dataset.index);
-    const valueInput = productItem.querySelector(`#value-${index}`);
-    const quantityInput = productItem.querySelector(`#quantity-${index}`);
-    const productInfo = productItem.querySelector('.product-info');
-    const productActions = productItem.querySelector('.product-actions');
-    const editControls = productItem.querySelector('.edit-controls');
-
-    const newValue = parseFloat(valueInput.value);
-    const newQuantity = parseInt(quantityInput.value);
-
-    if (!isNaN(newValue) && !isNaN(newQuantity) && newValue >= 0 && newQuantity >= 0) {
-        products[index].value = newValue.toFixed(2);
-        products[index].quantity = newQuantity;
-        saveProductsToLocalStorage(products);
-        renderAdminProducts(products); // Atualiza a lista na tela
-
-        // Volta para a visualização normal
-        productInfo.style.display = 'block';
-        productActions.style.display = 'flex';
-        editControls.style.display = 'none';
-    } else {
-        alert('Por favor, insira valores válidos para valor e quantidade.');
-    }
-}
-
-function handleEditNewsItem(event) {
-    const button = event.currentTarget;
-    const newsItem = button.closest('.news-item');
-    const index = parseInt(button.dataset.index);
-    const newsInfo = newsItem.querySelector('.news-info');
-    const newsActions = newsItem.querySelector('.news-actions');
-    const editControls = newsItem.querySelector('.edit-news-controls');
-    const editTitleInput = editControls.querySelector(`#edit-title-${index}`);
-    const editDescriptionTextarea = editControls.querySelector(`#edit-description-${index}`);
-
-    // Preenche os campos de edição com os valores atuais
-    editTitleInput.value = news[index].title;
-    editDescriptionTextarea.value = news[index].description;
-
-    // Oculta a informação e os botões de ação
-    newsInfo.style.display = 'none';
-    newsActions.style.display = 'none';
-
-    // Exibe os controles de edição
-    editControls.style.display = 'flex';
-}
-
-function handleSaveEditNews(event) {
-    const button = event.currentTarget;
-    const newsItem = button.closest('.news-item');
-    const index = parseInt(button.dataset.index);
-    const editTitleInput = newsItem.querySelector(`#edit-title-${index}`);
-    const editDescriptionTextarea = newsItem.querySelector(`#edit-description-${index}`);
-    const newsInfo = newsItem.querySelector('.news-info');
-    const newsActions = newsItem.querySelector('.news-actions');
-    const editControls = newsItem.querySelector('.edit-news-controls');
-
-    const newTitle = editTitleInput.value.trim();
-    const newDescription = editDescriptionTextarea.value.trim();
-
-    if (newTitle && newDescription) {
-        news[index].title = newTitle;
-        news[index].description = newDescription;
-        saveNewsToLocalStorage(news);
-        renderNewsList(); // Atualiza a lista na tela
-
-        // Volta para a visualização normal
-        newsInfo.style.display = 'block';
-        newsActions.style.display = 'flex';
-        editControls.style.display = 'none';
-    } else {
-        alert('Por favor, preencha o título e a descrição da notícia.');
-    }
-}
-
-
-function handleDeleteNewsItem(event) {
-    const button = event.currentTarget;
-    const index = parseInt(button.dataset.index);
-    const newsItem = news[index];
-
-    if (confirm(`Tem certeza que deseja excluir a notícia "${newsItem.title}"?`)) {
-        news.splice(index, 1);
-        saveNewsToLocalStorage(news);
-        renderNewsList();
-        alert('Notícia excluída com sucesso!');
-    }
-}
-
-function renderOrcamentos() {
-    const budgetsContent = document.getElementById('budgets-content');
-    if (!budgetsContent) return;
-    budgetsContent.innerHTML = '';
-
-    const orcamentos = localStorage.getItem('orcamentos');
-    const listaOrcamentos = orcamentos ? JSON.parse(orcamentos) : [];
-
-    if (listaOrcamentos.length === 0) {
-        budgetsContent.innerHTML = '<p>Nenhum orçamento recebido.</p>';
-        return;
-    }
-
-    const listaHTML = document.createElement('ul');
-    listaOrcamentos.forEach((orcamento, index) => {
-        const isConcluido = orcamento.concluido || false;
-
-        const itemLista = document.createElement('li');
-        itemLista.innerHTML = `
-            <strong>Nome:</strong> ${orcamento.nome}<br>
-            <strong>Email:</strong> ${orcamento.email}<br>
-            <strong>Telefone:</strong> ${orcamento.telefone}<br>
-            <strong>Serviço Solicitado:</strong> ${orcamento.servico}<br>
-            <strong>Descrição:</strong> ${orcamento.descricao}<br>
-            <strong>Data de Envio:</strong> ${orcamento.dataEnvio}<br>
-            <label>
-                Concluído:
-                <input type="checkbox" data-index="${index}" ${isConcluido ? 'checked' : ''} onchange="atualizarStatusOrcamento(this)">
-            </label>
-            <button class="button delete-button danger" onclick="excluirOrcamento(${index})">Excluir</button>
-            <hr>
-        `;
-        listaHTML.appendChild(itemLista);
-    });
-
-    budgetsContent.appendChild(listaHTML);
-}
-
-window.excluirOrcamento = function(index) {
-    if (confirm('Tem certeza que deseja excluir este orçamento?')) {
-        const orcamentos = localStorage.getItem('orcamentos');
-        let listaOrcamentos = orcamentos ? JSON.parse(orcamentos) : [];
-
-        if (index >= 0 && index < listaOrcamentos.length) {
-            listaOrcamentos.splice(index, 1);
-            localStorage.setItem('orcamentos', JSON.stringify(listaOrcamentos));
+    switch (tabName) {
+        case 'products':
+            targetButton = tabProducts;
+            targetContent = productsContent;
+            fetchAndRenderProducts();
+            break;
+        case 'add-product':
+            targetButton = tabAddProduct;
+            targetContent = addProductContent;
+            break;
+        case 'add-news':
+            targetButton = tabAddNews;
+            targetContent = addNewsContent;
+            fetchAndRenderNews();
+            break;
+        case 'admins':
+            targetButton = tabAdmins;
+            targetContent = adminsContent;
+            if (isSuperAdmin) renderAdminList();
+            break;
+        case 'budgets':
+            targetButton = tabBudgets;
+            targetContent = budgetsContent;
             renderOrcamentos();
-        } else {
-            console.error('Índice de orçamento inválido:', index);
-        }
+            break;
+        case 'support-requests':
+            targetButton = tabSupportRequests;
+            targetContent = supportRequestsContent;
+            renderPedidosSuporte(); 
+            break;
+        case 'popular-products':
+            targetButton = tabPopularProducts;
+            targetContent = popularProductsContent;
+            renderPopularProductsAdmin();
+            break;
+        case 'new-products':
+            targetButton = tabNewProducts;
+            targetContent = newProductsContent;
+            renderNewProductsAdminList();
+            break;
+        case 'offers':
+            targetButton = tabOffers;
+            targetContent = offersContent;
+            renderOffersAdminList();
+            break;
+        case 'clients':
+            targetButton = tabClients;
+            targetContent = clientContent;
+            if (clientsContentDiv) clientsContentDiv.style.display = 'block';
+            break;
+        default:
+            console.warn(`Aba desconhecida: ${tabName}`);
+            return;
     }
-};
 
-window.atualizarStatusOrcamento = function(checkbox) {
-    const index = parseInt(checkbox.dataset.index);
-    const isChecked = checkbox.checked;
-
-    const orcamentos = localStorage.getItem('orcamentos');
-    let listaOrcamentos = orcamentos ? JSON.parse(orcamentos) : [];
-
-    if (index >= 0 && index < listaOrcamentos.length) {
-        listaOrcamentos[index] = { ...listaOrcamentos[index], concluido: isChecked };
-        localStorage.setItem('orcamentos', JSON.stringify(listaOrcamentos));
-    } else {
-        console.error('Índice de orçamento inválido para atualização de status:', index);
+    if (targetButton) {
+        targetButton.classList.add('active');
     }
-};
-
-function renderPedidosSuporte() {
-    const supportRequestsContent = document.getElementById('support-requests-content');
-    if (!supportRequestsContent) return;
-    supportRequestsContent.innerHTML = '<h2>Pedidos de Suporte</h2>';
-    const pedidos = loadPedidosSuporte();
-    if (pedidos.length === 0) {
-        supportRequestsContent.innerHTML += '<p>Nenhum pedido de suporte recebido.</p>';
-        return;
+    if (targetContent) {
+        targetContent.style.display = 'block';
     }
-    const listaPedidos = document.createElement('ul');
-    pedidos.forEach((pedido, index) => {
-        const isConcluido = pedido.concluido || false;
 
-        const item = document.createElement('li');
-        item.innerHTML = `
-            <strong>Nome:</strong> ${pedido.nome}<br>
-            <strong>Email:</strong> ${pedido.email}<br>
-            <strong>Problema:</strong> ${pedido.problema}<br>
-            <strong>Detalhes:</strong> ${pedido.detalhes}<br>
-            <strong>Enviado em:</strong> ${pedido.dataEnvio}<br>
-            <label>
-                Concluído:
-                <input type="checkbox" data-index="${index}" ${isConcluido ? 'checked' : ''} onchange="atualizarStatusSuporte(this)">
-            </label>
-            <button class="button delete-button danger" onclick="excluirPedidoSuporte(${index})">Excluir</button>
-            <hr>
-        `;
-        listaPedidos.appendChild(item);
-    });
-    supportRequestsContent.appendChild(listaPedidos);
+    if (tabAdminsButton) {
+        tabAdminsButton.style.display = isSuperAdmin ? 'inline-block' : 'none';
+    }
 }
 
-window.atualizarStatusSuporte = function(checkbox) {
-    const index = parseInt(checkbox.dataset.index);
-    const isChecked = checkbox.checked;
+window.addEventListener('load', async () => {
+    loadAdminAccounts();
 
-    let pedidos = loadPedidosSuporte();
-    if (index >= 0 && index < pedidos.length) {
-        pedidos[index] = { ...pedidos[index], concluido: isChecked };
-        localStorage.setItem('pedidosSuporte', JSON.stringify(pedidos));
-    } else {
-        console.error('Índice inválido de pedido de suporte:', index);
-    }
-};
+    const loginSectionElement = document.getElementById('loginSection');
+    const adminContentElement = document.getElementById('adminContent');
 
-window.excluirPedidoSuporte = function(index) {
-    if (confirm('Deseja excluir este pedido de suporte?')) {
-        let pedidos = loadPedidosSuporte();
-        if (index >= 0 && index < pedidos.length) {
-            pedidos.splice(index, 1);
-            localStorage.setItem('pedidosSuporte', JSON.stringify(pedidos));
-            renderPedidosSuporte();
-        } else {
-            console.error('Índice inválido para exclusão de suporte:', index);
-        }
-    }
-};
+    await showAdminPanel();
 
-function renderMensagensFaleConosco() {
-    const contactUsContent = document.getElementById('contact-us-content');
-    if (!contactUsContent) return;
-    contactUsContent.innerHTML = '<h2>Mensagens Fale Conosco</h2>';
-    const mensagens = loadMensagensFaleConosco();
-    if (mensagens.length === 0) {
-        contactUsContent.innerHTML += '<p>Nenhuma mensagem recebida.</p>';
-        return;
-    }
-    const listaMensagens = document.createElement('ul');
-    mensagens.forEach((mensagem, index) => {
-        const isConcluido = mensagem.concluido || false;
-
-        const item = document.createElement('li');
-        item.innerHTML = `
-            <strong>Nome:</strong> ${mensagem.nome}<br>
-            <strong>Email:</strong> ${mensagem.email}<br>
-            <strong>Assunto:</strong> ${mensagem.assunto}<br>
-            <strong>Mensagem:</strong> ${mensagem.mensagem}<br>
-            <strong>Enviado em:</strong> ${mensagem.dataEnvio}<br>
-            <label>
-                Concluído:
-                <input type="checkbox" data-index="${index}" ${isConcluido ? 'checked' : ''} onchange="atualizarStatusMensagem(this)">
-            </label>
-            <button class="button delete-button danger" onclick="excluirMensagem(${index})">Excluir</button>
-            <hr>
-        `;
-        listaMensagens.appendChild(item);
-    });
-    contactUsContent.appendChild(listaMensagens);
-}
-
-function loadMensagensFaleConosco() {
-    const storedMensagens = localStorage.getItem('mensagensFaleConosco');
-    return storedMensagens ? JSON.parse(storedMensagens) : [];
-}
-
-window.atualizarStatusMensagem = function(checkbox) {
-    const index = parseInt(checkbox.dataset.index);
-    const isChecked = checkbox.checked;
-
-    let mensagens = loadMensagensFaleConosco();
-    if (index >= 0 && index < mensagens.length) {
-        mensagens[index] = { ...mensagens[index], concluido: isChecked };
-        localStorage.setItem('mensagensFaleConosco', JSON.stringify(mensagens));
-    } else {
-        console.error('Índice inválido de mensagem Fale Conosco:', index);
-    }
-};
-
-window.excluirMensagem = function(index) {
-    if (confirm('Deseja excluir esta mensagem?')) {
-        let mensagens = loadMensagensFaleConosco();
-        if (index >= 0 && index < mensagens.length) {
-            mensagens.splice(index, 1);
-            localStorage.setItem('mensagensFaleConosco', JSON.stringify(mensagens));
-            renderMensagensFaleConosco();
-        } else {
-            console.error('Índice inválido para exclusão de mensagem:', index);
-        }
-    }
-};
-
-function loadOrcamentos() {
-    const storedOrcamentos = localStorage.getItem('orcamentos');
-    return storedOrcamentos ? JSON.parse(storedOrcamentos) : [];
-}
-
-function loadPedidosSuporte() {
-    const storedPedidos = localStorage.getItem('pedidosSuporte');
-    return storedPedidos ? JSON.parse(storedPedidos) : [];
-}
-
-function loadMensagensFaleConosco() {
-    const storedMensagens = localStorage.getItem('mensagensFaleConosco');
-    return storedMensagens ? JSON.parse(storedMensagens) : [];
-}
-
-function enviarPedidoSuporte() {
-    const nome = document.getElementById('nome').value;
-    const email = document.getElementById('email').value;
-    const problema = document.getElementById('problema').value;
-    const detalhes = document.getElementById('detalhes').value;
-
-    const novoPedidoSuporte = {
-        id: Date.now().toString(),
-        nome,
-        email,
-        problema,
-        detalhes,
-        dataEnvio: new Date().toLocaleString()
-    };
-
-    let pedidosSuporte = localStorage.getItem('pedidosSuporte');
-    pedidosSuporte = pedidosSuporte ? JSON.parse(pedidosSuporte) : [];
-    pedidosSuporte.push(novoPedidoSuporte);
-    localStorage.setItem('pedidosSuporte', JSON.stringify(pedidosSuporte));
-
-    alert('Pedido de suporte enviado com sucesso!');
-}
-
-addAdminBtn.addEventListener('click', () => {
-    if (!isSuperAdmin) {
-        alert('Você não tem permissão para adicionar novos administradores.');
-        return;
+    const loginButtonElement = document.getElementById('login-button');
+    if (loginButtonElement) {
+        loginButtonElement.addEventListener('click', loginAdmin);
     }
 
-    const addAdminMessage = document.getElementById('add-admin-message');
-    const addAdminError = document.getElementById('add-admin-error');
-    const nameInput = document.getElementById('add-admin-name'); // Pegue o campo de nome
-    const emailInput = document.getElementById('add-admin-email');
-    const passwordInput = document.getElementById('add-admin-password');
-
-    const newName = nameInput.value.trim(); // Obtenha o valor do nome
-    const newEmail = emailInput.value;
-    const newPassword = passwordInput.value;
-
-    if (!newName || !newEmail || !newPassword) { // Verifique se o nome também foi preenchido
-        addAdminError.textContent = 'Por favor, preencha todos os campos.';
-        addAdminError.style.display = 'block';
-        addAdminMessage.style.display = 'none';
-        return;
+    const logoutButtonAdminElement = document.getElementById('logout-admin-button');
+    if (logoutButtonAdminElement) {
+        logoutButtonAdminElement.addEventListener('click', logoutAdmin);
     }
 
-    if (adminAccounts.some(admin => admin.email === newEmail)) {
-        addAdminError.textContent = 'Este email já está cadastrado.';
-        addAdminError.style.display = 'block';
-        addAdminMessage.style.display = 'none';
-        return;
+    const formBuscaClienteElement = document.getElementById('form-busca-cliente');
+    if (formBuscaClienteElement) {
+        formBuscaClienteElement.addEventListener('submit', handleBuscarCliente);
     }
 
-    adminAccounts.push({
-        name: newName, // Salve o nome aqui
-        email: newEmail,
-        password: newPassword,
-        isSuper: false
-    });
-
-    saveAdminAccounts(adminAccounts);
-    renderAdminList();
-
-    nameInput.value = '';
-    emailInput.value = '';
-    passwordInput.value = '';
-    addAdminMessage.style.display = 'block';
-    addAdminError.style.display = 'none';
-
-    setTimeout(() => {
-        addAdminMessage.style.display = 'none';
-    }, 3000);
+    setupTabs();
+    
+    if (isAdminLoggedIn) {
+        switchTab('budgets'); 
+    }
 });
 
-if (addProductForm) {
-    addProductForm.addEventListener('submit', (event) => {
-        event.preventDefault();
+const formBuscarCliente = document.getElementById('form-busca-cliente');
+const resultadosBuscaDiv = document.getElementById('resultados-busca');
+const detalhesClienteDiv = document.getElementById('detalhes-cliente');
+const listaPedidosClienteAdm = document.getElementById('lista-pedidos-cliente-adm');
+const listaHistoricoClienteAdm = document.getElementById('lista-historico-cliente-adm');
 
-        const nameInput = document.getElementById('new-product-name');
-        const detailsInput = document.getElementById('new-product-details');
-        const valueInput = document.getElementById('new-product-value');
-        const quantityInput = document.getElementById('new-product-quantity');
-        const imageInput = document.getElementById('new-product-image');
+if (formBuscarCliente) {
+    formBuscarCliente.addEventListener('submit', handleBuscarCliente);
+}
 
-        const name = nameInput.value.trim();
-        const details = detailsInput.value.trim();
-        const value = parseFloat(valueInput.value);
-        const quantity = parseInt(quantityInput.value);
-        const image = imageInput.value.trim();
-
-        if (!name) {
-            alert('Por favor, informe o nome do produto.');
-            nameInput.focus();
-            return;
-        }
-
-        if (isNaN(value) || value < 0) {
-            alert('Por favor, digite um valor válido.');
-            valueInput.focus();
-            return;
-        }
-
-        if (isNaN(quantity) || quantity < 0) {
-            alert('Por favor, digite uma quantidade válida.');
-            quantityInput.focus();
-            return;
-        }
-
-        const newProduct = {
-            id: Date.now().toString(),
-            name,
-            details,
-            value: value.toFixed(2),
-            quantity,
-            image
-        };
-
-        products = loadProductsFromLocalStorage(); // Recarregue os produtos
-        products.push(newProduct);
-        saveProductsToLocalStorage(products);
-        renderAdminProducts(products);
-
-        addProductForm.reset();
-        alert('Produto adicionado com sucesso!');
-        switchTab('products');
+if (productSearchInput) {
+    productSearchInput.addEventListener('input', () => {
+        const searchTerm = productSearchInput.value.trim().toLowerCase();
+        const filteredProducts = products.filter(product => {
+            const productNameLower = (product.name || '').toLowerCase();
+            const productDetailsLower = (product.details || '').toLowerCase();
+            return productNameLower.includes(searchTerm) || productDetailsLower.includes(searchTerm);
+        });
+        renderAdminProducts(filteredProducts);
     });
+}
+
+function carregarSuportesDoCliente(emailCliente) {
+    const todosSuportes = localStorage.getItem('pedidosSuporte');
+    return todosSuportes ? JSON.parse(todosSuportes).filter(suporte => suporte.email && suporte.email.trim().toLowerCase() === emailCliente.trim().toLowerCase()) : [];
+}
+
+function carregarFaleConoscosDoCliente(emailCliente) {
+    const todasMensagens = localStorage.getItem('mensagensFaleConosco');
+    return todasMensagens ? JSON.parse(todasMensagens).filter(mensagem => mensagem.email && mensagem.email.trim().toLowerCase() === emailCliente.trim().toLowerCase()) : [];
+}
+
+function carregarOrcamentosDoCliente(emailCliente) {
+    const todosOrcamentos = localStorage.getItem('orcamentos');
+    return todosOrcamentos ? JSON.parse(todosOrcamentos).filter(orcamento => orcamento.email && orcamento.email.trim().toLowerCase() === emailCliente.trim().toLowerCase()) : [];
+}
+
+function carregarPedidosAtivosDoCliente(emailCliente) {
+    const chavePedidosCliente = `pedidos_${emailCliente.replace(/[^a-zA-Z0-9]/g, '')}`;
+    const todosPedidos = localStorage.getItem(chavePedidosCliente);
+    return todosPedidos ? JSON.parse(todosPedidos).filter(pedido => pedido.status !== 'Entregue' && pedido.status !== 'Concluido') : [];
+}
+
+function carregarHistoricoPedidosLojaDoCliente(emailCliente) {
+    const chavePedidosCliente = `pedidos_${emailCliente.replace(/[^a-zA-Z0-9]/g, '')}`;
+    const todosPedidos = localStorage.getItem(chavePedidosCliente);
+    return todosPedidos ? JSON.parse(todosPedidos).filter(pedido => pedido.status === 'Entregue' || pedido.status === 'Concluido' || pedido.status === 'Pago') : [];
+}
+
+function addAdminAccount() {
+    const nameInput = document.getElementById('add-admin-name');
+    const emailInput = document.getElementById('add-admin-email');
+    const passwordInput = document.getElementById('add-admin-password');
+    const addAdminMessage = document.getElementById('add-admin-message');
+    const addAdminError = document.getElementById('add-admin-error');
+
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (name && email && password) {
+        const newAdmin = { name: name, email: email, password: password, isSuper: false };
+        adminAccounts.push(newAdmin);
+        saveAdminAccounts(adminAccounts);
+        renderAdminList();
+
+        nameInput.value = '';
+        emailInput.value = '';
+        passwordInput.value = '';
+        addAdminMessage.style.display = 'block';
+        addAdminError.style.display = 'none';
+
+        setTimeout(() => {
+            addAdminMessage.style.display = 'none';
+        }, 3000);
+    } else {
+        addAdminMessage.style.display = 'none';
+        addAdminError.style.display = 'block';
+        addAdminError.textContent = 'Por favor, preencha todos os campos.';
+    }
+}
+
+if (addProductForm) {
+    addProductForm.addEventListener('submit', addProductHandler);
 }
 
 if (addNewsForm) {
-    addNewsForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const titleInput = document.getElementById('news-title');
-        const descriptionInput = document.getElementById('news-description');
-
-        const title = titleInput.value.trim();
-        const description = descriptionInput.value.trim();
-
-        if (!title) {
-            alert('Por favor, informe o título da notícia.');
-            titleInput.focus();
-            return;
-        }
-
-        if (!description) {
-            alert('Por favor, informe a descrição da notícia.');
-            descriptionInput.focus();
-            return;
-        }
-
-        const newNews = {
-            id: Date.now().toString(),
-            title,
-            description,
-            date: new Date().toLocaleDateString()
-        };
-
-        news.push(newNews);
-        saveNewsToLocalStorage(news);
-        renderNewsList();
-
-        addNewsForm.reset();
-        alert('Notícia adicionada com sucesso!');
-        switchTab('add-news');
-    });
+    addNewsForm.addEventListener('submit', addNewsHandler);
 }
 
 function renderPopularProductsAdmin() {
@@ -1341,7 +1547,6 @@ function renderPopularProductsAdmin() {
         productInfoDiv.appendChild(label);
         listItem.appendChild(productInfoDiv);
 
-        // Adicionar botão de excluir
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Excluir';
         deleteButton.classList.add('button', 'delete-item-button', 'danger');
@@ -1361,9 +1566,9 @@ function renderPopularProductsAdmin() {
 function savePopularProducts(event) {
     event.preventDefault();
     const checkboxes = document.querySelectorAll('#popular-products-checkbox-list input[type="checkbox"]:checked');
-    const selectedProducts = Array.from(checkboxes).map(cb => cb.value); // Salva apenas os IDs
+    const selectedProducts = Array.from(checkboxes).map(cb => cb.value);
     savePopularProductsToLocalStorage(selectedProducts);
-    popularProductsList = selectedProducts; // Atualiza a variável global
+    popularProductsList = selectedProducts;
     alert('Produtos mais procurados salvos!');
 }
 
@@ -1401,7 +1606,6 @@ function renderNewProductsAdminList() {
         productInfoDiv.appendChild(label);
         listItem.appendChild(productInfoDiv);
 
-        // Adicionar botão de excluir
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Excluir';
         deleteButton.classList.add('button', 'delete-item-button', 'danger');
@@ -1421,7 +1625,7 @@ function renderNewProductsAdminList() {
 function saveNewProductsAdmin(event) {
     event.preventDefault();
     const checkboxes = document.querySelectorAll('#new-products-checkbox-list input[type="checkbox"]:checked');
-    const selectedProducts = Array.from(checkboxes).map(cb => cb.value); // Salva apenas os IDs
+    const selectedProducts = Array.from(checkboxes).map(cb => cb.value);
     saveNewProductsAdminToLocalStorage(selectedProducts);
     newProductsListAdmin = selectedProducts;
     alert('Novos produtos salvos!');
@@ -1484,7 +1688,6 @@ function renderOffersAdminList() {
         offerPricesDiv.appendChild(priceCurrentInput);
         listItem.appendChild(offerPricesDiv);
 
-        // Adicionar botão de excluir
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Excluir';
         deleteButton.classList.add('button', 'delete-item-button', 'danger');
@@ -1527,7 +1730,6 @@ function removeOfferProduct(event) {
     alert('Produto removido das Ofertas da Semana!');
 }
 
-
 let isDarkTheme = localStorage.getItem('isDarkTheme') === 'true';
 
 function applyTheme() {
@@ -1550,10 +1752,20 @@ if (themeToggleButton) {
 
 applyTheme();
 
-    // Verifica se o admin está logado ao carregar a página
-    if (isAdminLoggedIn) {
-        showAdminPanel();
-    } else {
-        loginSection.style.display = 'flex';
-        adminContent.style.display = 'none';
+async function loadAdminDashboard() {
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+        window.location.href = '/admin/login.html';
+        return;
     }
+
+    try {
+        const response = await fetch(`${API_URL}/admin/dashboard`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        document.getElementById('admin-name').textContent = data.usuario;
+    } catch (error) {
+        console.error('Erro ao carregar dashboard:', error);
+    }
+}

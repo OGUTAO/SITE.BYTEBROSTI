@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const servico = urlParams.get('servico');
     const orcamentoForm = document.getElementById('orcamento-form');
+    const API_URL = 'http://localhost:8080/api';
 
     if (servico) {
         let imagem = '';
@@ -36,41 +37,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (orcamentoForm) {
-        orcamentoForm.addEventListener('submit', function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
+        orcamentoForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
 
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
-            const telefone = document.getElementById('telefone').value;
+            const telefone = document.getElementById('telefone').value; 
             const descricao = document.getElementById('descricao').value;
-            const dataEnvio = new Date().toLocaleString();
             const servicoSolicitado = servico ? getServicoNome(servico) : 'Não especificado';
-            const tipo = 'Orcamento'; // Adicionando o tipo
 
-            const novoOrcamento = { nome, email, telefone, descricao, dataEnvio, servico: servicoSolicitado, tipo }; // Incluindo o tipo
+            const novoOrcamento = {
+                nome_cliente: nome,
+                email_cliente: email,
+                telefone: telefone, 
+                descricao: descricao,
+                servico_nome: servicoSolicitado,
+            };
 
-            const clienteEmailLogado = localStorage.getItem('loggedInUserEmail');
+            try {
+                const response = await fetch(`${API_URL}/orcamentos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(novoOrcamento)
+                });
 
-            if (clienteEmailLogado) {
-                const chaveHistoricoCliente = `historico_${clienteEmailLogado.replace(/[^a-zA-Z0-9]/g, '')}`;
-                const historicoExistente = JSON.parse(localStorage.getItem(chaveHistoricoCliente)) || [];
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.erro || 'Erro desconhecido ao enviar orçamento.');
+                }
 
-                historicoExistente.push(novoOrcamento);
-                localStorage.setItem(chaveHistoricoCliente, JSON.stringify(historicoExistente));
-
-                // --- Adicionando lógica para salvar na chave geral 'orcamentos' ---
-                let orcamentosGeral = localStorage.getItem('orcamentos');
-                orcamentosGeral = orcamentosGeral ? JSON.parse(orcamentosGeral) : [];
-                orcamentosGeral.push(novoOrcamento);
-                localStorage.setItem('orcamentos', JSON.stringify(orcamentosGeral));
+                const responseData = await response.json();
+                console.log('Orçamento enviado para o backend:', responseData);
 
                 alert('Orçamento enviado com sucesso!');
-                orcamentoForm.reset(); // Limpa o formulário
-                window.location.href = 'orcamento-enviado.html'; // Redireciona para a página de confirmação
-            } else {
-                alert('Você precisa estar logado para solicitar um orçamento.');
-                // Opcional: Redirecionar para a página de login
-                // window.location.href = 'login.html';
+                orcamentoForm.reset();
+                window.location.href = 'orcamento-enviado.html';
+            } catch (error) {
+                console.error("Erro ao enviar orçamento:", error);
+                alert(`Ocorreu um erro ao enviar seu orçamento: ${error.message}. Por favor, tente novamente mais tarde.`);
             }
         });
     }

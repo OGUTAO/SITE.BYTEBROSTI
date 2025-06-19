@@ -64,185 +64,164 @@
     <script src="js/version.js"></script>
     <script>
         console.log("PAGAMENTO (Início): Email Logado:", localStorage.getItem('loggedInUserEmail'));
-    document.addEventListener('DOMContentLoaded', () => {
-        const opcaoCreditoBotao = document.getElementById('opcao-credito');
-        const opcaoDebitoBotao = document.getElementById('opcao-debito');
-        const opcaoPixBotao = document.getElementById('opcao-pix');
-        const formCartao = document.getElementById('form-cartao');
-        const infoPix = document.getElementById('info-pix');
-        const formDadosCartao = document.getElementById('form-dados-cartao'); // Embora não usado na validação final, pode ser útil para outros fins
-        const botoesOpcao = document.querySelectorAll('.opcao-botao');
-        const confirmarPagamentoBtn = document.getElementById('confirmar-pagamento-btn');
+        document.addEventListener('DOMContentLoaded', () => {
+            const opcaoCreditoBotao = document.getElementById('opcao-credito');
+            const opcaoDebitoBotao = document.getElementById('opcao-debito');
+            const opcaoPixBotao = document.getElementById('opcao-pix');
+            const formCartao = document.getElementById('form-cartao');
+            const infoPix = document.getElementById('info-pix');
+            const formDadosCartao = document.getElementById('form-dados-cartao');
+            const botoesOpcao = document.querySelectorAll('.opcao-botao');
+            const confirmarPagamentoBtn = document.getElementById('confirmar-pagamento-btn');
+            const API_URL = 'http://localhost:8080/api'; 
 
-        let formaPagamentoSelecionada = null;
+            let formaPagamentoSelecionada = null;
 
-        function deselecionarTodosBotoes() {
-            botoesOpcao.forEach(botao => {
-                botao.classList.remove('selecionado');
+            function deselecionarTodosBotoes() {
+                botoesOpcao.forEach(botao => {
+                    botao.classList.remove('selecionado');
+                });
+            }
+
+            opcaoCreditoBotao.addEventListener('click', () => {
+                deselecionarTodosBotoes();
+                opcaoCreditoBotao.classList.add('selecionado');
+                formCartao.style.display = 'block';
+                infoPix.style.display = 'none';
+                formaPagamentoSelecionada = 'credito';
             });
-        }
 
-        // --- Listeners para seleção da forma de pagamento ---
-        opcaoCreditoBotao.addEventListener('click', () => {
-            deselecionarTodosBotoes();
-            opcaoCreditoBotao.classList.add('selecionado');
-            formCartao.style.display = 'block';
-            infoPix.style.display = 'none';
-            formaPagamentoSelecionada = 'credito';
-        });
+            opcaoDebitoBotao.addEventListener('click', () => {
+                deselecionarTodosBotoes();
+                opcaoDebitoBotao.classList.add('selecionado');
+                formCartao.style.display = 'block';
+                infoPix.style.display = 'none';
+                formaPagamentoSelecionada = 'debito';
+            });
 
-        opcaoDebitoBotao.addEventListener('click', () => {
-            deselecionarTodosBotoes();
-            opcaoDebitoBotao.classList.add('selecionado');
-            formCartao.style.display = 'block';
-            infoPix.style.display = 'none';
-            formaPagamentoSelecionada = 'debito';
-        });
+            opcaoPixBotao.addEventListener('click', () => {
+                deselecionarTodosBotoes();
+                opcaoPixBotao.classList.add('selecionado');
+                formCartao.style.display = 'none';
+                infoPix.style.display = 'block';
+                formaPagamentoSelecionada = 'pix';
+            });
 
-        opcaoPixBotao.addEventListener('click', () => {
-            deselecionarTodosBotoes();
-            opcaoPixBotao.classList.add('selecionado');
-            formCartao.style.display = 'none';
-            infoPix.style.display = 'block';
-            formaPagamentoSelecionada = 'pix';
-        });
+            if (confirmarPagamentoBtn) {
+                confirmarPagamentoBtn.addEventListener('click', async () => { 
+                    const carrinho = JSON.parse(localStorage.getItem('cart')) || [];
+                    const clienteEmailLogado = localStorage.getItem('loggedInUserEmail');
+                    const userToken = localStorage.getItem('userToken'); 
+                    console.log("PAGAMENTO: Email Logado:", clienteEmailLogado);
 
-        // --- Listener do Botão Confirmar Pagamento (CÓDIGO MODIFICADO) ---
-        if (confirmarPagamentoBtn) {
-            confirmarPagamentoBtn.addEventListener('click', () => {
-                const carrinho = JSON.parse(localStorage.getItem('cart')) || [];
+                    const enderecoEntrega = localStorage.getItem('enderecoEntrega');
+                    const tipoFrete = localStorage.getItem('tipoFreteSelecionado') || 'Padrão';
+                    const valorFrete = parseFloat(localStorage.getItem('valorFreteCalculado') || '0.00');
+                    const prazoEntrega = localStorage.getItem('prazoEntregaSimulado') || 'Não disponível'; 
 
-                // ---- MODIFICAÇÃO 1: Buscar email do usuário logado ----
-                const clienteEmailLogado = localStorage.getItem('loggedInUserEmail');
-                console.log("PAGAMENTO: Email Logado:", clienteEmailLogado); // DEBUG
-                // ---- FIM MODIFICAÇÃO 1 ----
-
-                const enderecoEntrega = localStorage.getItem('enderecoEntrega');
-                const tipoFrete = localStorage.getItem('tipoFreteSelecionado') || 'Padrão';
-                const valorFrete = parseFloat(localStorage.getItem('valorFreteCalculado') || '0.00');
-
-                // ---- VALIDAÇÃO IMPORTANTE: Verificar se usuário está logado ----
-                if (!clienteEmailLogado) {
-                    alert('Erro: Você precisa estar logado para finalizar o pedido. Faça o login primeiro.');
-                    // Opcional: Redirecionar para a página de login
-                    // window.location.href = 'login.html';
-                    return; // Interrompe a execução se não estiver logado
-                }
-                // ---- FIM VALIDAÇÃO ----
-
-                // Validação do carrinho e endereço
-                if (carrinho.length === 0 || !enderecoEntrega) {
-                    alert('Por favor, adicione itens ao carrinho e forneça um endereço de entrega válido.');
-                    return;
-                }
-
-                // Validação e cálculo do subtotal
-                let subtotal = 0;
-                try {
-                    subtotal = carrinho.reduce((total, item) => {
-                        // Certifique-se que 'item.value' é o preço unitário e 'item.quantity' a quantidade
-                        const price = parseFloat(item.value);
-                        const quantity = parseInt(item.quantity, 10);
-                        if (isNaN(price) || isNaN(quantity)) {
-                            throw new Error(`Item inválido no carrinho: ${item.name || JSON.stringify(item)}`);
-                        }
-                        return total + (price * quantity);
-                    }, 0);
-                } catch (error) {
-                    console.error("Erro ao calcular subtotal:", error);
-                    alert(`Erro ao processar o carrinho: ${error.message}. Remova o item inválido ou corrija os dados.`);
-                    return;
-                }
-
-                const valorTotal = subtotal + valorFrete;
-
-
-                // Validação da forma de pagamento e simulação
-                if (formaPagamentoSelecionada === 'credito' || formaPagamentoSelecionada === 'debito') {
-                    // Validação básica dos campos do cartão (pode ser reativada/melhorada)
-                    const numeroCartaoInput = document.getElementById('numero-cartao');
-                    const nomeTitularInput = document.getElementById('nome-titular');
-                    const dataValidadeInput = document.getElementById('data-validade');
-                    const cvvInput = document.getElementById('cvv');
-
-                    if (!numeroCartaoInput.value || !nomeTitularInput.value || !dataValidadeInput.value || !cvvInput.value) {
-                        alert('Por favor, preencha todos os dados do cartão.');
+                    if (!clienteEmailLogado || !userToken) { 
+                        alert('Erro: Você precisa estar logado para finalizar o pedido. Faça o login primeiro.');
+                        window.location.href = 'login.html';
                         return;
                     }
-                    // Outras validações (formato, etc.) podem ser adicionadas aqui
-                    console.log("Dados do Cartão (simulação):", {
-                        numero: numeroCartaoInput.value,
-                        nome: nomeTitularInput.value,
-                        validade: dataValidadeInput.value,
-                        cvv: cvvInput.value
-                    });
-                    alert('Pagamento com cartão simulado e confirmado!');
 
-                } else if (formaPagamentoSelecionada === 'pix') {
-                    alert('Pagamento com Pix confirmado (simulação)!');
-                } else {
-                    alert('Por favor, selecione uma forma de pagamento.');
-                    return;
-                }
+                    if (carrinho.length === 0 || !enderecoEntrega) {
+                        alert('Por favor, adicione itens ao carrinho e forneça um endereço de entrega válido.');
+                        return;
+                    }
 
-                // --- Criação do Objeto do Pedido ---
-                const novoPedido = {
-                    id: Date.now(), // Gera um ID simples baseado no timestamp
-                    dataPedido: new Date().toISOString().split('T')[0], // Data no formato AAAA-MM-DD
-                    itens: carrinho.map(item => ({
-                        nome: item.name, // Garanta que 'name' exista no item do carrinho
-                        quantidade: parseInt(item.quantity, 10), // Garanta que 'quantity' exista
-                        valor_unitario: parseFloat(item.value) // Garanta que 'value' (ou o nome correto da propriedade de preço) exista
-                    })),
-                    // ---- MODIFICAÇÃO 2: Definir status inicial como ativo ----
-                    status: 'Processando', // Status inicial para aparecer em Pedidos Ativos
-                    // ---- FIM MODIFICAÇÃO 2 ----
-                    enderecoEntrega: enderecoEntrega,
-                    tipoFrete: tipoFrete,
-                    valorFrete: valorFrete,
-                    valor_total: valorTotal,
-                    formaPagamento: formaPagamentoSelecionada,
-                    clienteEmail: clienteEmailLogado // Guarda o email do cliente no pedido
-                };
+                    let subtotal = 0;
+                    const itensParaAPI = [];
+                    try {
+                        subtotal = carrinho.reduce((total, item) => {
+                            const price = parseFloat(item.value);
+                            const quantity = parseInt(item.quantity, 10);
+                            if (isNaN(price) || isNaN(quantity)) {
+                                throw new Error(`Item inválido no carrinho: ${item.name || JSON.stringify(item)}`);
+                            }
+                            itensParaAPI.push({
+                                produto_id: parseInt(item.id, 10),
+                                nome_produto: item.name,
+                                quantidade: quantity,
+                                valor_unitario: price
+                            });
+                            return total + (price * quantity);
+                        }, 0);
+                    } catch (error) {
+                        console.error("Erro ao calcular subtotal:", error);
+                        alert(`Erro ao processar o carrinho: ${error.message}. Remova o item inválido ou corrija os dados.`);
+                        return;
+                    }
 
-                // ---- MODIFICAÇÃO 3: Usar o email do usuário logado para a chave ----
-                const chavePedidosCliente = `pedidos_${clienteEmailLogado.replace(/[^a-zA-Z0-9]/g, '')}`;
-                console.log("PAGAMENTO: Chave para salvar pedido:", chavePedidosCliente); // DEBUG
-                // ---- FIM MODIFICAÇÃO 3 ----
+                    const valorTotal = subtotal + valorFrete;
 
-                // --- Salvando o Pedido no localStorage ---
-                try {
-                    const pedidosExistentes = JSON.parse(localStorage.getItem(chavePedidosCliente)) || [];
-                    pedidosExistentes.push(novoPedido);
-                    localStorage.setItem(chavePedidosCliente, JSON.stringify(pedidosExistentes));
+                    if (formaPagamentoSelecionada === 'credito' || formaPagamentoSelecionada === 'debito') {
+                        const numeroCartaoInput = document.getElementById('numero-cartao');
+                        const nomeTitularInput = document.getElementById('nome-titular');
+                        const dataValidadeInput = document.getElementById('data-validade');
+                        const cvvInput = document.getElementById('cvv');
 
-                    console.log('Pedido salvo com sucesso para:', clienteEmailLogado, novoPedido);
+                        if (!numeroCartaoInput.value || !nomeTitularInput.value || !dataValidadeInput.value || !cvvInput.value) {
+                            alert('Por favor, preencha todos os dados do cartão.');
+                            return;
+                        }
+                        alert('Pagamento com cartão simulado e confirmado!');
+                    } else if (formaPagamentoSelecionada === 'pix') {
+                        alert('Pagamento com Pix confirmado (simulação)!');
+                    } else {
+                        alert('Por favor, selecione uma forma de pagamento.');
+                        return;
+                    }
 
-                    // Limpar dados do carrinho e da compra do localStorage
-                    localStorage.removeItem('cart');
-                    localStorage.removeItem('enderecoEntrega');
-                    localStorage.removeItem('cepDestino');
-                    localStorage.removeItem('valorFreteCalculado');
-                    localStorage.removeItem('tipoFreteSelecionado');
+                    const novoPedido = {
+                        itens: itensParaAPI,
+                        endereco_entrega: enderecoEntrega,
+                        tipo_frete: tipoFrete,
+                        valor_frete: valorFrete,
+                        valor_total: valorTotal,
+                        forma_pagamento: formaPagamentoSelecionada,
+                        prazo_entrega: prazoEntrega,
+                    };
 
-                    alert('Pedido realizado e registrado com sucesso!');
-                    window.location.href = 'meuspedidos.html'; // Redireciona para a página de pedidos
+                    try {
+                        const response = await fetch(`${API_URL}/pedidos`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${userToken}`
+                            },
+                            body: JSON.stringify(novoPedido)
+                        });
 
-                } catch (error) {
-                    console.error("Erro ao salvar pedido no localStorage:", error);
-                    alert("Ocorreu um erro ao salvar seu pedido. Verifique o console para detalhes e tente novamente.");
-                }
-            }); // Fim do listener do botão confirmarPagamentoBtn
-        } // Fim do if (confirmarPagamentoBtn)
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.erro || 'Erro ao registrar pedido no servidor.');
+                        }
 
-        // --- Script para Tema Escuro (opcional, manter se usar) ---
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme === "dark") {
-            // Use a classe CSS correta para o tema escuro ('dark-mode', 'dark-theme', etc.)
-            document.body.classList.add("dark-mode");
-            // Ou document.body.classList.add("dark-theme"); se for essa a classe usada
-        }
-    }); // Fim do listener DOMContentLoaded
+                        const responseData = await response.json();
+                        console.log('Pedido registrado no backend:', responseData);
+
+                        localStorage.removeItem('cart');
+                        localStorage.removeItem('enderecoEntrega');
+                        localStorage.removeItem('cepDestino');
+                        localStorage.removeItem('valorFreteCalculado');
+                        localStorage.removeItem('tipoFreteSelecionado');
+                        localStorage.removeItem('prazoEntregaSimulado'); 
+
+                        alert('Pedido realizado e registrado com sucesso!');
+                        window.location.href = 'meuspedidos.html'; 
+                    } catch (error) {
+                        console.error("Erro ao enviar pedido para o backend:", error);
+                        alert(`Ocorreu um erro ao finalizar seu pedido: ${error.message}. Tente novamente.`);
+                    }
+                });
+            }
+
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark-mode");
+            }
+        });
     </script>
 </body>
 </html>

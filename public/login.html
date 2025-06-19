@@ -26,28 +26,52 @@
     </div>
     <script src="js/version.js"></script>
     <script>
-        function validateLogin() {
-            const emailInput = document.getElementById('login-email');
-            const passwordInput = document.getElementById('login-password');
-            const errorElement = document.getElementById('login-error');
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
+        function handleLoginSuccess(userEmail, userName, userToken, userRole = 'usuario') {
+    localStorage.setItem('userLoggedIn', 'true');
+    localStorage.setItem('loggedInUserEmail', userEmail);
+    localStorage.setItem('userName', userName); 
+    localStorage.setItem('userToken', userToken);
+    localStorage.setItem('userRole', userRole);
+    console.log(`LOGIN SUCESSO: Email=${userEmail}, Nome=${userName}, Role=${userRole}`);
+    window.location.href = 'index.html';
+}
 
-            const users = JSON.parse(localStorage.getItem('users')) || {};
+        async function validateLogin() {
+    const emailInput = document.getElementById('login-email');
+    const passwordInput = document.getElementById('login-password');
+    const errorElement = document.getElementById('login-error');
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
-            if (users[email] && users[email].password === password) {
-                // Login bem-sucedido (simulado)
-                localStorage.setItem('userLoggedIn', 'true');
-                localStorage.setItem('loggedInUserEmail', email); // Salva o email do usuário logado
-                console.log("LOGIN: Email armazenado:", localStorage.getItem('loggedInUserEmail'));
-                window.location.href = 'index.html';
-            } else {
-                // Credenciais inválidas
-                errorElement.textContent = 'Email ou senha incorretos.';
-            }
+    const API_URL = 'http://localhost:8080/api';
+
+    errorElement.textContent = '';
+
+    if (!email || !password) {
+        errorElement.textContent = 'Por favor, digite seu email e senha.';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, senha: password })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.erro || 'Credenciais inválidas.');
         }
 
-        // Função para aplicar o tema com classe 'dark-mode'
+        const userData = await response.json();
+        handleLoginSuccess(userData.email, userData.nome, userData.token, 'usuario');
+    } catch (error) {
+        console.error("Erro no login de usuário:", error);
+        errorElement.textContent = error.message;
+    }
+}
+
         function applyTheme() {
           const savedTheme = localStorage.getItem('theme');
           if (savedTheme === 'dark') {
@@ -57,7 +81,6 @@
           }
         }
 
-        // Aplica o tema ao carregar a página
         applyTheme();
     </script>
     <script src="js/script.js"></script>

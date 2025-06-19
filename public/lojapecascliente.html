@@ -9,18 +9,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        /* Estilos para o modal de quantidade */
         .quantity-modal-overlay {
-            display: none; /* Oculto por padrão */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+            background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
-            z-index: 1000; /* Garante que fique acima do conteúdo */
+            z-index: 1000;
         }
 
         .quantity-modal {
@@ -45,14 +44,14 @@
             border-radius: 4px;
             width: 80px;
             text-align: center;
-            margin-bottom: 10px; /* Adicionado margem abaixo do input */
+            margin-bottom: 10px;
         }
 
         .quantity-modal .error-message {
             color: red;
             margin-bottom: 10px;
-            text-align: left; /* Alinhar a mensagem de erro à esquerda */
-            font-size: 0.9em; /* Reduzir um pouco o tamanho da fonte */
+            text-align: left;
+            font-size: 0.9em;
         }
 
         .quantity-modal .modal-buttons {
@@ -92,11 +91,10 @@
             color: var(--text-color-dark);
         }
 
-        /* Estilos para o ícone do carrinho no header */
         .right-buttons {
             display: flex;
             align-items: center;
-            gap: 20px; /* Aumentei o espaçamento */
+            gap: 20px;
         }
 
         .cart-icon-header {
@@ -139,7 +137,6 @@
             background-color: var(--accent-color-dark);
         }
 
-        /* Estilos para o destaque do produto */
         .product-item.destacado {
             border: 2px solid var(--accent-color-light);
             box-shadow: 0 4px 8px rgba(var(--shadow-color-light-rgb), 0.3);
@@ -206,6 +203,7 @@
             const quantityModalOk = document.getElementById('quantityModalOk');
             const quantityModalCancel = document.getElementById('quantityModalCancel');
             const quantityErrorMessage = document.getElementById('quantityErrorMessage');
+            const API_URL = 'http://localhost:8080/api';
 
             let cartItemCount = 0;
             let currentProductToAdd = null;
@@ -233,11 +231,15 @@
                 const productName = button.dataset.productName;
                 const productValue = parseFloat(button.dataset.productValue);
                 const productQuantityAvailable = parseInt(button.dataset.productQuantity, 10);
+                const productImage = button.dataset.productImage;
+                const productDetails = button.dataset.productDetails;
 
                 const product = {
                     id: productId,
                     name: productName,
-                    value: productValue
+                    value: productValue,
+                    image: productImage,
+                    details: productDetails
                 };
                 showQuantityModal(product, productQuantityAvailable);
             }
@@ -257,7 +259,7 @@
                 }
 
                 if (quantity > currentProductToAdd.available) {
-                    quantityErrorMessage.textContent = `A quantidade desejada (<span class="math-inline">$\{quantity\}\) excede a disponível \(</span>{currentProductToAdd.available}).`;
+                    quantityErrorMessage.textContent = `A quantidade desejada (${quantity}) excede a disponível (${currentProductToAdd.available}).`;
                     quantityErrorMessage.style.display = 'block';
                     quantityInput.classList.add('error');
                     return;
@@ -269,7 +271,7 @@
                 if (existingItem) {
                     const newQuantity = existingItem.quantity + quantity;
                     if (newQuantity > currentProductToAdd.available) {
-                        quantityErrorMessage.textContent = `Você já tem <span class="math-inline">\{existingItem\.quantity\} no carrinho\. Adicionar mais <span class\="math\-inline"\></span>\{quantity\} excederia o limite \(</span>{currentProductToAdd.available}).`;
+                        quantityErrorMessage.textContent = `Você já tem ${existingItem.quantity} no carrinho. Adicionar mais ${quantity} excederia o limite (${currentProductToAdd.available}).`;
                         quantityErrorMessage.style.display = 'block';
                         quantityInput.classList.add('error');
                         return;
@@ -280,7 +282,9 @@
                         id: currentProductToAdd.id,
                         name: currentProductToAdd.name,
                         value: currentProductToAdd.value,
-                        quantity: quantity
+                        quantity: quantity,
+                        image: currentProductToAdd.image,
+                        details: currentProductToAdd.details
                     });
                 }
 
@@ -328,9 +332,18 @@
                 }
             }
 
-            function loadProductsFromLocalStorage() {
-                const storedProducts = localStorage.getItem('products');
-                return storedProducts ? JSON.parse(storedProducts) : [];
+            async function loadProductsFromAPI() {
+                try {
+                    const response = await fetch(`${API_URL}/produtos`);
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar produtos da API.');
+                    }
+                    const productsData = await response.json();
+                    renderClientProducts(productsData);
+                } catch (error) {
+                    console.error("Erro ao carregar produtos para a loja:", error);
+                    productList.innerHTML = '<li class="no-products-message">Erro ao carregar produtos (em breve).</li>';
+                }
             }
 
             function getFavoritos() {
@@ -340,32 +353,31 @@
             function salvarFavoritos(favoritos) {
                 localStorage.setItem("favoritos", JSON.stringify(favoritos));
             }
-    function attachHeartListeners() {
-        const coracoes = document.querySelectorAll(".coracao");
-        console.log('Número de corações encontrados:', coracoes.length);
 
-        coracoes.forEach(coracao => {
-            const produto = coracao.closest(".product-item");
-            const titulo = produto.querySelector(".product-name").textContent;
-            console.log('Adicionando listener ao coração de:', titulo);
+            function attachHeartListeners() {
+                const coracoes = document.querySelectorAll(".coracao");
+                coracoes.forEach(coracao => {
+                    const productItem = coracao.closest(".product-item");
+                    const productNameElement = productItem.querySelector(".product-name");
+                    const titulo = productNameElement ? productNameElement.textContent.trim() : '';
 
-            coracao.addEventListener("click", (event) => { // Adicione o objeto 'event'
-                console.log('Evento de clique no coração:', event.target); // Veja qual elemento recebeu o clique
-                console.log('Coração clicado para:', titulo);
-                let favoritos = getFavoritos();
+                    if (titulo) {
+                        coracao.addEventListener("click", (event) => {
+                            event.stopPropagation();
+                            let favoritos = getFavoritos();
+                            if (favoritos.includes(titulo)) {
+                                favoritos = favoritos.filter(item => item !== titulo);
+                                coracao.classList.remove("favoritado");
+                            } else {
+                                favoritos.push(titulo);
+                                coracao.classList.add("favoritado");
+                            }
+                            salvarFavoritos(favoritos);
+                        });
+                    }
+                });
+            }
 
-                if (favoritos.includes(titulo)) {
-                    favoritos = favoritos.filter(item => item !== titulo);
-                    coracao.classList.remove("favoritado");
-                } else {
-                    favoritos.push(titulo);
-                    coracao.classList.add("favoritado");
-                }
-
-                salvarFavoritos(favoritos);
-        });
-    });
-}
             function renderClientProducts(productsToRender) {
                 productList.innerHTML = '';
 
@@ -377,70 +389,70 @@
                 const favoritos = getFavoritos();
 
                 productsToRender.forEach((product, index) => {
-                    if (product.quantity > 0) {
+                    const productName = product.name || 'Nome Indisponível';
+                    const productDetails = product.details ? product.details.String : '';
+                    const productValue = product.value;
+                    const productQuantity = product.quantity || 0;
+                    const productImage = product.image.String || 'img/default_product.jpg';
+
+                    if (productQuantity > 0) {
                         const listItem = document.createElement('li');
                         listItem.classList.add('product-item');
-                        listItem.dataset.productId = product.id || index;
+                        listItem.dataset.productId = product.id;
 
-                        const valueAsNumber = parseFloat(product.value);
-                        const formattedValue = !isNaN(valueAsNumber)
-                            ? valueAsNumber.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        const formattedValue = !isNaN(parseFloat(productValue))
+                            ? parseFloat(productValue).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
                             : 'Valor Indisponível';
 
-                        const isFavorited = favoritos.includes(product.name);
+                        const isFavorited = favoritos.includes(productName);
 
                         listItem.innerHTML = `
-                <div class="product-image-container">
-                    <img src="${product.image || 'img/default_product.jpg'}" alt="${product.name || 'Produto'}" class="product-image">
-                </div>
-                <div class="product-info">
-                    <span class="coracao ${isFavorited ? 'favoritado' : ''}" title="Favoritar"><i class="fas fa-heart"></i></span>
-                    <h3 class="product-name">${product.name || 'Nome Indisponível'}</h3>
-                    <p class="product-details">${product.details || ''}</p>
-                    <div class="product-price-quantity">
-                        <span class="product-price">${formattedValue}</span>
-                        <span class="product-quantity">Disponível: ${product.quantity}</span>
-                    </div>
-                </div>
-                <button class="button add-to-cart-button"
-                    data-product-id="${product.id || index}"
-                    data-product-name="${product.name || ''}"
-                    data-product-value="${product.value || 0}"
-                    data-product-quantity="${product.quantity}"> Adicionar ao Carrinho
-                </button>
-            `;
+                            <div class="product-image-container">
+                                <img src="${productImage}" alt="${productName}" class="product-image">
+                            </div>
+                            <div class="product-info">
+                                <span class="coracao ${isFavorited ? 'favoritado' : ''}" title="Favoritar"><i class="fas fa-heart"></i></span>
+                                <h3 class="product-name">${productName}</h3>
+                                <p class="product-details">${productDetails}</p>
+                                <div class="product-price-quantity">
+                                    <span class="product-price">${formattedValue}</span>
+                                    <span class="product-quantity">Disponível: ${productQuantity}</span>
+                                </div>
+                            </div>
+                            <button class="button add-to-cart-button"
+                                data-product-id="${product.id}"
+                                data-product-name="${productName}"
+                                data-product-value="${productValue}"
+                                data-product-quantity="${productQuantity}"
+                                data-product-image="${productImage}"
+                                data-product-details="${productDetails}"> Adicionar ao Carrinho
+                            </button>
+                        `;
+                        productList.appendChild(listItem);
+                    }
+                });
 
-            productList.appendChild(listItem);
-        }
-    });
+                attachHeartListeners();
+                const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
+                addToCartButtons.forEach(button => {
+                    button.addEventListener('click', handleAddToCartButtonClick);
+                });
+            }
 
-    
-    attachHeartListeners(); // Anexa os listeners dos corações
-
-    // Anexa os listeners dos botões "Adicionar ao Carrinho" diretamente aqui
-    const addToCartButtons = document.querySelectorAll('.add-to-cart-button');
-    addToCartButtons.forEach(button => {
-        button.addEventListener('click', handleAddToCartButtonClick);
-    });
-}
-
-// Função para obter um parâmetro da URL
-function getUrlParam(param) {
+            function getUrlParam(param) {
                 const urlParams = new URLSearchParams(window.location.search);
                 return urlParams.get(param);
             }
 
-            // Função para destacar um produto na lista
             function destacarProduto(produtoId) {
                 const productElements = document.querySelectorAll('.product-item');
                 productElements.forEach(element => {
                     if (element.dataset.productId === produtoId) {
                         element.classList.add('destacado');
                         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        // Adiciona um ouvinte para remover o destaque após um tempo (opcional)
                         setTimeout(() => {
                             element.classList.remove('destacado');
-                        }, 3000); // Remove o destaque após 3 segundos
+                        }, 3000);
                     }
                 });
             }
@@ -451,14 +463,11 @@ function getUrlParam(param) {
 
             loadTheme();
             updateCartBadge();
+            loadProductsFromAPI();
 
-            const products = loadProductsFromLocalStorage();
-            renderClientProducts(products);
-
-            // Ao carregar a página, verifica se há um produtoId na URL
             const productIdNaUrl = getUrlParam('produtoId');
             if (productIdNaUrl) {
-                destacarProduto(productIdNaUrl);
+                setTimeout(() => destacarProduto(productIdNaUrl), 500);
             }
         });
     </script>

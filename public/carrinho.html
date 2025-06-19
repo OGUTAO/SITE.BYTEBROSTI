@@ -68,7 +68,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Seletores (mantidos)
             const itensCarrinhoLista = document.querySelector('.itens-carrinho');
             const valorSubtotalElement = document.querySelector('.valor-subtotal');
             const valorFreteElement = document.querySelector('.valor-frete');
@@ -82,7 +81,6 @@
             const tipoFreteSelect = document.getElementById('tipo-frete');
             const enderecoInput = document.getElementById('endereco-input');
 
-            // CEP de origem (mantido)
             const cepOrigem = '71215-100';
             let freteCalculado = 0;
             let freteFoiCalculado = false;
@@ -95,7 +93,6 @@
             }
 
             function renderizarCarrinho() {
-                // (Função renderizarCarrinho mantida sem alterações significativas)
                 itensCarrinhoLista.innerHTML = '';
 
                 if (carrinho.length === 0) {
@@ -112,15 +109,20 @@
                     observacaoCheckout.style.display = 'none';
 
                     carrinho.forEach(item => {
+                        // Extraia a string da imagem e detalhes aqui, caso estejam como [object Object]
+                        const imageUrl = item.image && typeof item.image === 'object' && item.image.String ? item.image.String : item.image || 'img/default_product_carrinho.jpg';
+                        // Remove o item.details da exibição, como solicitado
+                        // const productDetails = item.details && typeof item.details === 'object' && item.details.String ? item.details.String : item.details || '';
+
                         const li = document.createElement('li');
                         li.classList.add('item-carrinho');
                         li.innerHTML = `
                             <div class="info-produto">
-                                <img src="${item.imagem || 'img/default_product_carrinho.jpg'}" alt="${item.name}" />
+                                <img src="${imageUrl}" alt="${item.name}" />
                                 <div class="detalhes-produto">
                                     <h3>${item.name}</h3>
                                     <p class="preco-unitario">Preço Unitário: R$ ${parseFloat(item.value).toFixed(2)}</p>
-                                </div>
+                                    </div>
                             </div>
                             <div class="acoes-produto">
                                 <div class="quantidade">
@@ -194,22 +196,21 @@
                 let prazoBaseDias = 0;
                 const tipoFrete = tipoFreteSelect.value;
                 const fatorExpresso = tipoFrete === 'expresso' ? 1.5 : 1;
-                const fatorPrazoExpresso = tipoFrete === 'expresso' ? 0.7 : 1; // Reduz o prazo para expresso
+                const fatorPrazoExpresso = tipoFrete === 'expresso' ? 0.7 : 1;
 
-                // Simulação de custo base e prazo base por "região"
-                if (primeirosDigitosDestino >= 0 && primeirosDigitosDestino <= 19) { // Região 1
+                if (primeirosDigitosDestino >= 0 && primeirosDigitosDestino <= 19) {
                     custoBase = 10.00;
                     prazoBaseDias = 3;
-                } else if (primeirosDigitosDestino >= 20 && primeirosDigitosDestino <= 39) { // Região 2
+                } else if (primeirosDigitosDestino >= 20 && primeirosDigitosDestino <= 39) {
                     custoBase = 15.00;
                     prazoBaseDias = 5;
-                } else if (primeirosDigitosDestino >= 40 && primeirosDigitosDestino <= 59) { // Região 3
+                } else if (primeirosDigitosDestino >= 40 && primeirosDigitosDestino <= 59) {
                     custoBase = 20.00;
                     prazoBaseDias = 7;
-                } else if (primeirosDigitosDestino >= 60 && primeirosDigitosDestino <= 79) { // Região 4
+                } else if (primeosDigitosDestino >= 60 && primeirosDigitosDestino <= 79) {
                     custoBase = 25.00;
                     prazoBaseDias = 9;
-                } else { // Região 5
+                } else {
                     custoBase = 30.00;
                     prazoBaseDias = 12;
                 }

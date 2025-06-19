@@ -1,12 +1,9 @@
-/* css/style13.css (ou style4.css - o que você escolher) */
-
 .oferta-fixa {
-    display: none; /* Oculta o selo fixo */
+    display: none;
 }
 
 header nav a {
     color:  rgba(23, 189, 240, 0.767);
-    /* ... outros estilos ... */
 }
 
 .container {
@@ -39,7 +36,7 @@ header nav a {
 }
 
 .secao-destaque h2 i {
-    color: #007bff; /* Cor primária para os ícones */
+    color: #007bff;
 }
 
 .lista-produtos {
@@ -55,61 +52,89 @@ header nav a {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    height: auto;
+    min-height: 280px;
+    position: relative;
+    text-align: center;
 }
 
 .produto img {
     width: 100%;
-    height: auto;
+    max-height: 150px;
+    object-fit: contain;
     border-bottom: 1px solid #eee;
-    aspect-ratio: 1/1; /* Manter a proporção quadrada */
-    object-fit: cover; /* Cobrir o espaço sem distorcer */
-    display: block; /* Adicionado para evitar espaços extras abaixo da imagem */
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.produto .info-produto {
+    padding: 10px 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .produto h3 {
     color: #333;
-    font-size: 1.2em;
-    margin: 10px 15px 5px;
+    font-size: 1.1em;
+    margin: 0 0 5px;
+    line-height: 1.3;
+}
+
+.produto .produto-detalhes {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    max-height: 4em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 
 .produto .preco {
     font-size: 1em;
-    color: #666;
-    margin: 0 15px 10px;
+    color: #007bff;
+    font-weight: bold;
+    margin: auto 0 5px;
 }
 
 .produto .preco-antigo {
     color: #999;
     text-decoration: line-through;
     margin-right: 5px;
+    font-size: 0.85em;
 }
 
 .produto .preco-atual {
-    color: #dc3545; /* Cor vermelha para o preço de oferta */
+    color: #dc3545;
     font-weight: bold;
 }
 
 .produto .botao-comprar {
-    background-color: #007bff;
+    background-color: #28a745;
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 8px 12px;
     text-align: center;
     text-decoration: none;
     display: block;
     border-radius: 0 0 6px 6px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.9em;
     transition: background-color 0.3s ease;
-    margin-top: auto; /* Empurra o botão para a parte inferior */
+    width: 100%;
 }
 
 .produto .botao-comprar:hover {
-    background-color: #0056b3;
+    background-color: #218838;
 }
 
 .selo-novo, .selo-oferta {
-    background-color: #28a745; /* Cor verde para "Novo" */
+    background-color: #28a745;
     color: white;
     font-size: 0.8em;
     padding: 5px 8px;
@@ -121,14 +146,13 @@ header nav a {
 }
 
 .selo-oferta {
-    background-color: #dc3545; /* Cor vermelha para "Oferta" */
+    background-color: #dc3545;
 }
 
 body.dark-theme header nav a {
     color: #1abc9c;
 }
 
-/* Estilos para tema escuro (se você tiver) */
 body.dark-theme .container {
     background-color: #1e1e1e;
     color: #e0e0e0;
@@ -148,121 +172,87 @@ body.dark-theme .secao-destaque h2 {
 }
 
 body.dark-theme .secao-destaque h2 i {
-    color: #66b3ff; /* Cor primária para os ícones no tema escuro */
+    color: #66b3ff;
 }
 
 body.dark-theme .produto {
-    background-color: #333;
-    color: #e0e0e0;
+    background-color: #2a2a2a;
     box-shadow: 0 2px 5px rgba(255, 255, 255, 0.08);
     border-color: #555;
 }
-
+body.dark-theme .produto img {
+    border-color: #555;
+}
+body.dark-theme .produto .info-produto h3,
+body.dark-theme .produto .produto-detalhes {
+    color: #eee;
+}
 body.dark-theme .produto .preco {
-    color: #ccc;
+    color: #60a5fa;
 }
-
 body.dark-theme .produto .preco-antigo {
-    color: #888;
+    color: #aaa;
 }
-
 body.dark-theme .produto .botao-comprar {
-    background-color: #0056b3;
+    background-color: #1e7e34;
 }
-
 body.dark-theme .produto .botao-comprar:hover {
-    background-color: #003d80;
+    background-color: #155724;
 }
 
-body.dark-theme .selo-novo,
-body.dark-theme .selo-oferta {
-    color: #333;
-}
-
-body.dark-theme .selo-novo {
-    background-color: #5cb85c;
-}
-
-body.dark-theme .selo-oferta {
-    background-color: #d9534f;
-}
-
-/* Responsividade - AJUSTADO PARA BOXES MENORES */
-/* Responsividade - AJUSTADO PARA BOXES MENORES AINDA */
-@media (max-width: 992px) { /* Para tablets e telas menores de desktop */
+@media (max-width: 992px) {
     .lista-produtos {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Boxes menores em telas médias */
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
     }
-
     .produto img {
-        max-height: 100px; /* Altura máxima menor da imagem */
-    }
-
-    .produto h3 {
-        font-size: 0.9em; /* Fonte menor */
-        margin: 5px 8px 2px;
-    }
-
-    .produto .preco {
-        font-size: 0.8em; /* Fonte menor */
-        margin: 0 8px 5px;
-    }
-
-    .produto .botao-comprar {
-        font-size: 0.8em; /* Fonte menor */
-        padding: 6px 10px;
+        max-height: 120px;
     }
 }
 
-@media (max-width: 600px) { /* Para telefones maiores */
+@media (max-width: 600px) {
     .lista-produtos {
-        grid-template-columns: 1fr; /* Um produto por linha em telefones */
+        grid-template-columns: 1fr;
     }
-
     .produto {
-        flex-direction: row; /* Layout horizontal */
+        flex-direction: row;
         align-items: center;
-        padding: 8px; /* Reduzindo o padding interno */
-        gap: 5px; /* Espaço menor entre os itens */
+        padding: 10px;
+        gap: 10px;
+        min-height: 120px;
     }
-
     .produto img {
-        width: 80px; /* Largura menor da imagem */
-        height: 80px; /* Altura menor da imagem */
+        width: 80px;
+        height: 80px;
+        max-height: 80px;
+        padding: 0;
+        border-right: 1px solid #eee;
+        border-bottom: none;
+        margin-right: 10px;
     }
-
-    .info-produto h3 {
-        font-size: 0.9em;
-        margin: 0 0 3px;
+    .produto .info-produto {
+        padding: 0;
+        text-align: left;
     }
-
-    .info-produto .preco {
-        font-size: 0.8em;
-        margin: 0 0 3px;
-    }
-
-    .produto .botao-comprar {
-        font-size: 0.8em;
-        padding: 5px 8px;
-    }
-}
-
-@media (max-width: 400px) { /* Para telefones menores */
-    .produto img {
-        width: 60px;
-        height: 60px;
-    }
-
     .produto h3 {
+        font-size: 1em;
+    }
+    .produto .produto-detalhes {
         font-size: 0.8em;
+        max-height: 2.8em;
+        -webkit-line-clamp: 2;
     }
-
     .produto .preco {
-        font-size: 0.7em;
+        font-size: 0.9em;
+        margin-top: 5px;
     }
-
     .produto .botao-comprar {
-        font-size: 0.7em;
-        padding: 4px 6px;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: auto;
+        border-radius: 0;
+        padding: 5px 10px;
+        font-size: 0.8em;
     }
 }
