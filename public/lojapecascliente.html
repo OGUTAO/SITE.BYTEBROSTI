@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    <script>
+        window.API_BASE_URL = "${API_ENDPOINT}";
+    </script>
+
     <style>
         .quantity-modal-overlay {
             display: none;
@@ -203,7 +207,9 @@
             const quantityModalOk = document.getElementById('quantityModalOk');
             const quantityModalCancel = document.getElementById('quantityModalCancel');
             const quantityErrorMessage = document.getElementById('quantityErrorMessage');
-            const API_URL = 'http://localhost:8080/api';
+            // REMOVIDO: const API_URL = 'http://localhost:8080/api';
+            // AGORA USAMOS:
+            const API_BASE_URL_LOCAL = window.API_BASE_URL; // Variável local para facilitar o uso
 
             let cartItemCount = 0;
             let currentProductToAdd = null;
@@ -221,6 +227,7 @@
                 quantityInput.value = 1;
                 quantityInput.max = availableQuantity;
                 quantityErrorMessage.style.display = 'none';
+                quantityErrorMessage.textContent = '';
                 quantityInput.classList.remove('error');
                 quantityModalOverlay.style.display = 'flex';
             }
@@ -334,7 +341,8 @@
 
             async function loadProductsFromAPI() {
                 try {
-                    const response = await fetch(`${API_URL}/produtos`);
+                    // MUDANÇA AQUI: Usando API_BASE_URL_LOCAL
+                    const response = await fetch(`${API_BASE_URL_LOCAL}produtos`);
                     if (!response.ok) {
                         throw new Error('Erro ao carregar produtos da API.');
                     }
