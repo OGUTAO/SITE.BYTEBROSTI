@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        window.API_BASE_URL = "${API_ENDPOINT}";
+    </script>
 </head>
 <body>
     <div class="container">
@@ -27,58 +30,61 @@
     <script src="js/version.js"></script>
     <script>
         function handleLoginSuccess(userEmail, userName, userToken, userRole = 'usuario') {
-    localStorage.setItem('userLoggedIn', 'true');
-    localStorage.setItem('loggedInUserEmail', userEmail);
-    localStorage.setItem('userName', userName); 
-    localStorage.setItem('userToken', userToken);
-    localStorage.setItem('userRole', userRole);
-    console.log(`LOGIN SUCESSO: Email=${userEmail}, Nome=${userName}, Role=${userRole}`);
-    window.location.href = 'index.html';
-}
-
-        async function validateLogin() {
-    const emailInput = document.getElementById('login-email');
-    const passwordInput = document.getElementById('login-password');
-    const errorElement = document.getElementById('login-error');
-    const email = emailInput.value.trim();
-    const password = passwordInput.value.trim();
-
-    const API_URL = 'http://localhost:8080/api';
-
-    errorElement.textContent = '';
-
-    if (!email || !password) {
-        errorElement.textContent = 'Por favor, digite seu email e senha.';
-        return;
-    }
-
-    try {
-        const response = await fetch(`${API_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email, senha: password })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.erro || 'Credenciais inválidas.');
+            localStorage.setItem('userLoggedIn', 'true');
+            localStorage.setItem('loggedInUserEmail', userEmail);
+            localStorage.setItem('userName', userName);    
+            localStorage.setItem('userToken', userToken);
+            localStorage.setItem('userRole', userRole);
+            console.log(`LOGIN SUCESSO: Email=${userEmail}, Nome=${userName}, Role=${userRole}`);
+            window.location.href = 'index.html';
         }
 
-        const userData = await response.json();
-        handleLoginSuccess(userData.email, userData.nome, userData.token, 'usuario');
-    } catch (error) {
-        console.error("Erro no login de usuário:", error);
-        errorElement.textContent = error.message;
-    }
-}
+        async function validateLogin() {
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            const errorElement = document.getElementById('login-error');
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            // REMOVIDO: const API_URL = 'http://localhost:8080/api';
+            // AGORA USAMOS:
+            const API_BASE_URL_LOCAL = window.API_BASE_URL;
+
+            errorElement.textContent = '';
+
+            if (!email || !password) {
+                errorElement.textContent = 'Por favor, digite seu email e senha.';
+                return;
+            }
+
+            try {
+                // MUDANÇA AQUI: Usando API_BASE_URL_LOCAL
+                const response = await fetch(`${API_BASE_URL_LOCAL}auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, senha: password })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.erro || 'Credenciais inválidas.');
+                }
+
+                const userData = await response.json();
+                handleLoginSuccess(userData.email, userData.nome, userData.token, 'usuario');
+            } catch (error) {
+                console.error("Erro no login de usuário:", error);
+                errorElement.textContent = error.message;
+            }
+        }
 
         function applyTheme() {
-          const savedTheme = localStorage.getItem('theme');
-          if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-          } else {
-            document.body.classList.remove('dark-mode');
-          }
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
         }
 
         applyTheme();
