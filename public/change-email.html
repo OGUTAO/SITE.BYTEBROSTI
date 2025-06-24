@@ -1,109 +1,115 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alterar E-mail</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar E-mail</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        window.API_BASE_URL = "${API_ENDPOINT}";
+    </script>
 </head>
 <body>
-  <div class="container">
-    <h2>Alterar E-mail</h2>
-    <input type="email" id="current-email" placeholder="E-mail Atual">
-    <input type="email" id="new-email" placeholder="Novo E-mail">
-    <input type="email" id="confirm-new-email" placeholder="Confirmar Novo E-mail">
-    <input type="password" id="current-password" placeholder="Sua Senha Atual"> <p class="error" id="email-error"></p>
-    <button onclick="changeEmail()">Alterar</button>
-    <p><a href="index.html" class="voltar-login">Voltar ao Menu Principal</a></p> </div>
+    <div class="container">
+        <h2>Alterar E-mail</h2>
+        <input type="email" id="current-email" placeholder="E-mail Atual">
+        <input type="email" id="new-email" placeholder="Novo E-mail">
+        <input type="email" id="confirm-new-email" placeholder="Confirmar Novo E-mail">
+        <input type="password" id="current-password" placeholder="Sua Senha Atual"> <p class="error" id="email-error"></p>
+        <button onclick="changeEmail()">Alterar</button>
+        <p><a href="index.html" class="voltar-login">Voltar ao Menu Principal</a></p> </div>
 
-  <div class="registration-image">
-    <img src="img/bytebros.png" alt="Imagem de Registro">
-    <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
-    <p id="system-version" style="text-align: center; margin-bottom: 5px; color: #777;"></p>
-  </div>
+    <div class="registration-image">
+        <img src="img/bytebros.png" alt="Imagem de Registro">
+        <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
+        <p id="system-version" style="text-align: center; margin-bottom: 5px; color: #777;"></p>
+    </div>
 
     <script src="js/version.js"></script>
 
-  <script>
-    const API_URL = 'http://localhost:8080/api'; 
+    <script>
+        // REMOVIDO: const API_URL = 'http://localhost:8080/api';
+        // AGORA USAMOS:
+        const API_BASE_URL_LOCAL = window.API_BASE_URL; // Variável local para facilitar o uso
 
-    async function changeEmail() {
-        const currentEmailInput = document.getElementById('current-email');
-        const newEmailInput = document.getElementById('new-email');
-        const confirmNewEmailInput = document.getElementById('confirm-new-email');
-        const currentPasswordInput = document.getElementById('current-password');
-        const errorElement = document.getElementById('email-error');
+        async function changeEmail() {
+            const currentEmailInput = document.getElementById('current-email');
+            const newEmailInput = document.getElementById('new-email');
+            const confirmNewEmailInput = document.getElementById('confirm-new-email');
+            const currentPasswordInput = document.getElementById('current-password');
+            const errorElement = document.getElementById('email-error');
 
-        const currentEmail = currentEmailInput.value.trim();
-        const newEmail = newEmailInput.value.trim();
-        const confirmNewEmail = confirmNewEmailInput.value.trim();
-        const currentPassword = currentPasswordInput.value.trim(); 
+            const currentEmail = currentEmailInput.value.trim();
+            const newEmail = newEmailInput.value.trim();
+            const confirmNewEmail = confirmNewEmailInput.value.trim();
+            const currentPassword = currentPasswordInput.value.trim(); 
 
-        errorElement.textContent = '';
+            errorElement.textContent = '';
 
-        if (!currentEmail || !newEmail || !confirmNewEmail || !currentPassword) {
-            errorElement.textContent = 'Por favor, preencha todos os campos.';
-            return;
-        }
-
-        if (newEmail !== confirmNewEmail) {
-            errorElement.textContent = 'O novo e-mail e a confirmação não coincidem.';
-            return;
-        }
-
-        const userToken = localStorage.getItem('userToken');
-        if (!userToken) {
-            errorElement.textContent = 'Você precisa estar logado para alterar seu e-mail.';
-            return;
-        }
-
-        const payload = {
-            email_atual: currentEmail,
-            novo_email: newEmail,
-            confirmar_email: confirmNewEmail,
-            senha: currentPassword 
-        };
-
-        try {
-            const response = await fetch(`${API_URL}/usuarios/email`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${userToken}`
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.erro || 'Erro ao alterar o e-mail.');
+            if (!currentEmail || !newEmail || !confirmNewEmail || !currentPassword) {
+                errorElement.textContent = 'Por favor, preencha todos os campos.';
+                return;
             }
 
-            const responseData = await response.json();
-            alert(responseData.mensagem + '\nPor favor, faça login novamente com seu novo e-mail.');
+            if (newEmail !== confirmNewEmail) {
+                errorElement.textContent = 'O novo e-mail e a confirmação não coincidem.';
+                return;
+            }
 
-            localStorage.setItem('loggedInUserEmail', responseData.novo_email);
-            localStorage.setItem('userToken', responseData.token);
-            localStorage.removeItem('userLoggedIn');
-            localStorage.removeItem('userName');
+            const userToken = localStorage.getItem('userToken');
+            if (!userToken) {
+                errorElement.textContent = 'Você precisa estar logado para alterar seu e-mail.';
+                return;
+            }
 
-            window.location.href = 'login.html';
-        } catch (error) {
-            console.error("Erro ao alterar e-mail:", error);
-            errorElement.textContent = `Erro: ${error.message}`;
+            const payload = {
+                email_atual: currentEmail,
+                novo_email: newEmail,
+                confirmar_email: confirmNewEmail,
+                senha: currentPassword 
+            };
+
+            try {
+                // MUDANÇA AQUI: Usando API_BASE_URL_LOCAL
+                const response = await fetch(`${API_BASE_URL_LOCAL}usuarios/email`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.erro || 'Erro ao alterar o e-mail.');
+                }
+
+                const responseData = await response.json();
+                alert(responseData.mensagem + '\nPor favor, faça login novamente com seu novo e-mail.');
+
+                localStorage.setItem('loggedInUserEmail', responseData.novo_email);
+                localStorage.setItem('userToken', responseData.token);
+                localStorage.removeItem('userLoggedIn');
+                localStorage.removeItem('userName');
+
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error("Erro ao alterar e-mail:", error);
+                errorElement.textContent = `Erro: ${error.message}`;
+            }
         }
-    }
 
-    function applyTheme() {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-      } else {
-        document.body.classList.remove('dark-mode');
-      }
-    }
+        function applyTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
 
-    applyTheme();
-  </script>
+        applyTheme();
+    </script>
 </body>
 </html>
