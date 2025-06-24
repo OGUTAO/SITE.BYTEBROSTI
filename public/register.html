@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/style.css">
     <script>
         // Esta linha injeta a URL base do backend vinda do Netlify
+        // O formato ${API_ENDPOINT} é para o comando de build do Netlify
         window.API_BASE_URL = "${API_ENDPOINT}";
     </script>
 </head>
@@ -56,7 +57,8 @@
                 return;
             }
 
-            // CORREÇÃO CRÍTICA: Usa a variável global injetada pelo Netlify
+            // CORREÇÃO CRÍTICA: Usa a variável global injetada pelo Netlify.
+            // Se a variável não for injetada, usa um valor padrão para desenvolvimento local.
             const API_BASE_URL_LOCAL = window.API_BASE_URL || 'http://localhost:8080/api/';
 
             const userData = {
@@ -78,10 +80,9 @@
                 if (!response.ok) {
                     // Tenta ler a resposta de erro como JSON
                     return response.json().then(errorData => {
-                        // Lança um erro com a mensagem do backend
-                        throw new Error(errorData.erro || 'Erro desconhecido no cadastro.');
+                        throw new Error(errorData.erro || `O servidor respondeu com o status ${response.status}`);
                     }).catch(() => {
-                        // Se a resposta de erro não for JSON, lança um erro genérico com o status
+                        // Se a resposta de erro não for JSON, lança um erro genérico
                         throw new Error(`O servidor respondeu com o status ${response.status}`);
                     });
                 }
@@ -89,7 +90,6 @@
             })
             .then(data => {
                 console.log('Usuário cadastrado com sucesso:', data);
-                // Salva os dados do usuário no localStorage para login automático
                 localStorage.setItem('userLoggedIn', 'true');
                 localStorage.setItem('loggedInUserEmail', data.email);
                 localStorage.setItem('userName', data.nome);
