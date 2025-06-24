@@ -1,3 +1,16 @@
 [build]
-  publish = "public"
-  command = ""
+  # Publica a pasta onde seus arquivos finais (HTML, CSS, JS) estão.
+  # Com base na sua imagem do GitHub, seus arquivos principais estão na pasta 'public'.
+  publish = "public" 
+
+  # Comando de build do seu projeto. Para um projeto HTML/CSS/JS puro, pode ser simples.
+  command = "echo 'Iniciando build do frontend com injeção de API_ENDPOINT...'"
+
+# Define a variável de ambiente que estará disponível durante o build
+[build.environment]
+  API_ENDPOINT = "https://back-end-site-bytebros-nuot.onrender.com/api/" # <--- COLOQUE A URL COMPLETA DO SEU BACKEND AQUI
+
+# Configuração de processamento para HTML (isso permite a substituição de variáveis no HTML)
+[build.processing.html]
+  enable = true # Habilita a substituição de variáveis em arquivos HTML
+  # Isso garantirá que o %%API_ENDPOINT%% seja substituído no seu HTML.
