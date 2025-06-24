@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="css/style7.css" />
     <link rel="stylesheet" href="css/style9.css" />
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        window.API_BASE_URL = "${API_ENDPOINT}";
+    </script>
 </head>
 <body>
     <div class="container">
@@ -178,7 +181,11 @@
                 renderizarCarrinho();
             }
 
-            function calcularFrete(cepDestino) {
+            // REMOVIDO: const API_URL = 'http://localhost:8080/api';
+            // AGORA USAMOS:
+            const API_BASE_URL_LOCAL = window.API_BASE_URL; // Variável local para facilitar o uso
+
+            async function calcularFrete(cepDestino) {
                 if (!cepDestino || cepDestino.length !== 9) {
                     alert('Por favor, digite um CEP válido.');
                     valorFreteElement.textContent = 'A calcular';
@@ -191,6 +198,7 @@
                     return;
                 }
 
+                // Simulação de cálculo de frete
                 const primeirosDigitosDestino = cepDestino.substring(0, 2);
                 let custoBase = 0;
                 let prazoBaseDias = 0;
@@ -207,7 +215,7 @@
                 } else if (primeirosDigitosDestino >= 40 && primeirosDigitosDestino <= 59) {
                     custoBase = 20.00;
                     prazoBaseDias = 7;
-                } else if (primeosDigitosDestino >= 60 && primeirosDigitosDestino <= 79) {
+                } else if (primeirosDigitosDestino >= 60 && primeirosDigitosDestino <= 79) {
                     custoBase = 25.00;
                     prazoBaseDias = 9;
                 } else {
@@ -303,11 +311,5 @@
             atualizarBotaoCheckout();
         });
     </script>
-    <footer>
-        <p class="copyright">&copy; 2025 Byte Bros. Todos os direitos reservados.</p>
-        <p id="system-version" style="text-align: center; margin-bottom: 5px; font-size: 0.8em;"></p>
-    </footer>
-</div>
-<script src="js/version.js"></script>
 </body>
 </html>
