@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento</title>
     <link rel="stylesheet" href="css/style14.css"> <link rel="stylesheet" href="css/style5.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script>
+        window.API_BASE_URL = "${API_ENDPOINT}";
+    </script>
 </head>
 <body>
     <a href="carrinho.html" class="button back-button-fixed">
@@ -73,7 +76,9 @@
             const formDadosCartao = document.getElementById('form-dados-cartao');
             const botoesOpcao = document.querySelectorAll('.opcao-botao');
             const confirmarPagamentoBtn = document.getElementById('confirmar-pagamento-btn');
-            const API_URL = 'http://localhost:8080/api'; 
+            // REMOVIDO: const API_URL = 'http://localhost:8080/api';
+            // AGORA USAMOS:
+            const API_BASE_URL_LOCAL = window.API_BASE_URL; // Variável local para facilitar o uso
 
             let formaPagamentoSelecionada = null;
 
@@ -108,18 +113,18 @@
             });
 
             if (confirmarPagamentoBtn) {
-                confirmarPagamentoBtn.addEventListener('click', async () => { 
+                confirmarPagamentoBtn.addEventListener('click', async () => {    
                     const carrinho = JSON.parse(localStorage.getItem('cart')) || [];
                     const clienteEmailLogado = localStorage.getItem('loggedInUserEmail');
-                    const userToken = localStorage.getItem('userToken'); 
+                    const userToken = localStorage.getItem('userToken');    
                     console.log("PAGAMENTO: Email Logado:", clienteEmailLogado);
 
                     const enderecoEntrega = localStorage.getItem('enderecoEntrega');
                     const tipoFrete = localStorage.getItem('tipoFreteSelecionado') || 'Padrão';
                     const valorFrete = parseFloat(localStorage.getItem('valorFreteCalculado') || '0.00');
-                    const prazoEntrega = localStorage.getItem('prazoEntregaSimulado') || 'Não disponível'; 
+                    const prazoEntrega = localStorage.getItem('prazoEntregaSimulado') || 'Não disponível';    
 
-                    if (!clienteEmailLogado || !userToken) { 
+                    if (!clienteEmailLogado || !userToken) {    
                         alert('Erro: Você precisa estar logado para finalizar o pedido. Faça o login primeiro.');
                         window.location.href = 'login.html';
                         return;
@@ -184,7 +189,8 @@
                     };
 
                     try {
-                        const response = await fetch(`${API_URL}/pedidos`, {
+                        // MUDANÇA AQUI: Usando API_BASE_URL_LOCAL
+                        const response = await fetch(`${API_BASE_URL_LOCAL}pedidos`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -206,10 +212,10 @@
                         localStorage.removeItem('cepDestino');
                         localStorage.removeItem('valorFreteCalculado');
                         localStorage.removeItem('tipoFreteSelecionado');
-                        localStorage.removeItem('prazoEntregaSimulado'); 
+                        localStorage.removeItem('prazoEntregaSimulado');    
 
                         alert('Pedido realizado e registrado com sucesso!');
-                        window.location.href = 'meuspedidos.html'; 
+                        window.location.href = 'meuspedidos.html';    
                     } catch (error) {
                         console.error("Erro ao enviar pedido para o backend:", error);
                         alert(`Ocorreu um erro ao finalizar seu pedido: ${error.message}. Tente novamente.`);
