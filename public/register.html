@@ -6,6 +6,7 @@
     <title>Cadastro</title>
     <link rel="stylesheet" href="css/style.css">
     <script>
+        // Esta linha injeta a URL base do backend vinda do Netlify
         window.API_BASE_URL = "${API_ENDPOINT}";
     </script>
 </head>
@@ -31,7 +32,6 @@
     </div>
     <script src="js/version.js"></script>
     <script>
-        
         function registerUser() {
             const nameInput = document.getElementById('register-name');
             const emailInput = document.getElementById('register-email');
@@ -56,8 +56,8 @@
                 return;
             }
 
-            
-            const API_BASE_URL_LOCAL = window.API_BASE_URL; 
+            // CORREÇÃO CRÍTICA: Usa a variável global injetada pelo Netlify
+            const API_BASE_URL_LOCAL = window.API_BASE_URL || 'http://localhost:8080/api/';
 
             const userData = {
                 nome_completo: name,
@@ -66,6 +66,7 @@
                 senha: password
             };
 
+            // CORREÇÃO CRÍTICA: Garante que a URL completa seja usada na chamada fetch
             fetch(`${API_BASE_URL_LOCAL}auth/registrar`, {
                 method: 'POST',
                 headers: {
@@ -75,14 +76,20 @@
             })
             .then(response => {
                 if (!response.ok) {
+                    // Tenta ler a resposta de erro como JSON
                     return response.json().then(errorData => {
+                        // Lança um erro com a mensagem do backend
                         throw new Error(errorData.erro || 'Erro desconhecido no cadastro.');
+                    }).catch(() => {
+                        // Se a resposta de erro não for JSON, lança um erro genérico com o status
+                        throw new Error(`O servidor respondeu com o status ${response.status}`);
                     });
                 }
                 return response.json();
             })
             .then(data => {
                 console.log('Usuário cadastrado com sucesso:', data);
+                // Salva os dados do usuário no localStorage para login automático
                 localStorage.setItem('userLoggedIn', 'true');
                 localStorage.setItem('loggedInUserEmail', data.email);
                 localStorage.setItem('userName', data.nome);
@@ -96,17 +103,6 @@
                 errorElement.textContent = `Erro: ${error.message}`;
             });
         }
-
-        function applyTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
-        }
-
-        applyTheme();
     </script>
 </body>
 </html>
