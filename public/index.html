@@ -6,6 +6,10 @@
     <title>Acesso - Byte Bros</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="css/style2.css" />
+    <script>
+        // O Netlify irá substituir %%API_ENDPOINT%% aqui durante o build
+        window.API_BASE_URL = "%%API_ENDPOINT%%";
+    </script>
 </head>
 <body>
     <div class="page-container">
@@ -149,7 +153,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const settingsSidebar = document.querySelector('.settings-sidebar');
-            const API_URL = "%%API_ENDPOINT%%";
             const chatMessagesElement = document.getElementById('chatbot-messages');
             const userInputElement = document.getElementById('user-input');
 
@@ -166,7 +169,7 @@
                 chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
             }
 
-            window.sendMessage = async function() {
+            window.sendMessage = async function() { // Tornando sendMessage global
                 const userMessage = userInputElement.value.trim();
                 if (!userMessage) return;
 
@@ -176,7 +179,7 @@
                 conversationHistory.push({ role: "user", parts: [userMessage] });
 
                 try {
-                    const response = await fetch(`${API_URL}/chatbot`, {
+                    const response = await fetch(`${window.API_BASE_URL}chatbot`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message: userMessage, history: conversationHistory })
@@ -191,7 +194,6 @@
                     const botResponse = data.response;
                     displayMessage('bot', botResponse);
 
-                    
                     conversationHistory.push({ role: "model", parts: [botResponse] });
 
                     if (botResponse.includes("gostaria de criar um ticket de suporte") || botResponse.includes("posso registrar um pedido de suporte")) {
@@ -225,9 +227,8 @@
 
                         const ticketMessage = `Ticket de Suporte Gerado pelo Chatbot:\n\n${fullConversation}\n\nResumo do problema: ${conversationHistory[conversationHistory.length - 1].parts[0]}`;
 
-
                         try {
-                            const response = await fetch(`${API_URL}/chatbot/suporte`, {
+                            const response = await fetch(`${window.API_BASE_URL}chatbot/suporte`, {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
