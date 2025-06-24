@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Pedidos</title>
     <link rel="stylesheet" href="css/style11.css">
+    <script>
+        window.API_BASE_URL = "${API_ENDPOINT}";
+    </script>
 </head>
 <body>
     <div class="container">
@@ -34,7 +37,9 @@
 
         const listaPedidosAtivos = document.getElementById("lista-pedidos-ativos");
         const listaHistoricoPedidos = document.getElementById("lista-historico-pedidos");
-        const API_URL = 'http://localhost:8080/api';
+        // REMOVIDO: const API_URL = 'http://localhost:8080/api';
+        // AGORA USAMOS:
+        const API_BASE_URL_LOCAL = window.API_BASE_URL; // Variável local para facilitar o uso
 
         async function carregarMeusDados() {
             const clienteEmailLogado = localStorage.getItem('loggedInUserEmail');
@@ -50,7 +55,8 @@
             listaPedidosAtivos.innerHTML = "<li>Carregando pedidos da loja...</li>";
             try {
                 console.log("Tentando buscar pedidos da loja para:", clienteEmailLogado);
-                const responsePedidos = await fetch(`${API_URL}/meus-pedidos`, {
+                // MUDANÇA AQUI: Usando API_BASE_URL_LOCAL
+                const responsePedidos = await fetch(`${API_BASE_URL_LOCAL}meus-pedidos`, {
                     headers: { 'Authorization': `Bearer ${userToken}` }
                 });
 
@@ -74,7 +80,8 @@
             listaHistoricoPedidos.innerHTML = "<li>Carregando histórico de interações...</li>";
             try {
                 console.log("Tentando buscar histórico de interações para:", clienteEmailLogado);
-                const responseInteracoes = await fetch(`${API_URL}/minhas-interacoes`, {
+                // MUDANÇA AQUI: Usando API_BASE_URL_LOCAL
+                const responseInteracoes = await fetch(`${API_BASE_URL_LOCAL}minhas-interacoes`, {
                     headers: { 'Authorization': `Bearer ${userToken}` }
                 });
 
@@ -105,7 +112,7 @@
             if (pedidosAtivosCliente.length > 0) {
                 pedidosAtivosCliente.forEach(pedido => {
                     const listItem = document.createElement("li");
-                    const dataFormatada = new Date(pedido.data_pedido).toLocaleDateString('pt-BR');
+                    const dataFormatada = new Date(pedido.data_pedido).toLocaleDateString('pt-BR'); // Agora 'criado_em' será uma string ISO 8601
                     const valorTotalFormatado = pedido.valor_total ? parseFloat(pedido.valor_total).toFixed(2).replace('.', ',') : 'N/A';
                     const valorFreteFormatado = pedido.valor_frete ? parseFloat(pedido.valor_frete).toFixed(2).replace('.', ',') : 'N/A';
 
@@ -161,7 +168,7 @@
                 const isOrcamento = item.tipo_interacao && item.tipo_interacao === 'orcamento';
 
                 return (isSuporteContato && statusFinalizadoSuporteContato) ||
-                       (isOrcamento && statusFinalizadoOrcamento);
+                               (isOrcamento && statusFinalizadoOrcamento);
             }).sort((a, b) => {
                 const dateA = new Date(a.criado_em || 0);
                 const dateB = new Date(b.criado_em || 0);
