@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alterar Telefone - Byte Bros</title>
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        window.API_BASE_URL = "${API_ENDPOINT}";
+    </script>
 </head>
 <body>
     <div class="container">
@@ -17,7 +20,7 @@
           <input type="tel" id="confirm-new-phone" name="confirm-new-phone" placeholder="Confirme o novo telefone" required>
 
           <input type="password" id="current-password" name="current-password" placeholder="Sua Senha Atual" required> <div class="error-message" id="error-message"></div>
-      
+          
           <button type="submit">Salvar Novo Telefone</button>
       </form>
         <div class="button-group">
@@ -34,7 +37,9 @@
     
     <script src="js/version.js"></script>
     <script>
-        const API_URL = 'http://localhost:8080/api'; 
+        // REMOVIDO: const API_URL = 'http://localhost:8080/api';
+        // AGORA USAMOS:
+        const API_BASE_URL_LOCAL = window.API_BASE_URL; // Variável local para facilitar o uso
 
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('change-phone-form');
@@ -73,7 +78,8 @@
                 };
 
                 try {
-                    const response = await fetch(`${API_URL}/usuarios/telefone`, {
+                    // MUDANÇA AQUI: Usando API_BASE_URL_LOCAL
+                    const response = await fetch(`${API_BASE_URL_LOCAL}usuarios/telefone`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -99,12 +105,12 @@
         });
 
         function applyTheme() {
-          const savedTheme = localStorage.getItem('theme');
-          if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-          } else {
-            document.body.classList.remove('dark-mode');
-          }
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
         }
         applyTheme();
     </script>
