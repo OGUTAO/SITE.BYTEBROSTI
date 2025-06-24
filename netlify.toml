@@ -1,16 +1,9 @@
 [build]
   publish = "public" # Confirme que sua pasta de arquivos estáticos é realmente 'public'
-  
-  # NOVO COMANDO: Copia o HTML, substitui o placeholder e move de volta
-  # Este comando é executado no ambiente de build do Netlify.
-  # Ele pega o valor da variável de ambiente API_ENDPOINT que você configurou no Netlify UI.
-  # Usando 'envsubst' que é mais robusto para variáveis de ambiente.
   command = "envsubst < public/register.html > public/register_temp.html && mv public/register_temp.html public/register.html"
 
-# Define a variável de ambiente que estará disponível durante o build
 [build.environment]
-  # API_ENDPOINT PRECISA ser definida AQUI e no Netlify UI. O comando 'envsubst' a usará.
-  API_ENDPOINT = "https://back-end-site-bytebros-nuot.onrender.com/api/" # <--- COLOQUE A URL COMPLETA DO SEU BACKEND AQUI (A MESMA QUE ESTÁ NO NETLIFY UI)
+  API_ENDPOINT = "https://back-end-site-bytebros-nuot.onrender.com/api/" # SUA URL DO RENDER, TERMINANDO COM /api/
 
 [build.processing.html]
-  enable = true # Manter, pois é a forma padrão e pode ser útil para outros arquivos
+  enable = true
