@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
     <link rel="stylesheet" href="css/style.css">
+    <script>
+       
+        window.API_BASE_URL = "%%API_ENDPOINT%%";
+    </script>
 </head>
 <body>
     <div class="container">
@@ -28,6 +32,7 @@
     </div>
     <script src="js/version.js"></script>
     <script>
+        
         function registerUser() {
             const nameInput = document.getElementById('register-name');
             const emailInput = document.getElementById('register-email');
@@ -52,7 +57,8 @@
                 return;
             }
 
-            const API_URL = 'http://localhost:8080/api';
+            
+            const API_BASE_URL_LOCAL = window.API_BASE_URL; 
 
             const userData = {
                 nome_completo: name,
@@ -61,7 +67,7 @@
                 senha: password
             };
 
-            fetch(`${API_URL}/auth/registrar`, {
+            fetch(`${API_BASE_URL_LOCAL}auth/registrar`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
